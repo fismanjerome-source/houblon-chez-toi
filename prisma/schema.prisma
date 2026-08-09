@@ -39,6 +39,9 @@ model Beer {
   active   Boolean @default(true)
   bottleImageUrl String?
   glassImageUrl  String?
+  learnMoreUrl String? // page officielle de la brasserie
+  shortHistory String? // courte histoire pour la mise en avant "bière du mois"
+  isBeerOfMonth Boolean @default(false)
   orderItems OrderItem[]
 }
 

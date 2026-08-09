@@ -45,3 +45,15 @@ h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
   width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 3px;
   font-family: 'Public Sans', sans-serif; font-size: 14px;
 }
+
+:target {
+  animation: highlight-beer 1.8s ease-out;
+}
+@keyframes highlight-beer {
+  0% { background: var(--amber); }
+  100% { background: var(--paper); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+}

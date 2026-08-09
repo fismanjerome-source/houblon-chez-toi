@@ -73,7 +73,7 @@ export default function OrderForm({ groups, slots }) {
         <div key={group.title}>
           <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>{group.title}</h2>
           {group.beers.map((beer) => (
-            <div key={beer.id} style={{ background: 'var(--paper)', padding: 20, border: '1px solid var(--line)', borderTop: 'none', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+            <div id={`beer-${beer.id}`} key={beer.id} style={{ background: 'var(--paper)', padding: 20, border: '1px solid var(--line)', borderTop: 'none', display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90 }}>
               {beer.bottleImageUrl && (
                 <img
                   src={beer.bottleImageUrl}
