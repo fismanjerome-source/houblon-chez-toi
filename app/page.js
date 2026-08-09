@@ -1,4 +1,6 @@
 const { prisma } = require('../lib/db');
+const { getUpcomingSlots } = require('../lib/slots');
+import OrderForm from './OrderForm';
 
 async function getBeers() {
   return prisma.beer.findMany({ where: { active: true }, orderBy: { country: 'asc' } });
@@ -6,8 +8,11 @@ async function getBeers() {
 
 export default async function HomePage() {
   const beers = await getBeers();
-  const french = beers.filter((b) => b.country === 'FR');
-  const belgian = beers.filter((b) => b.country === 'BE');
+  const groups = [
+    { title: 'Bières françaises', beers: beers.filter((b) => b.country === 'FR') },
+    { title: 'Bières belges', beers: beers.filter((b) => b.country === 'BE') },
+  ];
+  const slots = getUpcomingSlots();
 
   return (
     <main>
@@ -20,32 +25,8 @@ export default async function HomePage() {
       </header>
 
       <section className="wrap" style={{ paddingBottom: 60 }}>
-        <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Bières françaises</h2>
-        <BeerList beers={french} />
-
-        <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>Bières belges</h2>
-        <BeerList beers={belgian} />
+        <OrderForm groups={groups} slots={slots} />
       </section>
     </main>
-  );
-}
-
-function BeerList({ beers }) {
-  return (
-    <div style={{ display: 'grid', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
-      {beers.map((beer) => (
-        <div key={beer.id} style={{ background: 'var(--paper)', padding: 20 }}>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</div>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
-            {beer.origin} · {beer.abv}% vol.
-          </div>
-          <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 10 }}>
-            33cl : {beer.price33.toFixed(2)} € — 75cl : {beer.price75.toFixed(2)} €
-            {beer.glassName && <> — {beer.glassName} : {beer.glassPrice.toFixed(2)} €</>}
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }

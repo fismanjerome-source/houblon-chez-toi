@@ -7,6 +7,19 @@ export default function ComptePage() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', password: '', town: 'Bondues', accountType: 'particulier', companyName: '' });
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setUser(data);
+          loadOrders();
+        }
+        setCheckingSession(false);
+      });
+  }, []);
 
   async function loadOrders() {
     const res = await fetch('/api/orders');
@@ -37,6 +50,10 @@ export default function ComptePage() {
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
     setOrders([]);
+  }
+
+  if (checkingSession) {
+    return <main className="wrap" style={{ padding: '48px 0' }} />;
   }
 
   if (user) {
