@@ -139,7 +139,9 @@ export default function OrderForm({ groups, slots }) {
               )}
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</span>
+                  <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)', textDecoration: 'none' }}>
+                    {beer.name}
+                  </a>
                   <FlagIcon country={beer.country} />
                 </div>
                 <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
@@ -147,10 +149,13 @@ export default function OrderForm({ groups, slots }) {
                 </div>
                 <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
                 {beer.tastingNote && (
-                  <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 10 }}>
+                  <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 4 }}>
                     « {beer.tastingNote} »
                   </p>
                 )}
+                <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
+                  Voir la fiche complète →
+                </a>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
                   {beer.price33 > 0 && (
@@ -209,7 +214,7 @@ export default function OrderForm({ groups, slots }) {
               </li>
             ))}
             {glassLines.map((l) => (
-              <li key={`glass-${l.beer.id}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)' }}>
+              <li key={`glass-${l.beer.id}-${l.glass.id}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)' }}>
                 <span>+ {l.glass.name} {l.glass.volumeCl}cl ({l.beer.name})</span>
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>

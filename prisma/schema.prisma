@@ -35,6 +35,12 @@ model Beer {
   price75  Float
   description String
   tastingNote String? // notre avis de dégustation, affiché sur la fiche produit
+  appearance String? // robe
+  aroma      String? // nez
+  taste      String? // bouche
+  servingTemp String? // température de service conseillée
+  foodPairing String? // accords mets-bière
+  brewHistory String? // histoire de la brasserie / de la recette, pour la fiche complète
   active   Boolean @default(true)
   bottleImageUrl String?
   learnMoreUrl String? // page officielle de la brasserie
