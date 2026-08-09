@@ -11,7 +11,7 @@ const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 export default function OrderForm({ groups, slots }) {
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
-  const [glass, setGlass] = useState({}); // { [beerId]: boolean }
+  const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: glassId }
   const [town, setTown] = useState(TOWNS[0]);
   const [pickup, setPickup] = useState(false);
   const [slot, setSlot] = useState(slots[0] || '');
@@ -28,43 +28,61 @@ export default function OrderForm({ groups, slots }) {
     setQty((q) => ({ ...q, [`${beerId}-${format}`]: n }));
   }
 
-  const lines = useMemo(() => {
+  const beerLines = useMemo(() => {
     return beers.flatMap((beer) => {
       const items = [];
       for (const format of [33, 75]) {
         const quantity = qty[`${beer.id}-${format}`] || 0;
         if (quantity > 0) {
           const unitPrice = format === 75 ? beer.price75 : beer.price33;
-          const withGlass = format === 75 && !!glass[beer.id] && !!beer.glassName;
-          const lineTotal = unitPrice * quantity + (withGlass ? beer.glassPrice : 0);
-          items.push({ beer, format, quantity, withGlass, lineTotal });
+          items.push({ beer, format, quantity, lineTotal: unitPrice * quantity });
         }
       }
       return items;
     });
-  }, [beers, qty, glass]);
+  }, [beers, qty]);
 
-  const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const glassLines = useMemo(() => {
+    return beers.flatMap((beer) => {
+      const beerHasQty = [33, 75].some((f) => (qty[`${beer.id}-${f}`] || 0) > 0);
+      if (!beerHasQty) return [];
+      const glassId = glassChoice[beer.id];
+      if (!glassId) return [];
+      const glass = (beer.glasses || []).find((g) => g.id === glassId);
+      if (!glass) return [];
+      return [{ beer, glass, lineTotal: glass.price }];
+    });
+  }, [beers, qty, glassChoice]);
+
+  const subtotal = beerLines.reduce((sum, l) => sum + l.lineTotal, 0) + glassLines.reduce((sum, l) => sum + l.lineTotal, 0);
   const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(subtotal * 100) }) / 100;
   const total = subtotal + deliveryFee;
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const hasItems = beerLines.length > 0;
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus({ type: '', message: '' });
-    if (lines.length === 0) {
+    if (!hasItems) {
       setStatus({ type: 'error', message: 'Ajoutez au moins une bière à votre commande.' });
       return;
     }
     setSubmitting(true);
+
+    const assignedGlass = new Set();
+    const items = beerLines.map((l) => {
+      const glassId = glassChoice[l.beer.id];
+      let attachGlassId = null;
+      if (glassId && !assignedGlass.has(l.beer.id)) {
+        attachGlassId = glassId;
+        assignedGlass.add(l.beer.id);
+      }
+      return { beerId: l.beer.id, format: l.format, quantity: l.quantity, glassId: attachGlassId };
+    });
+
     const res = await fetch('/api/orders', {
       method: 'POST',
-      body: JSON.stringify({
-        town,
-        pickup,
-        slot,
-        items: lines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity, withGlass: l.withGlass })),
-      }),
+      body: JSON.stringify({ town, pickup, slot, items }),
     });
     setSubmitting(false);
     if (!res.ok) {
@@ -73,7 +91,7 @@ export default function OrderForm({ groups, slots }) {
       return;
     }
     setQty({});
-    setGlass({});
+    setGlassChoice({});
     setStatus({ type: 'success', message: 'Commande envoyée ! Retrouvez-la dans "Mon compte".' });
   }
 
@@ -84,6 +102,10 @@ export default function OrderForm({ groups, slots }) {
           <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>{group.title}</h2>
           {group.beers.map((beer) => {
             const color = BEER_COLORS[beer.name] || 'var(--line)';
+            const glasses = beer.glasses || [];
+            const selectedGlassId = glassChoice[beer.id] || '';
+            const selectedGlass = glasses.find((g) => g.id === selectedGlassId);
+            const previewGlassImage = (selectedGlass && selectedGlass.imageUrl) || (glasses.find((g) => g.imageUrl) || {}).imageUrl;
             return (
             <div
               id={`beer-${beer.id}`}
@@ -93,7 +115,7 @@ export default function OrderForm({ groups, slots }) {
                 display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90, marginBottom: 16,
               }}
             >
-              {(beer.bottleImageUrl || beer.glassImageUrl) && (
+              {(beer.bottleImageUrl || previewGlassImage) && (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0 }}>
                   {beer.bottleImageUrl && (
                     <img
@@ -102,9 +124,9 @@ export default function OrderForm({ groups, slots }) {
                       style={{ width: 70, height: 200, objectFit: 'contain' }}
                     />
                   )}
-                  {beer.glassImageUrl && (
+                  {previewGlassImage && (
                     <img
-                      src={beer.glassImageUrl}
+                      src={previewGlassImage}
                       alt={`Verre ${beer.name}`}
                       style={{ width: 60, height: 170, objectFit: 'contain' }}
                     />
@@ -120,6 +142,11 @@ export default function OrderForm({ groups, slots }) {
                   {beer.origin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
                 </div>
                 <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
+                {beer.tastingNote && (
+                  <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 10 }}>
+                    « {beer.tastingNote} »
+                  </p>
+                )}
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
                   {beer.price33 > 0 && (
@@ -136,17 +163,32 @@ export default function OrderForm({ groups, slots }) {
                       onChange={(v) => setQuantity(beer.id, 75, v)}
                     />
                   )}
-                  {beer.glassName && (
-                    <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(15,23,18,0.7)' }}>
-                      <input
-                        type="checkbox"
-                        checked={!!glass[beer.id]}
-                        onChange={(e) => setGlass((g) => ({ ...g, [beer.id]: e.target.checked }))}
-                      />
-                      + {beer.glassName} ({beer.glassPrice.toFixed(2)} €, avec un 75cl)
-                    </label>
-                  )}
                 </div>
+
+                {glasses.length === 1 && (
+                  <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(15,23,18,0.7)', marginTop: 14 }}>
+                    <input
+                      type="checkbox"
+                      checked={!!selectedGlassId}
+                      onChange={(e) => setGlassChoice((g) => ({ ...g, [beer.id]: e.target.checked ? glasses[0].id : '' }))}
+                    />
+                    + {glasses[0].name} — {glasses[0].volumeCl}cl ({glasses[0].price.toFixed(2)} €)
+                  </label>
+                )}
+
+                {glasses.length > 1 && (
+                  <div className="field" style={{ marginTop: 14, marginBottom: 0, maxWidth: 320 }}>
+                    <label>Ajouter un verre ?</label>
+                    <select value={selectedGlassId} onChange={(e) => setGlassChoice((g) => ({ ...g, [beer.id]: e.target.value }))}>
+                      <option value="">Sans verre</option>
+                      {glasses.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.name} — {g.volumeCl}cl ({g.price.toFixed(2)} €)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
             );
@@ -157,20 +199,26 @@ export default function OrderForm({ groups, slots }) {
       <form onSubmit={handleSubmit} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 24, marginTop: 24 }}>
         <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>Votre commande</h2>
 
-        {lines.length === 0 ? (
+        {!hasItems ? (
           <p style={{ color: 'rgba(15,23,18,0.5)', fontSize: 13.5 }}>Choisissez des quantités ci-dessus pour composer votre commande.</p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', fontSize: 13.5 }}>
-            {lines.map((l) => (
+            {beerLines.map((l) => (
               <li key={`${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-                <span>{l.quantity} × {l.beer.name} ({l.format}cl){l.withGlass ? ' + verre' : ''}</span>
+                <span>{l.quantity} × {l.beer.name} ({l.format}cl)</span>
+                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
+              </li>
+            ))}
+            {glassLines.map((l) => (
+              <li key={`glass-${l.beer.id}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)' }}>
+                <span>+ {l.glass.name} {l.glass.volumeCl}cl ({l.beer.name})</span>
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
           </ul>
         )}
 
-        {lines.length > 0 && (
+        {hasItems && (
           <>
             {remainingForFreeShipping > 0 && !pickup && town !== 'Bondues' ? (
               <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>

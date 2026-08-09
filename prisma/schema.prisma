@@ -33,15 +33,25 @@ model Beer {
   abv      Float
   price33  Float
   price75  Float
-  glassName  String?
-  glassPrice Float?
   description String
+  tastingNote String? // notre avis de dégustation, affiché sur la fiche produit
   active   Boolean @default(true)
   bottleImageUrl String?
-  glassImageUrl  String?
   learnMoreUrl String? // page officielle de la brasserie
   shortHistory String? // courte histoire pour la mise en avant "bière du mois"
   isBeerOfMonth Boolean @default(false)
+  glasses    Glass[]
+  orderItems OrderItem[]
+}
+
+model Glass {
+  id       String  @id @default(cuid())
+  beer     Beer    @relation(fields: [beerId], references: [id])
+  beerId   String
+  name     String
+  volumeCl Int
+  price    Float
+  imageUrl String?
   orderItems OrderItem[]
 }
 
@@ -68,6 +78,7 @@ model OrderItem {
   beerId    String
   format    Int     // 33 ou 75
   quantity  Int
-  withGlass Boolean @default(false)
+  glass     Glass?  @relation(fields: [glassId], references: [id])
+  glassId   String?
   unitPriceCents Int
 }

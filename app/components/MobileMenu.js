@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 const LINKS = [
   { href: '/', emoji: '🏠', label: 'Accueil' },
   { href: '/#catalogue', emoji: '🍺', label: 'Nos bières' },
+  { href: '/histoire', emoji: '📜', label: 'Histoire de la bière' },
+  { href: '/verres', emoji: '🍷', label: 'Histoire des verres' },
   { href: '/compte', emoji: '👤', label: 'Mon compte' },
   { href: '/contact', emoji: '💬', label: 'Contact' },
   { href: '/cgu', emoji: '📄', label: 'CGU' },

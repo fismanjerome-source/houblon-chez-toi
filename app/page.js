@@ -7,7 +7,11 @@ import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
 
 async function getBeers() {
-  return prisma.beer.findMany({ where: { active: true }, orderBy: { country: 'asc' } });
+  return prisma.beer.findMany({
+    where: { active: true },
+    orderBy: { country: 'asc' },
+    include: { glasses: { orderBy: { volumeCl: 'asc' } } },
+  });
 }
 
 export default async function HomePage() {

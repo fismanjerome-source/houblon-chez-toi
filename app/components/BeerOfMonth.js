@@ -1,5 +1,6 @@
 export default function BeerOfMonth({ beer }) {
   if (!beer) return null;
+  const glassImage = ((beer.glasses || []).find((g) => g.imageUrl) || {}).imageUrl;
 
   return (
     <section
@@ -11,8 +12,8 @@ export default function BeerOfMonth({ beer }) {
           {beer.bottleImageUrl && (
             <img src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} style={{ width: 80, height: 220, objectFit: 'contain' }} />
           )}
-          {beer.glassImageUrl && (
-            <img src={beer.glassImageUrl} alt={`Verre ${beer.name}`} style={{ width: 70, height: 150, objectFit: 'contain' }} />
+          {glassImage && (
+            <img src={glassImage} alt={`Verre ${beer.name}`} style={{ width: 70, height: 150, objectFit: 'contain' }} />
           )}
         </div>
         <div style={{ flex: '1 1 280px', minWidth: 240 }}>

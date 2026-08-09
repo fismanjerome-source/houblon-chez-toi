@@ -15,7 +15,7 @@ async function GET(request) {
 
   const orders = await prisma.order.findMany({
     where: { userId: session.userId },
-    include: { items: { include: { beer: true } } },
+    include: { items: { include: { beer: true, glass: true } } },
     orderBy: { createdAt: 'desc' },
   });
   return new Response(JSON.stringify(orders), { status: 200 });
@@ -26,25 +26,29 @@ async function POST(request) {
   if (!session) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
   const { town, slot, items, pickup } = await request.json();
-  // items: [{ beerId, format, quantity, withGlass }]
+  // items: [{ beerId, format, quantity, glassId }]
   if (!items || !items.length) {
     return new Response(JSON.stringify({ error: 'Panier vide' }), { status: 400 });
   }
 
   const beers = await prisma.beer.findMany({ where: { id: { in: items.map((i) => i.beerId) } } });
+  const glassIds = items.map((i) => i.glassId).filter(Boolean);
+  const glasses = glassIds.length ? await prisma.glass.findMany({ where: { id: { in: glassIds } } }) : [];
+
   let itemsTotalCents = 0;
   const orderItemsData = items.map((item) => {
     const beer = beers.find((b) => b.id === item.beerId);
     if (!beer) throw new Error('Bière introuvable');
+    const glass = item.glassId ? glasses.find((g) => g.id === item.glassId && g.beerId === beer.id) : null;
     const unitPrice = item.format === 75 ? beer.price75 : beer.price33;
     let lineCents = Math.round(unitPrice * 100) * item.quantity;
-    if (item.withGlass && beer.glassPrice) lineCents += Math.round(beer.glassPrice * 100);
+    if (glass) lineCents += Math.round(glass.price * 100);
     itemsTotalCents += lineCents;
     return {
       beerId: beer.id,
       format: item.format,
       quantity: item.quantity,
-      withGlass: !!item.withGlass,
+      glassId: glass ? glass.id : null,
       unitPriceCents: Math.round(unitPrice * 100),
     };
   });

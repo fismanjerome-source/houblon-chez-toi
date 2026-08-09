@@ -5,6 +5,8 @@ export default function SiteFooter() {
     <footer style={{ borderTop: '1px solid var(--line)', marginTop: 60 }}>
       <div className="wrap" style={{ padding: '28px 0', display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontFamily: 'Space Mono, monospace', fontSize: 11.5 }}>
+          <a href="/histoire" style={{ color: 'rgba(15,23,18,0.6)' }}>Histoire de la bière</a>
+          <a href="/verres" style={{ color: 'rgba(15,23,18,0.6)' }}>Histoire des verres</a>
           <a href="/contact" style={{ color: 'rgba(15,23,18,0.6)' }}>Contact</a>
           <a href="/cgu" style={{ color: 'rgba(15,23,18,0.6)' }}>CGU</a>
           <a href="/mentions-legales" style={{ color: 'rgba(15,23,18,0.6)' }}>Mentions légales</a>
