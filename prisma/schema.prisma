@@ -51,7 +51,10 @@ model Order {
   userId    String
   status    String      @default("EN_PREPARATION") // EN_PREPARATION, EN_LIVRAISON, LIVREE, ANNULEE
   town      String
+  pickup    Boolean     @default(false) // retrait sur place à Bondues au lieu d'une livraison
   slot      String      // ex: "Jeudi 14 août, 18h-19h"
+  itemsTotalCents Int   @default(0) // sous-total hors livraison
+  deliveryFeeCents Int  @default(0)
   totalCents Int
   createdAt DateTime    @default(now())
   items     OrderItem[]

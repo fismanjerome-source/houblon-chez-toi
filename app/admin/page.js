@@ -32,7 +32,8 @@ export default async function AdminPage() {
           </div>
           <div>{o.items.map((i) => `${i.quantity} × ${i.beer.name} ${i.format}cl`).join(', ')}</div>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 6 }}>
-            {o.town} — {o.slot} — {(o.totalCents / 100).toFixed(2)} € — {o.status}
+            {o.pickup ? 'Retrait à Bondues' : o.town} — {o.slot} — {((o.itemsTotalCents ?? o.totalCents) / 100).toFixed(2)} €
+            {o.deliveryFeeCents > 0 && ` + ${(o.deliveryFeeCents / 100).toFixed(2)} € livraison`} — {o.status}
           </div>
         </div>
       ))}

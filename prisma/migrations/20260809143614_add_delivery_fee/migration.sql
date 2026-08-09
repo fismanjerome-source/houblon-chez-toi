@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Order" ADD COLUMN     "deliveryFeeCents" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "itemsTotalCents" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "pickup" BOOLEAN NOT NULL DEFAULT false;

@@ -1,5 +1,6 @@
 const { prisma } = require('../../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
+const { computeDeliveryFeeCents } = require('../../../lib/delivery');
 
 function getSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -24,21 +25,21 @@ async function POST(request) {
   const session = getSession(request);
   if (!session) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
-  const { town, slot, items } = await request.json();
+  const { town, slot, items, pickup } = await request.json();
   // items: [{ beerId, format, quantity, withGlass }]
   if (!items || !items.length) {
     return new Response(JSON.stringify({ error: 'Panier vide' }), { status: 400 });
   }
 
   const beers = await prisma.beer.findMany({ where: { id: { in: items.map((i) => i.beerId) } } });
-  let totalCents = 0;
+  let itemsTotalCents = 0;
   const orderItemsData = items.map((item) => {
     const beer = beers.find((b) => b.id === item.beerId);
     if (!beer) throw new Error('Bière introuvable');
     const unitPrice = item.format === 75 ? beer.price75 : beer.price33;
     let lineCents = Math.round(unitPrice * 100) * item.quantity;
     if (item.withGlass && beer.glassPrice) lineCents += Math.round(beer.glassPrice * 100);
-    totalCents += lineCents;
+    itemsTotalCents += lineCents;
     return {
       beerId: beer.id,
       format: item.format,
@@ -48,12 +49,17 @@ async function POST(request) {
     };
   });
 
+  const deliveryFeeCents = computeDeliveryFeeCents({ pickup: !!pickup, town, itemsTotalCents });
+
   const order = await prisma.order.create({
     data: {
       userId: session.userId,
-      town,
+      town: pickup ? 'Bondues (retrait)' : town,
+      pickup: !!pickup,
       slot,
-      totalCents,
+      itemsTotalCents,
+      deliveryFeeCents,
+      totalCents: itemsTotalCents + deliveryFeeCents,
       items: { create: orderItemsData },
     },
     include: { items: true },

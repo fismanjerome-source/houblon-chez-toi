@@ -1,8 +1,11 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import FlagIcon from './components/FlagIcon';
+const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
 
 const TOWNS = ['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'];
+const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
+const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 
 // Couleur dominante de l'étiquette/capsule de chaque bière, relevée sur ses photos.
 const BEER_COLORS = {
@@ -28,6 +31,7 @@ export default function OrderForm({ groups, slots }) {
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
   const [glass, setGlass] = useState({}); // { [beerId]: boolean }
   const [town, setTown] = useState(TOWNS[0]);
+  const [pickup, setPickup] = useState(false);
   const [slot, setSlot] = useState(slots[0] || '');
   const [loggedIn, setLoggedIn] = useState(null); // null = inconnu, true/false une fois vérifié
   const [status, setStatus] = useState({ type: '', message: '' });
@@ -58,7 +62,10 @@ export default function OrderForm({ groups, slots }) {
     });
   }, [beers, qty, glass]);
 
-  const total = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(subtotal * 100) }) / 100;
+  const total = subtotal + deliveryFee;
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -72,6 +79,7 @@ export default function OrderForm({ groups, slots }) {
       method: 'POST',
       body: JSON.stringify({
         town,
+        pickup,
         slot,
         items: lines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity, withGlass: l.withGlass })),
       }),
@@ -180,20 +188,75 @@ export default function OrderForm({ groups, slots }) {
           </ul>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Space Mono, monospace', fontSize: 15, borderTop: '1px solid var(--line)', paddingTop: 12, marginBottom: 20 }}>
-          <span>Total</span>
-          <span>{total.toFixed(2)} €</span>
+        {lines.length > 0 && (
+          <>
+            {remainingForFreeShipping > 0 && !pickup && town !== 'Bondues' ? (
+              <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>
+                🚚 Plus que {remainingForFreeShipping.toFixed(2)} € d'achat pour la livraison gratuite (sinon {DELIVERY_FEE.toFixed(2)} €).
+              </p>
+            ) : (
+              <p style={{ fontSize: 13, color: 'var(--pine)', marginBottom: 4 }}>🚚 Livraison gratuite !</p>
+            )}
+            {subtotal >= FREE_SHIPPING_THRESHOLD && (
+              <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>
+                🎁 À partir de {FREE_SHIPPING_THRESHOLD.toFixed(0)} € : un cadeau surprise bientôt disponible sur vos premières commandes.
+              </p>
+            )}
+          </>
+        )}
+
+        <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span>Sous-total</span>
+            <span>{subtotal.toFixed(2)} €</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span>Livraison</span>
+            <span>{deliveryFee > 0 ? `${deliveryFee.toFixed(2)} €` : 'Gratuite'}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginTop: 8 }}>
+            <span>Total</span>
+            <span>{total.toFixed(2)} €</span>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, margin: '20px 0 16px' }}>
+          <button
+            type="button"
+            onClick={() => setPickup(false)}
+            className="btn"
+            style={!pickup ? {} : { background: 'transparent', color: 'var(--pine)' }}
+          >
+            Livraison
+          </button>
+          <button
+            type="button"
+            onClick={() => setPickup(true)}
+            className="btn"
+            style={pickup ? {} : { background: 'transparent', color: 'var(--pine)' }}
+          >
+            Retrait à Bondues
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <div className="field" style={{ flex: 1, minWidth: 180 }}>
-            <label>Commune de livraison</label>
-            <select value={town} onChange={(e) => setTown(e.target.value)}>
-              {TOWNS.map((t) => <option key={t}>{t}</option>)}
-            </select>
-          </div>
+          {pickup ? (
+            <div className="field" style={{ flex: 1, minWidth: 220 }}>
+              <label>Adresse de retrait</label>
+              <p style={{ margin: 0, fontSize: 14, padding: 12, border: '1px solid var(--line)', borderRadius: 3, background: 'var(--paper)' }}>
+                📍 {PICKUP_ADDRESS}
+              </p>
+            </div>
+          ) : (
+            <div className="field" style={{ flex: 1, minWidth: 180 }}>
+              <label>Commune de livraison</label>
+              <select value={town} onChange={(e) => setTown(e.target.value)}>
+                {TOWNS.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+          )}
           <div className="field" style={{ flex: 1, minWidth: 220 }}>
-            <label>Créneau de livraison</label>
+            <label>Créneau de {pickup ? 'retrait' : 'livraison'}</label>
             <select value={slot} onChange={(e) => setSlot(e.target.value)}>
               {slots.map((s) => <option key={s}>{s}</option>)}
             </select>
