@@ -1,0 +1,65 @@
+// Schéma de base de données — Houblon chez toi
+// En local : SQLite (fichier). En production (Vercel) : remplacer le provider
+// par "postgresql" et DATABASE_URL par l'URL Neon/Supabase.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  accountType  String   @default("PARTICULIER") // "PARTICULIER" ou "PROFESSIONNEL"
+  companyName  String?
+  town         String
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  orders       Order[]
+}
+
+model Beer {
+  id       String  @id @default(cuid())
+  name     String
+  brewery  String
+  origin   String  // ville / région
+  country  String  // "FR" ou "BE"
+  abv      Float
+  price33  Float
+  price75  Float
+  glassName  String?
+  glassPrice Float?
+  description String
+  active   Boolean @default(true)
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+  status    String      @default("EN_PREPARATION") // EN_PREPARATION, EN_LIVRAISON, LIVREE, ANNULEE
+  town      String
+  slot      String      // ex: "Jeudi 14 août, 18h-19h"
+  totalCents Int
+  createdAt DateTime    @default(now())
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  beer      Beer    @relation(fields: [beerId], references: [id])
+  beerId    String
+  format    Int     // 33 ou 75
+  quantity  Int
+  withGlass Boolean @default(false)
+  unitPriceCents Int
+}

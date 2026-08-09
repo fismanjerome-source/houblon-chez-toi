@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=Space+Mono:wght@400;500&display=swap');
+
+:root {
+  --pine: #1B2E20;
+  --paper: #F3ECD8;
+  --paper-warm: #ECE2C6;
+  --amber: #C98A2E;
+  --ink: #0F1712;
+  --copper: #7A3B24;
+  --line: rgba(15, 23, 18, 0.14);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Public Sans', sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
+
+.wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+.btn {
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--pine);
+  color: var(--paper);
+  border: 1px solid var(--pine);
+  border-radius: 3px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.field { margin-bottom: 16px; }
+.field label { display: block; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; color: rgba(15,23,18,0.6); }
+.field input, .field select {
+  width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 3px;
+  font-family: 'Public Sans', sans-serif; font-size: 14px;
+}
