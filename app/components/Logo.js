@@ -1,6 +1,9 @@
+import HopIcon from './HopIcon';
+
 export default function Logo({ size = 34 }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+      <HopIcon size={size * 0.8} />
       <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path
           d="M14 6h20l-2.4 26.5C31.2 37.7 27.9 41 24 41s-7.2-3.3-7.6-8.5L14 6z"

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
+import FlagIcon from './components/FlagIcon';
 
 const TOWNS = ['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'];
 
@@ -123,9 +124,7 @@ export default function OrderForm({ groups, slots }) {
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</span>
-                  <span style={{ fontSize: 18 }} title={beer.country === 'BE' ? 'Belgique' : 'France'}>
-                    {beer.country === 'BE' ? '🇧🇪' : '🇫🇷'}
-                  </span>
+                  <FlagIcon country={beer.country} />
                 </div>
                 <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
                   {beer.origin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
