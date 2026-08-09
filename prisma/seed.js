@@ -40,6 +40,8 @@ async function main() {
         glassName: 'Verre demi-lune Paix Dieu',
         glassPrice: 5.5,
         description: "Triple d'abbaye ronde et épicée.",
+        bottleImageUrl: '/beers/paix-dieu-bouteille.png',
+        glassImageUrl: '/beers/paix-dieu-verre.webp',
       },
       {
         name: 'Chouffe',

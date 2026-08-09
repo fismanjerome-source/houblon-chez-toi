@@ -37,6 +37,8 @@ model Beer {
   glassPrice Float?
   description String
   active   Boolean @default(true)
+  bottleImageUrl String?
+  glassImageUrl  String?
   orderItems OrderItem[]
 }
 

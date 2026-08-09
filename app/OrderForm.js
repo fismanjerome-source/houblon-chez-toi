@@ -73,34 +73,46 @@ export default function OrderForm({ groups, slots }) {
         <div key={group.title}>
           <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>{group.title}</h2>
           {group.beers.map((beer) => (
-            <div key={beer.id} style={{ background: 'var(--paper)', padding: 20, border: '1px solid var(--line)', borderTop: 'none' }}>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
-                {beer.origin} · {beer.abv}% vol.
-              </div>
-              <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
+            <div key={beer.id} style={{ background: 'var(--paper)', padding: 20, border: '1px solid var(--line)', borderTop: 'none', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              {beer.bottleImageUrl && (
+                <img
+                  src={beer.bottleImageUrl}
+                  alt={`Bouteille ${beer.name}`}
+                  style={{ width: 70, height: 200, objectFit: 'contain', flexShrink: 0 }}
+                />
+              )}
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</div>
+                <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
+                  {beer.origin} · {beer.abv}% vol.
+                </div>
+                <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
-                <QuantityField
-                  label={`33cl — ${beer.price33.toFixed(2)} €`}
-                  value={qty[`${beer.id}-33`] || 0}
-                  onChange={(v) => setQuantity(beer.id, 33, v)}
-                />
-                <QuantityField
-                  label={`75cl — ${beer.price75.toFixed(2)} €`}
-                  value={qty[`${beer.id}-75`] || 0}
-                  onChange={(v) => setQuantity(beer.id, 75, v)}
-                />
-                {beer.glassName && (
-                  <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(15,23,18,0.7)' }}>
-                    <input
-                      type="checkbox"
-                      checked={!!glass[beer.id]}
-                      onChange={(e) => setGlass((g) => ({ ...g, [beer.id]: e.target.checked }))}
-                    />
-                    + {beer.glassName} ({beer.glassPrice.toFixed(2)} €, avec un 75cl)
-                  </label>
-                )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
+                  <QuantityField
+                    label={`33cl — ${beer.price33.toFixed(2)} €`}
+                    value={qty[`${beer.id}-33`] || 0}
+                    onChange={(v) => setQuantity(beer.id, 33, v)}
+                  />
+                  <QuantityField
+                    label={`75cl — ${beer.price75.toFixed(2)} €`}
+                    value={qty[`${beer.id}-75`] || 0}
+                    onChange={(v) => setQuantity(beer.id, 75, v)}
+                  />
+                  {beer.glassName && (
+                    <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(15,23,18,0.7)' }}>
+                      <input
+                        type="checkbox"
+                        checked={!!glass[beer.id]}
+                        onChange={(e) => setGlass((g) => ({ ...g, [beer.id]: e.target.checked }))}
+                      />
+                      {beer.glassImageUrl && (
+                        <img src={beer.glassImageUrl} alt={beer.glassName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
+                      )}
+                      + {beer.glassName} ({beer.glassPrice.toFixed(2)} €, avec un 75cl)
+                    </label>
+                  )}
+                </div>
               </div>
             </div>
           ))}
