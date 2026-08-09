@@ -38,7 +38,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div ref={boxRef} style={{ position: 'relative', width: '100%', maxWidth: 280 }}>
+    <div ref={boxRef} className="search-bar" style={{ position: 'relative', width: '100%', maxWidth: 280 }}>
       <div style={{ position: 'relative' }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} aria-hidden="true">
           <path d="M4 4v16l7-4 7 4V4" stroke="var(--copper)" strokeWidth="1.8" strokeLinejoin="round" fill="none" />

@@ -56,4 +56,5 @@ h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
 
 @media (max-width: 640px) {
   .wrap { padding: 0 16px; }
+  .search-bar { order: 3; max-width: 100%; margin: 0 auto; }
 }

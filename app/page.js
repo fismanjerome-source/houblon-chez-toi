@@ -20,14 +20,14 @@ export default async function HomePage() {
 
   return (
     <main>
-      <div className="wrap" style={{ padding: '40px 0 8px', display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ flex: '1 1 320px' }}>
-          <h1 style={{ fontSize: 40, color: 'var(--pine)' }}>Houblon chez toi</h1>
-          <p style={{ maxWidth: 480, color: 'rgba(15,23,18,0.7)' }}>
-            Bières artisanales françaises et belges, livrées à domicile dans le secteur de Bondues.
-          </p>
-        </div>
-        <HeroGlass />
+      <div className="wrap" style={{ padding: '40px 0 8px' }}>
+        <h1 style={{ fontSize: 40, color: 'var(--pine)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          Houblon chez toi
+          <HeroGlass size={44} />
+        </h1>
+        <p style={{ maxWidth: 480, color: 'rgba(15,23,18,0.7)' }}>
+          Bières artisanales françaises et belges, livrées à domicile dans le secteur de Bondues.
+        </p>
       </div>
 
       <BeerOfMonth beer={beerOfMonth} />

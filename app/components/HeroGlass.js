@@ -1,6 +1,6 @@
-export default function HeroGlass() {
+export default function HeroGlass({ size = 180 }) {
   return (
-    <svg viewBox="0 0 220 260" width="180" height="212" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg viewBox="0 0 220 260" width={size} height={size * (260 / 220)} xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       {/* stream being poured */}
       <path d="M118 0 C116 30, 120 50, 118 66" stroke="var(--amber)" strokeWidth="5" strokeLinecap="round" opacity="0.85" />
 
