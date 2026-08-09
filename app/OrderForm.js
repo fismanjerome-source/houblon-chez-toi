@@ -84,21 +84,25 @@ export default function OrderForm({ groups, slots }) {
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</div>
                 <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
-                  {beer.origin} · {beer.abv}% vol.
+                  {beer.origin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
                 </div>
                 <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
-                  <QuantityField
-                    label={`33cl — ${beer.price33.toFixed(2)} €`}
-                    value={qty[`${beer.id}-33`] || 0}
-                    onChange={(v) => setQuantity(beer.id, 33, v)}
-                  />
-                  <QuantityField
-                    label={`75cl — ${beer.price75.toFixed(2)} €`}
-                    value={qty[`${beer.id}-75`] || 0}
-                    onChange={(v) => setQuantity(beer.id, 75, v)}
-                  />
+                  {beer.price33 > 0 && (
+                    <QuantityField
+                      label={`33cl — ${beer.price33.toFixed(2)} €`}
+                      value={qty[`${beer.id}-33`] || 0}
+                      onChange={(v) => setQuantity(beer.id, 33, v)}
+                    />
+                  )}
+                  {beer.price75 > 0 && (
+                    <QuantityField
+                      label={`75cl — ${beer.price75.toFixed(2)} €`}
+                      value={qty[`${beer.id}-75`] || 0}
+                      onChange={(v) => setQuantity(beer.id, 75, v)}
+                    />
+                  )}
                   {beer.glassName && (
                     <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(15,23,18,0.7)' }}>
                       <input
