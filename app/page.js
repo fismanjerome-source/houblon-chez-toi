@@ -4,6 +4,7 @@ import OrderForm from './OrderForm';
 import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';
+import BeerMap from './components/BeerMap';
 
 async function getBeers() {
   return prisma.beer.findMany({ where: { active: true }, orderBy: { country: 'asc' } });
@@ -33,6 +34,14 @@ export default async function HomePage() {
       <BeerOfMonth beer={beerOfMonth} />
 
       <DirectContact />
+
+      <section className="wrap" style={{ padding: '8px 0 40px' }}>
+        <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>D'où viennent nos bières ?</h2>
+        <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.6)', marginBottom: 16 }}>
+          Cliquez sur un point pour découvrir la bière et sa fiche.
+        </p>
+        <BeerMap beers={beers} />
+      </section>
 
       <section id="catalogue" className="wrap" style={{ paddingBottom: 60, scrollMarginTop: 90 }}>
         <OrderForm groups={groups} slots={slots} />

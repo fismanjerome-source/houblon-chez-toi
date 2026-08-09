@@ -2,29 +2,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import FlagIcon from './components/FlagIcon';
 const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
+const { BEER_COLORS } = require('./components/beerColors');
 
 const TOWNS = ['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'];
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
 const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
-
-// Couleur dominante de l'étiquette/capsule de chaque bière, relevée sur ses photos.
-const BEER_COLORS = {
-  'Queue de Charrue': '#4a7c3f',
-  'Queue de Charrue IPA': '#e0b93a',
-  'Queue de Charrue Blonde': '#4a90c4',
-  'Queue de Charrue Brune': '#8b2e2e',
-  'Anosteke Blonde': '#7cb32e',
-  'Anosteke NEIPA': '#2ec4c6',
-  'Anosteke Saison': '#e8c200',
-  'Paix Dieu': '#6b1f2b',
-  'Chouffe': '#e0c94a',
-  'Ypra Triple': '#2f9e6f',
-  '3 Monts IPA': '#7cb342',
-  '3 Monts Blonde': '#d9a02c',
-  '3 Monts Ambrée': '#c1592f',
-  '3 Monts Saison': '#5cb8a4',
-  '3 Monts Triple': '#2b2b2b',
-};
 
 export default function OrderForm({ groups, slots }) {
   const beers = groups.flatMap((g) => g.beers);
