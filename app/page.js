@@ -42,7 +42,8 @@ export default async function HomePage() {
       <section className="wrap" style={{ padding: '8px 0 40px' }}>
         <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>D'où viennent nos bières ?</h2>
         <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.6)', marginBottom: 16 }}>
-          Cliquez sur un point pour découvrir la bière et sa fiche.
+          🏠 Tout part de Bondues — nos brasseries sont toutes à moins de 2h de route, pour des bières
+          vraiment locales. Cliquez sur un drapeau pour découvrir la bière et sa fiche.
         </p>
         <BeerMap beers={beers} />
       </section>
