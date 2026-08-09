@@ -3,6 +3,25 @@ import { useState, useEffect, useMemo } from 'react';
 
 const TOWNS = ['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'];
 
+// Couleur dominante de l'étiquette/capsule de chaque bière, relevée sur ses photos.
+const BEER_COLORS = {
+  'Queue de Charrue': '#4a7c3f',
+  'Queue de Charrue IPA': '#e0b93a',
+  'Queue de Charrue Blonde': '#4a90c4',
+  'Queue de Charrue Brune': '#8b2e2e',
+  'Anosteke Blonde': '#7cb32e',
+  'Anosteke NEIPA': '#2ec4c6',
+  'Anosteke Saison': '#e8c200',
+  'Paix Dieu': '#6b1f2b',
+  'Chouffe': '#e0c94a',
+  'Ypra Triple': '#2f9e6f',
+  '3 Monts IPA': '#7cb342',
+  '3 Monts Blonde': '#d9a02c',
+  '3 Monts Ambrée': '#c1592f',
+  '3 Monts Saison': '#5cb8a4',
+  '3 Monts Triple': '#2b2b2b',
+};
+
 export default function OrderForm({ groups, slots }) {
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
@@ -72,14 +91,34 @@ export default function OrderForm({ groups, slots }) {
       {groups.map((group) => (
         <div key={group.title}>
           <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>{group.title}</h2>
-          {group.beers.map((beer) => (
-            <div id={`beer-${beer.id}`} key={beer.id} style={{ background: 'var(--paper)', padding: 20, border: '1px solid var(--line)', borderTop: 'none', display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90 }}>
-              {beer.bottleImageUrl && (
-                <img
-                  src={beer.bottleImageUrl}
-                  alt={`Bouteille ${beer.name}`}
-                  style={{ width: 70, height: 200, objectFit: 'contain', flexShrink: 0 }}
-                />
+          {group.beers.map((beer) => {
+            const color = BEER_COLORS[beer.name] || 'var(--line)';
+            return (
+            <div
+              id={`beer-${beer.id}`}
+              key={beer.id}
+              style={{
+                background: 'var(--paper)', padding: 20, border: `3px solid ${color}`, borderRadius: 8,
+                display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90, marginBottom: 16,
+              }}
+            >
+              {(beer.bottleImageUrl || beer.glassImageUrl) && (
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0 }}>
+                  {beer.bottleImageUrl && (
+                    <img
+                      src={beer.bottleImageUrl}
+                      alt={`Bouteille ${beer.name}`}
+                      style={{ width: 70, height: 200, objectFit: 'contain' }}
+                    />
+                  )}
+                  {beer.glassImageUrl && (
+                    <img
+                      src={beer.glassImageUrl}
+                      alt={`Verre ${beer.name}`}
+                      style={{ width: 60, height: 170, objectFit: 'contain' }}
+                    />
+                  )}
+                </div>
               )}
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)' }}>{beer.name}</div>
@@ -110,16 +149,14 @@ export default function OrderForm({ groups, slots }) {
                         checked={!!glass[beer.id]}
                         onChange={(e) => setGlass((g) => ({ ...g, [beer.id]: e.target.checked }))}
                       />
-                      {beer.glassImageUrl && (
-                        <img src={beer.glassImageUrl} alt={beer.glassName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
-                      )}
                       + {beer.glassName} ({beer.glassPrice.toFixed(2)} €, avec un 75cl)
                     </label>
                   )}
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ))}
 
