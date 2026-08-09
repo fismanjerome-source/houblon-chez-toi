@@ -11,7 +11,16 @@ const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 export default function OrderForm({ groups, slots }) {
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
-  const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: glassId }
+  const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: Set<glassId> }
+
+  function toggleGlass(beerId, glassId, checked) {
+    setGlassChoice((prev) => {
+      const current = new Set(prev[beerId] || []);
+      if (checked) current.add(glassId);
+      else current.delete(glassId);
+      return { ...prev, [beerId]: current };
+    });
+  }
   const [town, setTown] = useState(TOWNS[0]);
   const [pickup, setPickup] = useState(false);
   const [slot, setSlot] = useState(slots[0] || '');
@@ -46,11 +55,11 @@ export default function OrderForm({ groups, slots }) {
     return beers.flatMap((beer) => {
       const beerHasQty = [33, 75].some((f) => (qty[`${beer.id}-${f}`] || 0) > 0);
       if (!beerHasQty) return [];
-      const glassId = glassChoice[beer.id];
-      if (!glassId) return [];
-      const glass = (beer.glasses || []).find((g) => g.id === glassId);
-      if (!glass) return [];
-      return [{ beer, glass, lineTotal: glass.price }];
+      const selected = glassChoice[beer.id];
+      if (!selected || selected.size === 0) return [];
+      return (beer.glasses || [])
+        .filter((g) => selected.has(g.id))
+        .map((glass) => ({ beer, glass, lineTotal: glass.price }));
     });
   }, [beers, qty, glassChoice]);
 
@@ -69,16 +78,10 @@ export default function OrderForm({ groups, slots }) {
     }
     setSubmitting(true);
 
-    const assignedGlass = new Set();
-    const items = beerLines.map((l) => {
-      const glassId = glassChoice[l.beer.id];
-      let attachGlassId = null;
-      if (glassId && !assignedGlass.has(l.beer.id)) {
-        attachGlassId = glassId;
-        assignedGlass.add(l.beer.id);
-      }
-      return { beerId: l.beer.id, format: l.format, quantity: l.quantity, glassId: attachGlassId };
-    });
+    const items = [
+      ...beerLines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity, glassId: null })),
+      ...glassLines.map((l) => ({ beerId: l.beer.id, format: 0, quantity: 1, glassId: l.glass.id })),
+    ];
 
     const res = await fetch('/api/orders', {
       method: 'POST',
@@ -103,9 +106,10 @@ export default function OrderForm({ groups, slots }) {
           {group.beers.map((beer) => {
             const color = BEER_COLORS[beer.name] || 'var(--line)';
             const glasses = beer.glasses || [];
-            const selectedGlassId = glassChoice[beer.id] || '';
-            const selectedGlass = glasses.find((g) => g.id === selectedGlassId);
-            const previewGlassImage = (selectedGlass && selectedGlass.imageUrl) || (glasses.find((g) => g.imageUrl) || {}).imageUrl;
+            const selectedGlassIds = glassChoice[beer.id] || new Set();
+            const previewGlassImage =
+              (glasses.find((g) => selectedGlassIds.has(g.id) && g.imageUrl) || {}).imageUrl ||
+              (glasses.find((g) => g.imageUrl) || {}).imageUrl;
             return (
             <div
               id={`beer-${beer.id}`}
@@ -165,28 +169,23 @@ export default function OrderForm({ groups, slots }) {
                   )}
                 </div>
 
-                {glasses.length === 1 && (
-                  <label style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(15,23,18,0.7)', marginTop: 14 }}>
-                    <input
-                      type="checkbox"
-                      checked={!!selectedGlassId}
-                      onChange={(e) => setGlassChoice((g) => ({ ...g, [beer.id]: e.target.checked ? glasses[0].id : '' }))}
-                    />
-                    + {glasses[0].name} — {glasses[0].volumeCl}cl ({glasses[0].price.toFixed(2)} €)
-                  </label>
-                )}
-
-                {glasses.length > 1 && (
-                  <div className="field" style={{ marginTop: 14, marginBottom: 0, maxWidth: 320 }}>
-                    <label>Ajouter un verre ?</label>
-                    <select value={selectedGlassId} onChange={(e) => setGlassChoice((g) => ({ ...g, [beer.id]: e.target.value }))}>
-                      <option value="">Sans verre</option>
+                {glasses.length > 0 && (
+                  <div style={{ marginTop: 14 }}>
+                    <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 6 }}>
+                      Ajouter un verre
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                       {glasses.map((g) => (
-                        <option key={g.id} value={g.id}>
+                        <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(15,23,18,0.7)' }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedGlassIds.has(g.id)}
+                            onChange={(e) => toggleGlass(beer.id, g.id, e.target.checked)}
+                          />
                           {g.name} — {g.volumeCl}cl ({g.price.toFixed(2)} €)
-                        </option>
+                        </label>
                       ))}
-                    </select>
+                    </div>
                   </div>
                 )}
               </div>

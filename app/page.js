@@ -5,6 +5,7 @@ import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
+import OurValues from './components/OurValues';
 
 async function getBeers() {
   return prisma.beer.findMany({
@@ -34,6 +35,8 @@ export default async function HomePage() {
           Bières artisanales françaises et belges, livrées à domicile dans le secteur de Bondues.
         </p>
       </div>
+
+      <OurValues />
 
       <BeerOfMonth beer={beerOfMonth} />
 

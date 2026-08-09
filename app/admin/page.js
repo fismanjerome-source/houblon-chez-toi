@@ -30,7 +30,15 @@ export default async function AdminPage() {
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>
             #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}
           </div>
-          <div>{o.items.map((i) => `${i.quantity} × ${i.beer.name} ${i.format}cl${i.glass ? ` + ${i.glass.name} ${i.glass.volumeCl}cl` : ''}`).join(', ')}</div>
+          <div>
+            {o.items
+              .map((i) =>
+                i.format > 0
+                  ? `${i.quantity} × ${i.beer.name} ${i.format}cl${i.glass ? ` + ${i.glass.name} ${i.glass.volumeCl}cl` : ''}`
+                  : `+ ${i.glass.name} ${i.glass.volumeCl}cl (${i.beer.name})`
+              )
+              .join(', ')}
+          </div>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 6 }}>
             {o.pickup ? 'Retrait à Bondues' : o.town} — {o.slot} — {((o.itemsTotalCents ?? o.totalCents) / 100).toFixed(2)} €
             {o.deliveryFeeCents > 0 && ` + ${(o.deliveryFeeCents / 100).toFixed(2)} € livraison`} — {o.status}

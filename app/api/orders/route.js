@@ -40,7 +40,7 @@ async function POST(request) {
     const beer = beers.find((b) => b.id === item.beerId);
     if (!beer) throw new Error('Bière introuvable');
     const glass = item.glassId ? glasses.find((g) => g.id === item.glassId && g.beerId === beer.id) : null;
-    const unitPrice = item.format === 75 ? beer.price75 : beer.price33;
+    const unitPrice = item.format === 75 ? beer.price75 : item.format === 33 ? beer.price33 : 0;
     let lineCents = Math.round(unitPrice * 100) * item.quantity;
     if (glass) lineCents += Math.round(glass.price * 100);
     itemsTotalCents += lineCents;
