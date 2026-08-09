@@ -8,6 +8,9 @@ export default function ComptePage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', password: '', town: 'Bondues', accountType: 'particulier', companyName: '' });
   const [checkingSession, setCheckingSession] = useState(true);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '' });
+  const [pwStatus, setPwStatus] = useState({ type: '', message: '' });
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -52,6 +55,19 @@ export default function ComptePage() {
     setOrders([]);
   }
 
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    setPwStatus({ type: '', message: '' });
+    const res = await fetch('/api/auth/password', { method: 'PATCH', body: JSON.stringify(pwForm) });
+    const data = await res.json();
+    if (!res.ok) {
+      setPwStatus({ type: 'error', message: data.error });
+      return;
+    }
+    setPwForm({ currentPassword: '', newPassword: '' });
+    setPwStatus({ type: 'success', message: 'Mot de passe mis à jour.' });
+  }
+
   if (checkingSession) {
     return <main className="wrap" style={{ padding: '48px 0' }} />;
   }
@@ -61,8 +77,31 @@ export default function ComptePage() {
       <main className="wrap" style={{ padding: '48px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
           <h1 style={{ color: 'var(--pine)' }}>Bonjour {user.name?.split(' ')[0] || ''}</h1>
-          <span onClick={handleLogout} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>Se déconnecter</span>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <span onClick={() => setShowPasswordForm((v) => !v)} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)' }}>
+              {showPasswordForm ? 'Fermer' : 'Changer le mot de passe'}
+            </span>
+            <span onClick={handleLogout} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>Se déconnecter</span>
+          </div>
         </div>
+
+        {showPasswordForm && (
+          <form onSubmit={handleChangePassword} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 20, marginBottom: 30, maxWidth: 380 }}>
+            <div className="field">
+              <label>Mot de passe actuel</label>
+              <input type="password" required value={pwForm.currentPassword} onChange={(e) => setPwForm({ ...pwForm, currentPassword: e.target.value })} />
+            </div>
+            <div className="field">
+              <label>Nouveau mot de passe</label>
+              <input type="password" required minLength={8} value={pwForm.newPassword} onChange={(e) => setPwForm({ ...pwForm, newPassword: e.target.value })} />
+            </div>
+            {pwStatus.message && (
+              <p style={{ color: pwStatus.type === 'error' ? '#A32D2D' : 'var(--pine)', fontSize: 13, marginBottom: 12 }}>{pwStatus.message}</p>
+            )}
+            <button type="submit" className="btn">Valider</button>
+          </form>
+        )}
+
         <h2 style={{ fontSize: 18, marginBottom: 14 }}>Mes commandes</h2>
         {orders.length === 0 && <p style={{ color: 'rgba(15,23,18,0.5)' }}>Aucune commande pour le moment.</p>}
         {orders.map((o) => (
