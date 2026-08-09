@@ -3,6 +3,7 @@ const { getUpcomingSlots } = require('../lib/slots');
 import OrderForm from './OrderForm';
 import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
+import DirectContact from './components/DirectContact';
 
 async function getBeers() {
   return prisma.beer.findMany({ where: { active: true }, orderBy: { country: 'asc' } });
@@ -31,7 +32,9 @@ export default async function HomePage() {
 
       <BeerOfMonth beer={beerOfMonth} />
 
-      <section className="wrap" style={{ paddingBottom: 60 }}>
+      <DirectContact />
+
+      <section id="catalogue" className="wrap" style={{ paddingBottom: 60, scrollMarginTop: 90 }}>
         <OrderForm groups={groups} slots={slots} />
       </section>
     </main>

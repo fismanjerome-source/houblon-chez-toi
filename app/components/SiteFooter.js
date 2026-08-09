@@ -18,6 +18,11 @@ export default function SiteFooter() {
           </p>
         </div>
       </div>
+      <div className="wrap" style={{ padding: '14px 0', textAlign: 'center' }}>
+        <p style={{ margin: 0, fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(15,23,18,0.45)' }}>
+          © 2026 Houblon chez toi. Tous droits réservés.
+        </p>
+      </div>
     </footer>
   );
 }

@@ -1,5 +1,6 @@
 import Logo from './Logo';
 import SearchBar from './SearchBar';
+import MobileMenu from './MobileMenu';
 
 export default function SiteHeader() {
   return (
@@ -14,6 +15,7 @@ export default function SiteHeader() {
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', flex: '1 1 auto', justifyContent: 'flex-end' }}>
           <SearchBar />
           <a href="/compte" className="btn" style={{ flexShrink: 0 }}>Mon compte</a>
+          <MobileMenu />
         </div>
       </div>
     </header>
