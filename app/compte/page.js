@@ -109,13 +109,14 @@ export default function ComptePage() {
           <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'white' }}>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>#{o.id.slice(-6)}</div>
             <div>
-              {o.items
-                .map((i) =>
+              {[
+                ...o.items.map((i) =>
                   i.format > 0
                     ? `${i.quantity} × ${i.beer.name} ${i.format}cl${i.glass ? ` + ${i.glass.name} ${i.glass.volumeCl}cl` : ''}`
                     : `+ ${i.glass.name} ${i.glass.volumeCl}cl (${i.beer.name})`
-                )
-                .join(', ')}
+                ),
+                ...(o.extras || []).map((x) => `${x.quantity} × ${x.name}`),
+              ].join(', ')}
             </div>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, marginTop: 6, color: 'rgba(15,23,18,0.6)' }}>
               {o.pickup ? '📍 Retrait à Bondues' : `🚚 Livraison — ${o.town}`}

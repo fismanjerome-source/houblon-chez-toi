@@ -23,6 +23,8 @@ export default async function HomePage() {
     { title: 'Bières belges', beers: beers.filter((b) => b.country === 'BE') },
   ];
   const slots = getUpcomingSlots();
+  const basket = await prisma.basket.findFirst({ where: { active: true, priceCents: { gt: 0 } }, include: { beers: true } });
+  const merchProducts = await prisma.merchProduct.findMany({ where: { active: true, priceCents: { gt: 0 } }, orderBy: { name: 'asc' } });
 
   return (
     <main>
@@ -52,7 +54,7 @@ export default async function HomePage() {
       </section>
 
       <section id="catalogue" className="wrap" style={{ paddingBottom: 60, scrollMarginTop: 90 }}>
-        <OrderForm groups={groups} slots={slots} />
+        <OrderForm groups={groups} slots={slots} basket={basket} merchProducts={merchProducts} />
       </section>
     </main>
   );

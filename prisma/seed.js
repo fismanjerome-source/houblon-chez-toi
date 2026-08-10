@@ -234,6 +234,32 @@ async function main() {
   await prisma.beer.updateMany({ where: { country: 'BE' }, data: { depositCents33: 10, depositCents75: 10 } });
   await prisma.beer.updateMany({ where: { name: 'Paix Dieu' }, data: { depositCents33: 50, depositCents75: 50 } });
 
+  // Panier de la quinzaine : toutes les bières actives, prix à définir par l'admin.
+  const existingBasket = await prisma.basket.findFirst();
+  if (!existingBasket) {
+    const allBeers = await prisma.beer.findMany({ where: { active: true } });
+    await prisma.basket.create({
+      data: {
+        name: 'Le panier de la quinzaine',
+        description: 'Une sélection de 15 bières triées sur le volet, à découvrir ou à offrir.',
+        priceCents: 0,
+        active: false,
+        beers: { connect: allBeers.map((b) => ({ id: b.id })) },
+      },
+    });
+  }
+
+  // Boutique : casquette et ecocup, prix à définir par l'admin.
+  const merchCount = await prisma.merchProduct.count();
+  if (merchCount === 0) {
+    await prisma.merchProduct.createMany({
+      data: [
+        { name: 'Casquette Houblon chez toi', description: 'Casquette brodée avec notre logo houblon.', priceCents: 0, active: false },
+        { name: 'Ecocup Houblon chez toi', description: 'Gobelet réutilisable avec notre logo houblon.', priceCents: 0, active: false },
+      ],
+    });
+  }
+
   // Compte admin de démarrage — À CHANGER le mot de passe immédiatement après le premier déploiement
   const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@houbloncheztoi.fr' } });
   if (!existingAdmin) {

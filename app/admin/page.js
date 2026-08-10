@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 const { prisma } = require('../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../lib/auth');
+import AdminBasketEditor from '../components/AdminBasketEditor';
+import AdminMerchEditor from '../components/AdminMerchEditor';
 
 export default async function AdminPage() {
   const cookieStore = cookies();
@@ -18,26 +20,35 @@ export default async function AdminPage() {
   }
 
   const orders = await prisma.order.findMany({
-    include: { items: { include: { beer: true, glass: true } }, user: true },
+    include: { items: { include: { beer: true, glass: true } }, extras: true, user: true },
     orderBy: { createdAt: 'desc' },
   });
+  const allBeers = await prisma.beer.findMany({ where: { active: true }, orderBy: { name: 'asc' } });
+  const basket = await prisma.basket.findFirst({ include: { beers: true } });
+  const merchProducts = await prisma.merchProduct.findMany({ orderBy: { name: 'asc' } });
 
   return (
     <main className="wrap" style={{ padding: '48px 0' }}>
-      <h1 style={{ color: 'var(--pine)', marginBottom: 24 }}>Toutes les commandes</h1>
+      <h1 style={{ color: 'var(--pine)', marginBottom: 24 }}>Administration</h1>
+
+      <AdminBasketEditor basket={basket} allBeers={allBeers} />
+      <AdminMerchEditor products={merchProducts} />
+
+      <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Toutes les commandes</h2>
       {orders.map((o) => (
         <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'white' }}>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>
             #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}
           </div>
           <div>
-            {o.items
-              .map((i) =>
+            {[
+              ...o.items.map((i) =>
                 i.format > 0
                   ? `${i.quantity} × ${i.beer.name} ${i.format}cl${i.glass ? ` + ${i.glass.name} ${i.glass.volumeCl}cl` : ''}`
                   : `+ ${i.glass.name} ${i.glass.volumeCl}cl (${i.beer.name})`
-              )
-              .join(', ')}
+              ),
+              ...o.extras.map((x) => `${x.quantity} × ${x.name}`),
+            ].join(', ')}
           </div>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 6 }}>
             {o.pickup ? 'Retrait à Bondues' : o.town} — {o.slot} — {((o.itemsTotalCents ?? o.totalCents) / 100).toFixed(2)} €

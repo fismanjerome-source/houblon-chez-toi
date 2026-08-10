@@ -51,6 +51,25 @@ model Beer {
   glasses    Glass[]
   orderItems OrderItem[]
   depositReturns DepositReturn[]
+  baskets    Basket[] @relation("BasketBeers")
+}
+
+model Basket {
+  id          String  @id @default(cuid())
+  name        String  @default("Le panier de la quinzaine")
+  description String?
+  priceCents  Int     @default(0)
+  active      Boolean @default(false) // inactif tant qu'aucun prix n'est fixé
+  beers       Beer[]  @relation("BasketBeers")
+}
+
+model MerchProduct {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  priceCents  Int     @default(0)
+  imageUrl    String?
+  active      Boolean @default(false) // inactif tant qu'aucun prix n'est fixé
 }
 
 model Glass {
@@ -80,6 +99,19 @@ model Order {
   createdAt DateTime    @default(now())
   items     OrderItem[]
   depositReturns DepositReturn[]
+  extras    OrderExtra[]
+}
+
+model OrderExtra {
+  id        String @id @default(cuid())
+  order     Order  @relation(fields: [orderId], references: [id])
+  orderId   String
+  kind      String // "basket" ou "merch"
+  refId     String // id du Basket ou du MerchProduct au moment de l'achat
+  name      String // nom figé au moment de l'achat
+  quantity  Int
+  unitPriceCents Int
+  lineTotalCents Int
 }
 
 model OrderItem {

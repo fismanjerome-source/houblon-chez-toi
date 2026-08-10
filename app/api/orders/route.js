@@ -15,7 +15,7 @@ async function GET(request) {
 
   const orders = await prisma.order.findMany({
     where: { userId: session.userId },
-    include: { items: { include: { beer: true, glass: true } }, depositReturns: { include: { beer: true } } },
+    include: { items: { include: { beer: true, glass: true } }, depositReturns: { include: { beer: true } }, extras: true },
     orderBy: { createdAt: 'desc' },
   });
   return new Response(JSON.stringify(orders), { status: 200 });
@@ -25,21 +25,23 @@ async function POST(request) {
   const session = getSession(request);
   if (!session) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
-  const { town, slot, items, pickup, returns } = await request.json();
+  const { town, slot, items, pickup, returns, extras } = await request.json();
   // items: [{ beerId, format, quantity, glassId }]
   // returns: [{ beerId, format, quantity }]
-  if (!items || !items.length) {
+  // extras: [{ kind: 'basket' | 'merch', refId, quantity }]
+  if ((!items || !items.length) && (!extras || !extras.length)) {
     return new Response(JSON.stringify({ error: 'Panier vide' }), { status: 400 });
   }
 
-  const allBeerIds = [...new Set([...items.map((i) => i.beerId), ...(returns || []).map((r) => r.beerId)])];
+  const safeItems = items || [];
+  const allBeerIds = [...new Set([...safeItems.map((i) => i.beerId), ...(returns || []).map((r) => r.beerId)])];
   const beers = await prisma.beer.findMany({ where: { id: { in: allBeerIds } } });
-  const glassIds = items.map((i) => i.glassId).filter(Boolean);
+  const glassIds = safeItems.map((i) => i.glassId).filter(Boolean);
   const glasses = glassIds.length ? await prisma.glass.findMany({ where: { id: { in: glassIds } } }) : [];
 
   let itemsTotalCents = 0;
   let depositChargedCents = 0;
-  const orderItemsData = items.map((item) => {
+  const orderItemsData = safeItems.map((item) => {
     const beer = beers.find((b) => b.id === item.beerId);
     if (!beer) throw new Error('Bière introuvable');
     const glass = item.glassId ? glasses.find((g) => g.id === item.glassId && g.beerId === beer.id) : null;
@@ -72,6 +74,27 @@ async function POST(request) {
       return { beerId: beer.id, format: r.format, quantity: r.quantity, creditedCents };
     });
 
+  const basketIds = (extras || []).filter((x) => x.kind === 'basket' && x.quantity > 0).map((x) => x.refId);
+  const merchIds = (extras || []).filter((x) => x.kind === 'merch' && x.quantity > 0).map((x) => x.refId);
+  const [baskets, merchProducts] = await Promise.all([
+    basketIds.length ? prisma.basket.findMany({ where: { id: { in: basketIds }, active: true } }) : [],
+    merchIds.length ? prisma.merchProduct.findMany({ where: { id: { in: merchIds }, active: true } }) : [],
+  ]);
+
+  let extrasTotalCents = 0;
+  const extrasData = (extras || [])
+    .filter((x) => x.quantity > 0)
+    .map((x) => {
+      const source = x.kind === 'basket' ? baskets.find((b) => b.id === x.refId) : merchProducts.find((m) => m.id === x.refId);
+      if (!source || source.priceCents <= 0) return null;
+      const lineTotalCents = source.priceCents * x.quantity;
+      extrasTotalCents += lineTotalCents;
+      return { kind: x.kind, refId: source.id, name: source.name, quantity: x.quantity, unitPriceCents: source.priceCents, lineTotalCents };
+    })
+    .filter(Boolean);
+
+  itemsTotalCents += extrasTotalCents;
+
   const deliveryFeeCents = computeDeliveryFeeCents({ pickup: !!pickup, town, itemsTotalCents: itemsTotalCents - depositChargedCents });
   const totalCents = Math.max(0, itemsTotalCents + deliveryFeeCents - depositReturnedCents);
 
@@ -88,8 +111,9 @@ async function POST(request) {
       totalCents,
       items: { create: orderItemsData },
       depositReturns: returnItemsData.length ? { create: returnItemsData } : undefined,
+      extras: extrasData.length ? { create: extrasData } : undefined,
     },
-    include: { items: true },
+    include: { items: true, extras: true },
   });
 
   return new Response(JSON.stringify(order), { status: 201 });

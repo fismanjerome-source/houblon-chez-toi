@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import FlagIcon from './components/FlagIcon';
+import BasketCard from './components/BasketCard';
 const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
 const { BEER_COLORS } = require('./components/beerColors');
 const { TOWN_NAMES, townLabel } = require('../lib/towns');
@@ -9,10 +10,12 @@ const TOWNS = TOWN_NAMES;
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
 const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 
-export default function OrderForm({ groups, slots }) {
+export default function OrderForm({ groups, slots, basket, merchProducts }) {
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
   const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: Set<glassId> }
+  const [basketQty, setBasketQty] = useState(0);
+  const [merchQty, setMerchQty] = useState({}); // { [merchId]: quantity }
 
   function toggleGlass(beerId, glassId, checked) {
     setGlassChoice((prev) => {
@@ -91,20 +94,32 @@ export default function OrderForm({ groups, slots }) {
     });
   }, [beers, qty, glassChoice]);
 
-  const itemsSubtotal = beerLines.reduce((sum, l) => sum + l.lineTotal, 0) + glassLines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const extrasLines = useMemo(() => {
+    const lines = [];
+    if (basket && basketQty > 0) {
+      lines.push({ kind: 'basket', refId: basket.id, name: basket.name, quantity: basketQty, lineTotal: (basket.priceCents / 100) * basketQty });
+    }
+    (merchProducts || []).forEach((m) => {
+      const q = merchQty[m.id] || 0;
+      if (q > 0) lines.push({ kind: 'merch', refId: m.id, name: m.name, quantity: q, lineTotal: (m.priceCents / 100) * q });
+    });
+    return lines;
+  }, [basket, basketQty, merchProducts, merchQty]);
+
+  const itemsSubtotal = beerLines.reduce((sum, l) => sum + l.lineTotal, 0) + glassLines.reduce((sum, l) => sum + l.lineTotal, 0) + extrasLines.reduce((sum, l) => sum + l.lineTotal, 0);
   const depositCharged = beerLines.reduce((sum, l) => sum + l.depositTotal, 0);
   const depositCredited = returnLines.reduce((sum, l) => sum + l.creditTotal, 0);
   const subtotal = itemsSubtotal + depositCharged;
   const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(itemsSubtotal * 100) }) / 100;
   const total = Math.max(0, subtotal + deliveryFee - depositCredited);
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - itemsSubtotal);
-  const hasItems = beerLines.length > 0;
+  const hasItems = beerLines.length > 0 || extrasLines.length > 0;
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus({ type: '', message: '' });
     if (!hasItems) {
-      setStatus({ type: 'error', message: 'Ajoutez au moins une bière à votre commande.' });
+      setStatus({ type: 'error', message: 'Ajoutez au moins un article à votre commande.' });
       return;
     }
     setSubmitting(true);
@@ -114,10 +129,11 @@ export default function OrderForm({ groups, slots }) {
       ...glassLines.map((l) => ({ beerId: l.beer.id, format: 0, quantity: 1, glassId: l.glass.id })),
     ];
     const returnItems = returnLines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity }));
+    const extraItems = extrasLines.map((l) => ({ kind: l.kind, refId: l.refId, quantity: l.quantity }));
 
     const res = await fetch('/api/orders', {
       method: 'POST',
-      body: JSON.stringify({ town, pickup, slot, items, returns: returnItems }),
+      body: JSON.stringify({ town, pickup, slot, items, returns: returnItems, extras: extraItems }),
     });
     setSubmitting(false);
     if (!res.ok) {
@@ -128,6 +144,8 @@ export default function OrderForm({ groups, slots }) {
     setQty({});
     setGlassChoice({});
     setReturns({});
+    setBasketQty(0);
+    setMerchQty({});
     setStatus({ type: 'success', message: 'Commande envoyée ! Retrouvez-la dans "Mon compte".' });
   }
 
@@ -239,6 +257,40 @@ export default function OrderForm({ groups, slots }) {
         </div>
       ))}
 
+      {basket && (
+        <BasketCard
+          basket={basket}
+          quantity={basketQty}
+          onChange={(v) => setBasketQty(Math.max(0, Math.min(9, Number(v) || 0)))}
+        />
+      )}
+
+      {merchProducts && merchProducts.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Boutique</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+            {merchProducts.map((m) => (
+              <div key={m.id} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 8, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
+                {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: '100%', height: 120, objectFit: 'contain', marginBottom: 10 }} />}
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--pine)', marginBottom: 4 }}>{m.name}</div>
+                {m.description && <p style={{ fontSize: 12.5, color: 'rgba(15,23,18,0.65)', marginBottom: 10 }}>{m.description}</p>}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
+                  <input
+                    type="number" min={0} max={20}
+                    value={merchQty[m.id] === 0 || !merchQty[m.id] ? '' : merchQty[m.id]}
+                    placeholder="0"
+                    onChange={(e) => setMerchQty((q) => ({ ...q, [m.id]: Math.max(0, Math.min(20, Number(e.target.value) || 0)) }))}
+                    onFocus={(e) => e.target.select()}
+                    style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 24, marginTop: 24 }}>
         <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>Votre commande</h2>
 
@@ -268,6 +320,12 @@ export default function OrderForm({ groups, slots }) {
               <li key={`return-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--pine)', fontSize: 12.5 }}>
                 <span>− reprise {l.quantity} × {l.beer.name} ({l.format}cl)</span>
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>−{l.creditTotal.toFixed(2)} €</span>
+              </li>
+            ))}
+            {extrasLines.map((l) => (
+              <li key={`extra-${l.kind}-${l.refId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
+                <span>{l.quantity} × {l.name}</span>
+                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
           </ul>
