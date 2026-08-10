@@ -33,6 +33,8 @@ model Beer {
   abv      Float
   price33  Float
   price75  Float
+  depositCents33 Int @default(0) // consigne bouteille 33cl
+  depositCents75 Int @default(0) // consigne bouteille 75cl
   description String
   tastingNote String? // notre avis de dégustation, affiché sur la fiche produit
   appearance String? // robe
@@ -48,6 +50,7 @@ model Beer {
   isBeerOfMonth Boolean @default(false)
   glasses    Glass[]
   orderItems OrderItem[]
+  depositReturns DepositReturn[]
 }
 
 model Glass {
@@ -71,9 +74,12 @@ model Order {
   slot      String      // ex: "Jeudi 14 août, 18h-19h"
   itemsTotalCents Int   @default(0) // sous-total hors livraison
   deliveryFeeCents Int  @default(0)
+  depositChargedCents Int @default(0) // consignes facturées sur cette commande
+  depositReturnedCents Int @default(0) // consignes recréditées (reprise de bouteilles)
   totalCents Int
   createdAt DateTime    @default(now())
   items     OrderItem[]
+  depositReturns DepositReturn[]
 }
 
 model OrderItem {
@@ -87,4 +93,16 @@ model OrderItem {
   glass     Glass?  @relation(fields: [glassId], references: [id])
   glassId   String?
   unitPriceCents Int
+  depositCents Int @default(0) // consigne facturée pour cette ligne (unitaire × quantité)
+}
+
+model DepositReturn {
+  id      String @id @default(cuid())
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+  beer    Beer   @relation(fields: [beerId], references: [id])
+  beerId  String
+  format  Int    // 33 ou 75
+  quantity Int
+  creditedCents Int
 }

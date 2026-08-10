@@ -38,13 +38,17 @@ export default async function BeerPage({ params }) {
 
       <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', marginTop: 20, marginBottom: 32 }}>
         {(beer.bottleImageUrl || glassImage) && (
-          <div style={{ display: 'flex', gap: 14, alignItems: 'flex-end', flexShrink: 0, margin: '0 auto' }}>
-            {beer.bottleImageUrl && (
-              <img src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} style={{ width: 110, height: 310, objectFit: 'contain' }} />
-            )}
-            {glassImage && (
-              <img src={glassImage} alt={`Verre ${beer.name}`} style={{ width: 95, height: 240, objectFit: 'contain' }} />
-            )}
+          <div style={{ display: 'flex', gap: 14, alignItems: 'flex-end', flexShrink: 0, margin: '0 auto', width: 215 }}>
+            <div style={{ width: 110, height: 310, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+              {beer.bottleImageUrl && (
+                <img src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} style={{ maxWidth: 110, maxHeight: 310, objectFit: 'contain' }} />
+              )}
+            </div>
+            <div style={{ width: 95, height: 310, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+              {glassImage && (
+                <img src={glassImage} alt={`Verre ${beer.name}`} style={{ maxWidth: 95, maxHeight: 240, objectFit: 'contain' }} />
+              )}
+            </div>
           </div>
         )}
 

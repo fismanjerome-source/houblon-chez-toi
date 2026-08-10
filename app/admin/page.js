@@ -41,7 +41,9 @@ export default async function AdminPage() {
           </div>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 6 }}>
             {o.pickup ? 'Retrait à Bondues' : o.town} — {o.slot} — {((o.itemsTotalCents ?? o.totalCents) / 100).toFixed(2)} €
-            {o.deliveryFeeCents > 0 && ` + ${(o.deliveryFeeCents / 100).toFixed(2)} € livraison`} — {o.status}
+            {o.deliveryFeeCents > 0 && ` + ${(o.deliveryFeeCents / 100).toFixed(2)} € livraison`}
+            {o.depositChargedCents > 0 && ` + ${(o.depositChargedCents / 100).toFixed(2)} € consignes`}
+            {o.depositReturnedCents > 0 && ` − ${(o.depositReturnedCents / 100).toFixed(2)} € reprise`} — {o.status}
           </div>
         </div>
       ))}

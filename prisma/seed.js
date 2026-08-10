@@ -25,7 +25,7 @@ const BEERS = [
     price75: 6.0,
     description: 'Blonde du Nord aux notes fleuries et fruitées.',
     tastingNote: 'Généreuse et fruitée, une belle rondeur en bouche.',
-    bottleImageUrl: '/beers/anosteke-blonde-bouteille.jpg',
+    bottleImageUrl: '/beers/anosteke-blonde-bouteille-clean.jpg',
   },
   {
     name: 'Anosteke NEIPA',
@@ -37,7 +37,7 @@ const BEERS = [
     price75: 6.0,
     description: "Blonde trouble, arômes puissants de fruits tropicaux et d'agrumes. Vendue en 75cl uniquement.",
     tastingNote: "Juteuse et parfumée, notes d'agrumes et de fruits tropicaux bien présentes.",
-    bottleImageUrl: '/beers/anosteke-neipa-bouteille.jpg',
+    bottleImageUrl: '/beers/anosteke-neipa-bouteille-clean.jpg',
   },
   {
     name: 'Anosteke Saison',
@@ -229,6 +229,10 @@ async function main() {
       await prisma.glass.createMany({ data: glasses.map((g) => ({ ...g, beerId: beer.id })) });
     }
   }
+
+  // Consigne : 0,10€ par défaut sur les bières belges (aucune sur les françaises), 0,50€ pour Paix Dieu.
+  await prisma.beer.updateMany({ where: { country: 'BE' }, data: { depositCents33: 10, depositCents75: 10 } });
+  await prisma.beer.updateMany({ where: { name: 'Paix Dieu' }, data: { depositCents33: 50, depositCents75: 50 } });
 
   // Compte admin de démarrage — À CHANGER le mot de passe immédiatement après le premier déploiement
   const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@houbloncheztoi.fr' } });

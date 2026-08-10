@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+const { TOWN_NAMES, townLabel } = require('../../lib/towns');
 
 export default function ComptePage() {
   const [mode, setMode] = useState('login');
@@ -120,6 +121,16 @@ export default function ComptePage() {
               {o.pickup ? '📍 Retrait à Bondues' : `🚚 Livraison — ${o.town}`}
               {o.deliveryFeeCents > 0 && ` (+${(o.deliveryFeeCents / 100).toFixed(2)} €)`}
             </div>
+            {o.depositChargedCents > 0 && (
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--copper)' }}>
+                ♻️ Consignes : +{(o.depositChargedCents / 100).toFixed(2)} €
+              </div>
+            )}
+            {o.depositReturnedCents > 0 && (
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
+                ♻️ Consignes reprises : −{(o.depositReturnedCents / 100).toFixed(2)} €
+              </div>
+            )}
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 4 }}>
               {(o.totalCents / 100).toFixed(2)} € — {o.status}
             </div>
@@ -152,7 +163,7 @@ export default function ComptePage() {
           <div className="field">
             <label>Commune</label>
             <select onChange={(e) => setForm({ ...form, town: e.target.value })}>
-              {['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'].map((t) => <option key={t}>{t}</option>)}
+              {TOWN_NAMES.map((t) => <option key={t} value={t}>{townLabel(t)}</option>)}
             </select>
           </div>
           <div className="field">

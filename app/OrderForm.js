@@ -3,8 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import FlagIcon from './components/FlagIcon';
 const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
 const { BEER_COLORS } = require('./components/beerColors');
+const { TOWN_NAMES, townLabel } = require('../lib/towns');
 
-const TOWNS = ['Bondues', 'Linselles', 'Mouvaux', 'Bousbecques', 'Marcq-en-Barœul', 'Wasquehal', 'Roncq', 'Comines'];
+const TOWNS = TOWN_NAMES;
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
 const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 
@@ -21,6 +22,7 @@ export default function OrderForm({ groups, slots }) {
       return { ...prev, [beerId]: current };
     });
   }
+  const [returns, setReturns] = useState({}); // { [beerId-format]: quantity }
   const [town, setTown] = useState(TOWNS[0]);
   const [pickup, setPickup] = useState(false);
   const [slot, setSlot] = useState(slots[0] || '');
@@ -37,6 +39,15 @@ export default function OrderForm({ groups, slots }) {
     setQty((q) => ({ ...q, [`${beerId}-${format}`]: n }));
   }
 
+  function setReturnQty(beerId, format, value) {
+    const n = Math.max(0, Math.min(999, Number(value) || 0));
+    setReturns((r) => ({ ...r, [`${beerId}-${format}`]: n }));
+  }
+
+  function depositRate(beer, format) {
+    return (format === 75 ? beer.depositCents75 : beer.depositCents33) / 100;
+  }
+
   const beerLines = useMemo(() => {
     return beers.flatMap((beer) => {
       const items = [];
@@ -44,12 +55,29 @@ export default function OrderForm({ groups, slots }) {
         const quantity = qty[`${beer.id}-${format}`] || 0;
         if (quantity > 0) {
           const unitPrice = format === 75 ? beer.price75 : beer.price33;
-          items.push({ beer, format, quantity, lineTotal: unitPrice * quantity });
+          const depositUnit = depositRate(beer, format);
+          items.push({ beer, format, quantity, lineTotal: unitPrice * quantity, depositTotal: depositUnit * quantity });
         }
       }
       return items;
     });
   }, [beers, qty]);
+
+  const depositEligibleBeers = useMemo(() => beers.filter((b) => b.depositCents33 > 0 || b.depositCents75 > 0), [beers]);
+
+  const returnLines = useMemo(() => {
+    return depositEligibleBeers.flatMap((beer) => {
+      const items = [];
+      for (const format of [33, 75]) {
+        const quantity = returns[`${beer.id}-${format}`] || 0;
+        const rate = depositRate(beer, format);
+        if (quantity > 0 && rate > 0) {
+          items.push({ beer, format, quantity, creditTotal: rate * quantity });
+        }
+      }
+      return items;
+    });
+  }, [depositEligibleBeers, returns]);
 
   const glassLines = useMemo(() => {
     return beers.flatMap((beer) => {
@@ -63,10 +91,13 @@ export default function OrderForm({ groups, slots }) {
     });
   }, [beers, qty, glassChoice]);
 
-  const subtotal = beerLines.reduce((sum, l) => sum + l.lineTotal, 0) + glassLines.reduce((sum, l) => sum + l.lineTotal, 0);
-  const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(subtotal * 100) }) / 100;
-  const total = subtotal + deliveryFee;
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const itemsSubtotal = beerLines.reduce((sum, l) => sum + l.lineTotal, 0) + glassLines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const depositCharged = beerLines.reduce((sum, l) => sum + l.depositTotal, 0);
+  const depositCredited = returnLines.reduce((sum, l) => sum + l.creditTotal, 0);
+  const subtotal = itemsSubtotal + depositCharged;
+  const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(itemsSubtotal * 100) }) / 100;
+  const total = Math.max(0, subtotal + deliveryFee - depositCredited);
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - itemsSubtotal);
   const hasItems = beerLines.length > 0;
 
   async function handleSubmit(e) {
@@ -82,10 +113,11 @@ export default function OrderForm({ groups, slots }) {
       ...beerLines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity, glassId: null })),
       ...glassLines.map((l) => ({ beerId: l.beer.id, format: 0, quantity: 1, glassId: l.glass.id })),
     ];
+    const returnItems = returnLines.map((l) => ({ beerId: l.beer.id, format: l.format, quantity: l.quantity }));
 
     const res = await fetch('/api/orders', {
       method: 'POST',
-      body: JSON.stringify({ town, pickup, slot, items }),
+      body: JSON.stringify({ town, pickup, slot, items, returns: returnItems }),
     });
     setSubmitting(false);
     if (!res.ok) {
@@ -95,6 +127,7 @@ export default function OrderForm({ groups, slots }) {
     }
     setQty({});
     setGlassChoice({});
+    setReturns({});
     setStatus({ type: 'success', message: 'Commande envoyée ! Retrouvez-la dans "Mon compte".' });
   }
 
@@ -120,21 +153,25 @@ export default function OrderForm({ groups, slots }) {
               }}
             >
               {(beer.bottleImageUrl || previewGlassImage) && (
-                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0 }}>
-                  {beer.bottleImageUrl && (
-                    <img
-                      src={beer.bottleImageUrl}
-                      alt={`Bouteille ${beer.name}`}
-                      style={{ width: 70, height: 200, objectFit: 'contain' }}
-                    />
-                  )}
-                  {previewGlassImage && (
-                    <img
-                      src={previewGlassImage}
-                      alt={`Verre ${beer.name}`}
-                      style={{ width: 60, height: 170, objectFit: 'contain' }}
-                    />
-                  )}
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0, width: 140 }}>
+                  <div style={{ width: 70, height: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                    {beer.bottleImageUrl && (
+                      <img
+                        src={beer.bottleImageUrl}
+                        alt={`Bouteille ${beer.name}`}
+                        style={{ maxWidth: 70, maxHeight: 200, objectFit: 'contain' }}
+                      />
+                    )}
+                  </div>
+                  <div style={{ width: 60, height: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                    {previewGlassImage && (
+                      <img
+                        src={previewGlassImage}
+                        alt={`Verre ${beer.name}`}
+                        style={{ maxWidth: 60, maxHeight: 170, objectFit: 'contain' }}
+                      />
+                    )}
+                  </div>
                 </div>
               )}
               <div style={{ flex: 1, minWidth: 200 }}>
@@ -161,6 +198,7 @@ export default function OrderForm({ groups, slots }) {
                   {beer.price33 > 0 && (
                     <QuantityField
                       label={`33cl — ${beer.price33.toFixed(2)} €`}
+                      sublabel={beer.depositCents33 > 0 ? `+ ${(beer.depositCents33 / 100).toFixed(2)} € consigne` : null}
                       value={qty[`${beer.id}-33`] || 0}
                       onChange={(v) => setQuantity(beer.id, 33, v)}
                     />
@@ -168,6 +206,7 @@ export default function OrderForm({ groups, slots }) {
                   {beer.price75 > 0 && (
                     <QuantityField
                       label={`75cl — ${beer.price75.toFixed(2)} €`}
+                      sublabel={beer.depositCents75 > 0 ? `+ ${(beer.depositCents75 / 100).toFixed(2)} € consigne` : null}
                       value={qty[`${beer.id}-75`] || 0}
                       onChange={(v) => setQuantity(beer.id, 75, v)}
                     />
@@ -219,7 +258,60 @@ export default function OrderForm({ groups, slots }) {
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
+            {beerLines.filter((l) => l.depositTotal > 0).map((l) => (
+              <li key={`deposit-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)', fontSize: 12.5 }}>
+                <span>+ consigne {l.beer.name} ({l.format}cl)</span>
+                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.depositTotal.toFixed(2)} €</span>
+              </li>
+            ))}
+            {returnLines.map((l) => (
+              <li key={`return-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--pine)', fontSize: 12.5 }}>
+                <span>− reprise {l.quantity} × {l.beer.name} ({l.format}cl)</span>
+                <span style={{ fontFamily: 'Space Mono, monospace' }}>−{l.creditTotal.toFixed(2)} €</span>
+              </li>
+            ))}
           </ul>
+        )}
+
+        {depositEligibleBeers.length > 0 && (
+          <details style={{ marginBottom: 16, fontSize: 13 }}>
+            <summary style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11.5, color: 'var(--pine)' }}>
+              ♻️ Rendre des bouteilles consignées (recrédité sur cette commande)
+            </summary>
+            <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {depositEligibleBeers.map((beer) => (
+                <div key={beer.id} style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 12.5, minWidth: 140 }}>{beer.name}</span>
+                  {beer.depositCents33 > 0 && (
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Space Mono, monospace', fontSize: 11 }}>
+                      33cl
+                      <input
+                        type="number" min={0} max={999}
+                        value={returns[`${beer.id}-33`] || ''}
+                        placeholder="0"
+                        onChange={(e) => setReturnQty(beer.id, 33, e.target.value)}
+                        onFocus={(e) => e.target.select()}
+                        style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                      />
+                    </label>
+                  )}
+                  {beer.depositCents75 > 0 && (
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Space Mono, monospace', fontSize: 11 }}>
+                      75cl
+                      <input
+                        type="number" min={0} max={999}
+                        value={returns[`${beer.id}-75`] || ''}
+                        placeholder="0"
+                        onChange={(e) => setReturnQty(beer.id, 75, e.target.value)}
+                        onFocus={(e) => e.target.select()}
+                        style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                      />
+                    </label>
+                  )}
+                </div>
+              ))}
+            </div>
+          </details>
         )}
 
         {hasItems && (
@@ -231,7 +323,7 @@ export default function OrderForm({ groups, slots }) {
             ) : (
               <p style={{ fontSize: 13, color: 'var(--pine)', marginBottom: 4 }}>🚚 Livraison gratuite !</p>
             )}
-            {subtotal >= FREE_SHIPPING_THRESHOLD && (
+            {itemsSubtotal >= FREE_SHIPPING_THRESHOLD && (
               <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>
                 🎁 À partir de {FREE_SHIPPING_THRESHOLD.toFixed(0)} € : un cadeau surprise bientôt disponible sur vos premières commandes.
               </p>
@@ -241,13 +333,25 @@ export default function OrderForm({ groups, slots }) {
 
         <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span>Sous-total</span>
-            <span>{subtotal.toFixed(2)} €</span>
+            <span>Sous-total bières{glassLines.length > 0 ? ' + verres' : ''}</span>
+            <span>{itemsSubtotal.toFixed(2)} €</span>
           </div>
+          {depositCharged > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+              <span>Consignes</span>
+              <span>{depositCharged.toFixed(2)} €</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span>Livraison</span>
             <span>{deliveryFee > 0 ? `${deliveryFee.toFixed(2)} €` : 'Gratuite'}</span>
           </div>
+          {depositCredited > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: 'var(--pine)' }}>
+              <span>Reprise consignes</span>
+              <span>−{depositCredited.toFixed(2)} €</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginTop: 8 }}>
             <span>Total</span>
             <span>{total.toFixed(2)} €</span>
@@ -285,7 +389,7 @@ export default function OrderForm({ groups, slots }) {
             <div className="field" style={{ flex: 1, minWidth: 180 }}>
               <label>Commune de livraison</label>
               <select value={town} onChange={(e) => setTown(e.target.value)}>
-                {TOWNS.map((t) => <option key={t}>{t}</option>)}
+                {TOWNS.map((t) => <option key={t} value={t}>{townLabel(t)}</option>)}
               </select>
             </div>
           )}
@@ -315,7 +419,7 @@ export default function OrderForm({ groups, slots }) {
   );
 }
 
-function QuantityField({ label, value, onChange }) {
+function QuantityField({ label, sublabel, value, onChange }) {
   return (
     <div>
       <label style={{ display: 'block', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.6)', marginBottom: 6 }}>{label}</label>
@@ -323,10 +427,15 @@ function QuantityField({ label, value, onChange }) {
         type="number"
         min={0}
         max={99}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={value === 0 ? '' : value}
+        placeholder="0"
+        onChange={(e) => onChange(e.target.value === '' ? '0' : e.target.value)}
+        onFocus={(e) => e.target.select()}
         style={{ width: 70, padding: 8, border: '1px solid var(--line)', borderRadius: 3, fontFamily: 'Public Sans, sans-serif', fontSize: 14 }}
       />
+      {sublabel && (
+        <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 9.5, color: 'var(--copper)', marginTop: 3 }}>{sublabel}</div>
+      )}
     </div>
   );
 }

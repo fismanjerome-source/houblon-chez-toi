@@ -1,3 +1,5 @@
+import HopFieldIllustration from '../components/HopFieldIllustration';
+
 export const metadata = { title: 'Histoire de la bière — Houblon chez toi' };
 
 export default function HistoirePage() {
@@ -13,6 +15,21 @@ export default function HistoirePage() {
         aujourd'hui. Autour d'eux, des brasseries indépendantes ont grandi au fil des générations, chacune
         avec sa levure maison, son savoir-faire et son terroir — les houblons de Flandre, l'eau des Monts
         de Flandre, les malts du Nord.
+      </p>
+
+      <div style={{ borderRadius: 8, overflow: 'hidden', margin: '28px 0' }}>
+        <HopFieldIllustration />
+      </div>
+
+      <h2 style={{ fontSize: 19, color: 'var(--pine)', marginBottom: 8 }}>Un vrai savoir-faire</h2>
+      <p style={{ color: 'rgba(15,23,18,0.8)', lineHeight: 1.8, fontSize: 15 }}>
+        Tout commence dans les champs : le houblon grimpe le long de fils tendus à 6-7 mètres de haut,
+        récolté une fois par an à la fin de l'été, quand ses cônes sont gorgés d'huiles aromatiques et de
+        résines amérisantes. Vient ensuite le maltage de l'orge, le brassage — l'art de marier l'eau, le
+        malt, le houblon et la levure à la bonne température, au bon moment — puis la fermentation, qui
+        peut durer de quelques jours à plusieurs mois selon le style. Chaque brasseur ajuste ses recettes
+        au fil des saisons et des récoltes : rien n'est jamais tout à fait automatique. C'est ce savoir-faire,
+        patient et précis, qu'on veut vous faire goûter à chaque bouteille.
       </p>
 
       <p style={{ color: 'rgba(15,23,18,0.8)', lineHeight: 1.8, fontSize: 15 }}>
