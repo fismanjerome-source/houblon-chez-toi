@@ -3,6 +3,7 @@ const { prisma } = require('../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../lib/auth');
 import AdminBasketEditor from '../components/AdminBasketEditor';
 import AdminMerchEditor from '../components/AdminMerchEditor';
+import AdminBeerEditor from '../components/AdminBeerEditor';
 
 export default async function AdminPage() {
   const cookieStore = cookies();
@@ -24,6 +25,7 @@ export default async function AdminPage() {
     orderBy: { createdAt: 'desc' },
   });
   const allBeers = await prisma.beer.findMany({ where: { active: true }, orderBy: { name: 'asc' } });
+  const everyBeer = await prisma.beer.findMany({ orderBy: [{ active: 'asc' }, { name: 'asc' }] });
   const basket = await prisma.basket.findFirst({ include: { beers: true } });
   const merchProducts = await prisma.merchProduct.findMany({ orderBy: { name: 'asc' } });
 
@@ -31,6 +33,7 @@ export default async function AdminPage() {
     <main className="wrap" style={{ padding: '48px 0' }}>
       <h1 style={{ color: 'var(--pine)', marginBottom: 24 }}>Administration</h1>
 
+      <AdminBeerEditor beers={everyBeer} />
       <AdminBasketEditor basket={basket} allBeers={allBeers} />
       <AdminMerchEditor products={merchProducts} />
 

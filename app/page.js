@@ -1,6 +1,8 @@
 const { prisma } = require('../lib/db');
 const { getUpcomingSlots } = require('../lib/slots');
 import OrderForm from './OrderForm';
+
+export const dynamic = 'force-dynamic';
 import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';

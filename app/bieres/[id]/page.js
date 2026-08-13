@@ -2,6 +2,8 @@ const { prisma } = require('../../../lib/db');
 import FlagIcon from '../../components/FlagIcon';
 const { BEER_COLORS } = require('../../components/beerColors');
 
+export const dynamic = 'force-dynamic';
+
 async function getBeer(id) {
   return prisma.beer.findUnique({
     where: { id },
