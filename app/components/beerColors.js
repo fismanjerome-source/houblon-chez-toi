@@ -15,6 +15,11 @@ const BEER_COLORS = {
   '3 Monts Ambrée': '#c1592f',
   '3 Monts Saison': '#5cb8a4',
   '3 Monts Triple': '#2b2b2b',
+  'Tripel Karmeliet': '#c9a227',
+  'Leffe Blonde': '#e8b400',
+  'PVL Blonde': '#1f4e8c',
+  'PVL Triple': '#3f6b2e',
+  'PVL Ambrée': '#b83232',
 };
 
 module.exports = { BEER_COLORS };
