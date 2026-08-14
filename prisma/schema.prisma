@@ -102,6 +102,21 @@ model Order {
   depositReturns DepositReturn[]
   extras    OrderExtra[]
   review    Review?
+  invoice   Invoice?
+}
+
+model Invoice {
+  id         String   @id @default(cuid())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String   @unique
+  number     String   @unique // ex: "F2026-0001"
+  totalCents Int      // montant figé au moment de l'émission
+  issuedAt   DateTime @default(now())
+}
+
+model InvoiceCounter {
+  year       Int @id
+  lastNumber Int @default(0)
 }
 
 model OrderExtra {

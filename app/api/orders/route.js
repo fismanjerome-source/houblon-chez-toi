@@ -17,7 +17,7 @@ async function GET(request) {
 
   const orders = await prisma.order.findMany({
     where: { userId: session.userId },
-    include: { items: { include: { beer: true, glass: true } }, depositReturns: { include: { beer: true } }, extras: true },
+    include: { items: { include: { beer: true, glass: true } }, depositReturns: { include: { beer: true } }, extras: true, invoice: true },
     orderBy: { createdAt: 'desc' },
   });
   return new Response(JSON.stringify(orders), { status: 200 });

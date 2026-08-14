@@ -2,6 +2,13 @@
 import { useState, useEffect } from 'react';
 const { TOWN_NAMES, townLabel } = require('../../lib/towns');
 
+const STATUS_LABELS = {
+  EN_PREPARATION: 'En préparation',
+  EN_LIVRAISON: 'En livraison',
+  LIVREE: 'Livrée',
+  ANNULEE: 'Annulée',
+};
+
 export default function ComptePage() {
   const [mode, setMode] = useState('login');
   const [user, setUser] = useState(null);
@@ -132,8 +139,15 @@ export default function ComptePage() {
                 ♻️ Consignes reprises : −{(o.depositReturnedCents / 100).toFixed(2)} €
               </div>
             )}
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 4 }}>
-              {(o.totalCents / 100).toFixed(2)} € — {o.status}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12 }}>
+                {(o.totalCents / 100).toFixed(2)} € — <span style={{ color: o.status === 'LIVREE' ? 'var(--pine)' : o.status === 'ANNULEE' ? 'var(--copper)' : 'inherit' }}>{STATUS_LABELS[o.status] || o.status}</span>
+              </div>
+              {o.invoice && (
+                <a href={`/api/factures/${o.invoice.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--pine)' }}>
+                  📄 Télécharger la facture ({o.invoice.number})
+                </a>
+              )}
             </div>
           </div>
         ))}

@@ -2,6 +2,8 @@ const { prisma } = require('../../../../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../../../../lib/auth');
 const { sendEmail } = require('../../../../../lib/email');
 const { invoiceEmail } = require('../../../../../lib/emailTemplates');
+const { nextInvoiceNumber } = require('../../../../../lib/invoiceNumber');
+const { buildInvoicePdf } = require('../../../../../lib/invoicePdf');
 
 const VALID_STATUSES = ['EN_PREPARATION', 'EN_LIVRAISON', 'LIVREE', 'ANNULEE'];
 
@@ -32,8 +34,19 @@ async function PATCH(request, { params }) {
   });
 
   if (status === 'LIVREE' && previous.status !== 'LIVREE') {
-    const invoice = invoiceEmail({ order, user: order.user });
-    await sendEmail({ to: order.user.email, subject: invoice.subject, html: invoice.html });
+    let invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
+    if (!invoice) {
+      const number = await nextInvoiceNumber(prisma);
+      invoice = await prisma.invoice.create({ data: { orderId: order.id, number, totalCents: order.totalCents } });
+    }
+    const pdfBuffer = await buildInvoicePdf({ order, invoice, user: order.user });
+    const content = invoiceEmail({ order, user: order.user, invoice });
+    await sendEmail({
+      to: order.user.email,
+      subject: content.subject,
+      html: content.html,
+      attachments: [{ filename: `facture-${invoice.number}.pdf`, content: pdfBuffer }],
+    });
   }
 
   return new Response(JSON.stringify(order), { status: 200 });

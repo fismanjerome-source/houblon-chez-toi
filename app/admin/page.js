@@ -5,6 +5,7 @@ import AdminBasketEditor from '../components/AdminBasketEditor';
 import AdminMerchEditor from '../components/AdminMerchEditor';
 import AdminBeerEditor from '../components/AdminBeerEditor';
 import OrderStatusControl from '../components/OrderStatusControl';
+import AdminNav from '../components/AdminNav';
 
 export default async function AdminPage() {
   const cookieStore = cookies();
@@ -22,7 +23,7 @@ export default async function AdminPage() {
   }
 
   const orders = await prisma.order.findMany({
-    include: { items: { include: { beer: true, glass: true } }, extras: true, user: true },
+    include: { items: { include: { beer: true, glass: true } }, extras: true, user: true, invoice: true },
     orderBy: { createdAt: 'desc' },
   });
   const allBeers = await prisma.beer.findMany({ where: { active: true }, orderBy: { name: 'asc' } });
@@ -32,7 +33,8 @@ export default async function AdminPage() {
 
   return (
     <main className="wrap" style={{ padding: '48px 0' }}>
-      <h1 style={{ color: 'var(--pine)', marginBottom: 24 }}>Administration</h1>
+      <h1 style={{ color: 'var(--pine)', marginBottom: 8 }}>Administration</h1>
+      <AdminNav active="/admin" />
 
       <AdminBeerEditor beers={everyBeer} />
       <AdminBasketEditor basket={basket} allBeers={allBeers} />
@@ -45,7 +47,12 @@ export default async function AdminPage() {
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>
               #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}
             </div>
-            <OrderStatusControl orderId={o.id} status={o.status} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {o.invoice && (
+                <a href={`/api/factures/${o.invoice.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--pine)' }}>📄 {o.invoice.number}</a>
+              )}
+              <OrderStatusControl orderId={o.id} status={o.status} />
+            </div>
           </div>
           <div>
             {[
