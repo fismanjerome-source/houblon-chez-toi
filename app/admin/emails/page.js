@@ -3,7 +3,7 @@ const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
 const { orderConfirmationEmail, invoiceEmail, reviewRequestEmail, SITE_URL } = require('../../../lib/emailTemplates');
 import AdminNav from '../../components/AdminNav';
 
-const SAMPLE_USER = { name: 'Camille Dupont', email: 'camille@example.com' };
+const SAMPLE_USER = { name: 'Camille Dupont', email: 'camille@example.com', proApproved: false };
 
 const SAMPLE_ORDER = {
   id: 'sample000001exemple',
@@ -13,7 +13,9 @@ const SAMPLE_ORDER = {
   deliveryFeeCents: 0,
   depositChargedCents: 20,
   depositReturnedCents: 10,
+  discountCents: 0,
   totalCents: 1560,
+  paymentChoice: 'CASH_ON_DELIVERY',
   items: [
     { format: 33, quantity: 2, unitPriceCents: 300, depositCents: 20, beer: { name: 'Chouffe' }, glass: { name: 'Verre ballon Chouffe', volumeCl: 33, price: 7.2 } },
     { format: 75, quantity: 1, unitPriceCents: 580, depositCents: 0, beer: { name: '3 Monts Blonde' }, glass: null },
@@ -22,7 +24,7 @@ const SAMPLE_ORDER = {
   reviewToken: 'sample-review-token',
 };
 
-const SAMPLE_INVOICE = { number: 'F2026-0007', issuedAt: new Date() };
+const SAMPLE_INVOICE = { number: 'F2026-0007', issuedAt: new Date(), dueDate: null };
 
 export default async function AdminEmailsPage() {
   const cookieStore = cookies();

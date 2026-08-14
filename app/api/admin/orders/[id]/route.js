@@ -5,7 +5,7 @@ const { invoiceEmail } = require('../../../../../lib/emailTemplates');
 const { nextInvoiceNumber } = require('../../../../../lib/invoiceNumber');
 const { buildInvoicePdf } = require('../../../../../lib/invoicePdf');
 
-const VALID_STATUSES = ['EN_PREPARATION', 'EN_LIVRAISON', 'LIVREE', 'ANNULEE'];
+const VALID_STATUSES = ['EN_ATTENTE_PAIEMENT', 'EN_PREPARATION', 'EN_LIVRAISON', 'LIVREE', 'ANNULEE'];
 
 function getAdminSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -37,7 +37,20 @@ async function PATCH(request, { params }) {
     let invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
     if (!invoice) {
       const number = await nextInvoiceNumber(prisma);
-      invoice = await prisma.invoice.create({ data: { orderId: order.id, number, totalCents: order.totalCents } });
+      const issuedAt = new Date();
+      // Déjà réglée par carte (Stripe) : facture soldée. Compte pro à 30 jours :
+      // échéance différée. Sinon (espèces) : réglée au moment de la livraison.
+      const isNet30 = order.paymentChoice === 'NET_30';
+      invoice = await prisma.invoice.create({
+        data: {
+          orderId: order.id,
+          number,
+          totalCents: order.totalCents,
+          issuedAt,
+          dueDate: isNet30 ? new Date(issuedAt.getTime() + 30 * 24 * 60 * 60 * 1000) : null,
+          paidAt: isNet30 ? null : (order.paidAt || issuedAt),
+        },
+      });
     }
     const pdfBuffer = await buildInvoicePdf({ order, invoice, user: order.user });
     const content = invoiceEmail({ order, user: order.user, invoice });

@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 const { prisma } = require('../../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
 import AdminNav from '../../components/AdminNav';
+import InvoicePaymentStatus from '../../components/InvoicePaymentStatus';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,8 +67,10 @@ export default async function AdminFacturesPage() {
               <div key={inv.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
                 <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5 }}>
                   <strong>{inv.number}</strong> — {inv.issuedAt.toLocaleDateString('fr-FR')} — {inv.order.user.name}
+                  {inv.order.user.proApproved && <span style={{ marginLeft: 8, fontSize: 10.5, color: 'var(--copper)' }}>PRO</span>}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                  <InvoicePaymentStatus invoiceId={inv.id} dueDate={inv.dueDate} paidAt={inv.paidAt} />
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5 }}>{(inv.totalCents / 100).toFixed(2)} €</span>
                   <a href={`/api/factures/${inv.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, color: 'var(--pine)' }}>📄 PDF</a>
                 </div>

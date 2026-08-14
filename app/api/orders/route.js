@@ -1,8 +1,10 @@
 const { prisma } = require('../../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
 const { computeDeliveryFeeCents } = require('../../../lib/delivery');
+const { computeVolumeDiscount } = require('../../../lib/pricing');
 const { sendEmail } = require('../../../lib/email');
 const { orderConfirmationEmail, reviewRequestEmail, SITE_URL } = require('../../../lib/emailTemplates');
+const { getStripeClient } = require('../../../lib/stripe');
 
 function getSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -27,12 +29,15 @@ async function POST(request) {
   const session = getSession(request);
   if (!session) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
-  const { town, slot, items, pickup, returns, extras } = await request.json();
+  const { town, slot, items, pickup, returns, extras, acceptedTerms, paymentChoice: requestedPaymentChoice } = await request.json();
   // items: [{ beerId, format, quantity, glassId }]
   // returns: [{ beerId, format, quantity }]
   // extras: [{ kind: 'basket' | 'merch', refId, quantity }]
   if ((!items || !items.length) && (!extras || !extras.length)) {
     return new Response(JSON.stringify({ error: 'Panier vide' }), { status: 400 });
+  }
+  if (!acceptedTerms) {
+    return new Response(JSON.stringify({ error: 'Vous devez accepter les CGU/CGV pour valider la commande.' }), { status: 400 });
   }
 
   const safeItems = items || [];
@@ -97,8 +102,35 @@ async function POST(request) {
 
   itemsTotalCents += extrasTotalCents;
 
+  const user = await prisma.user.findUnique({ where: { id: session.userId } });
+  let discountCents = 0;
+  if (user.proApproved) {
+    const totalBottles = safeItems.filter((i) => i.format > 0).reduce((sum, i) => sum + i.quantity, 0);
+    const tiers = await prisma.pricingTier.findMany();
+    ({ discountCents } = computeVolumeDiscount({
+      totalBottles,
+      discountableCents: itemsTotalCents - depositChargedCents,
+      tiers,
+    }));
+  }
+
   const deliveryFeeCents = computeDeliveryFeeCents({ pickup: !!pickup, town, itemsTotalCents: itemsTotalCents - depositChargedCents });
-  const totalCents = Math.max(0, itemsTotalCents + deliveryFeeCents - depositReturnedCents);
+  const totalCents = Math.max(0, itemsTotalCents + deliveryFeeCents - depositReturnedCents - discountCents);
+
+  // Le paiement par carte (Stripe) et le paiement à 30 jours ne sont proposés
+  // qu'aux comptes pro validés ; tout le monde d'autre paie en espèces à la livraison.
+  let paymentChoice = 'CASH_ON_DELIVERY';
+  if (user.proApproved && (requestedPaymentChoice === 'NET_30' || requestedPaymentChoice === 'STRIPE')) {
+    paymentChoice = requestedPaymentChoice;
+  }
+
+  let stripe = null;
+  if (paymentChoice === 'STRIPE') {
+    stripe = getStripeClient();
+    if (!stripe) {
+      return new Response(JSON.stringify({ error: "Le paiement par carte n'est pas encore disponible. Choisissez un autre mode de paiement." }), { status: 503 });
+    }
+  }
 
   const order = await prisma.order.create({
     data: {
@@ -110,13 +142,38 @@ async function POST(request) {
       deliveryFeeCents,
       depositChargedCents,
       depositReturnedCents,
+      discountCents,
       totalCents,
+      termsAcceptedAt: new Date(),
+      paymentChoice,
+      status: paymentChoice === 'STRIPE' ? 'EN_ATTENTE_PAIEMENT' : 'EN_PREPARATION',
       items: { create: orderItemsData },
       depositReturns: returnItemsData.length ? { create: returnItemsData } : undefined,
       extras: extrasData.length ? { create: extrasData } : undefined,
     },
     include: { items: { include: { beer: true, glass: true } }, extras: true, user: true },
   });
+
+  if (paymentChoice === 'STRIPE') {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'eur',
+          product_data: { name: `Commande Houblon chez toi n°${order.id.slice(-6)}` },
+          unit_amount: order.totalCents,
+        },
+        quantity: 1,
+      }],
+      success_url: `${SITE_URL}/compte?paiement=reussi`,
+      cancel_url: `${SITE_URL}/compte?paiement=annule`,
+      customer_email: order.user.email,
+      client_reference_id: order.id,
+    });
+    await prisma.order.update({ where: { id: order.id }, data: { stripeSessionId: checkoutSession.id } });
+    return new Response(JSON.stringify({ ...order, stripeCheckoutUrl: checkoutSession.url }), { status: 201 });
+  }
 
   const confirmation = orderConfirmationEmail({ order, user: order.user });
   const reviewEmail = reviewRequestEmail({ order, user: order.user, reviewUrl: `${SITE_URL}/avis/${order.reviewToken}` });

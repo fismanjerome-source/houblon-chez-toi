@@ -28,6 +28,7 @@ export default async function HomePage() {
   const slots = getUpcomingSlots();
   const basket = await prisma.basket.findFirst({ where: { active: true, priceCents: { gt: 0 } }, include: { beers: true } });
   const merchProducts = await prisma.merchProduct.findMany({ where: { active: true, priceCents: { gt: 0 } }, orderBy: { name: 'asc' } });
+  const pricingTiers = await prisma.pricingTier.findMany({ orderBy: { minQuantity: 'asc' } });
   const allReviews = await prisma.review.findMany({ where: { published: true }, orderBy: { createdAt: 'desc' } });
   const reviewsAverage = allReviews.length ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length : 0;
   const featuredReviews = allReviews.slice(0, 3);
@@ -62,7 +63,7 @@ export default async function HomePage() {
       </section>
 
       <section id="catalogue" className="wrap" style={{ paddingBottom: 60, scrollMarginTop: 90 }}>
-        <OrderForm groups={groups} slots={slots} basket={basket} merchProducts={merchProducts} />
+        <OrderForm groups={groups} slots={slots} basket={basket} merchProducts={merchProducts} pricingTiers={pricingTiers} />
       </section>
     </main>
   );

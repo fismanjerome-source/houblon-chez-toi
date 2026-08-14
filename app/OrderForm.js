@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import FlagIcon from './components/FlagIcon';
 import BasketCard from './components/BasketCard';
 const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
+const { computeVolumeDiscount } = require('../lib/pricing');
 const { BEER_COLORS } = require('./components/beerColors');
 const { TOWN_NAMES, townLabel } = require('../lib/towns');
 
@@ -10,12 +11,15 @@ const TOWNS = TOWN_NAMES;
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
 const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 
-export default function OrderForm({ groups, slots, basket, merchProducts }) {
+export default function OrderForm({ groups, slots, basket, merchProducts, pricingTiers }) {
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
   const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: Set<glassId> }
   const [basketQty, setBasketQty] = useState(0);
   const [merchQty, setMerchQty] = useState({}); // { [merchId]: quantity }
+  const [user, setUser] = useState(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [paymentChoice, setPaymentChoice] = useState('NET_30');
 
   function toggleGlass(beerId, glassId, checked) {
     setGlassChoice((prev) => {
@@ -34,7 +38,10 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch('/api/orders').then((res) => setLoggedIn(res.ok));
+    fetch('/api/auth/me').then(async (res) => {
+      setLoggedIn(res.ok);
+      if (res.ok) setUser(await res.json());
+    });
   }, []);
 
   function setQuantity(beerId, format, value) {
@@ -111,7 +118,14 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
   const depositCredited = returnLines.reduce((sum, l) => sum + l.creditTotal, 0);
   const subtotal = itemsSubtotal + depositCharged;
   const deliveryFee = computeDeliveryFeeCents({ pickup, town, itemsTotalCents: Math.round(itemsSubtotal * 100) }) / 100;
-  const total = Math.max(0, subtotal + deliveryFee - depositCredited);
+
+  const totalBottles = beerLines.reduce((sum, l) => sum + l.quantity, 0);
+  const proDiscount = user?.proApproved && pricingTiers?.length
+    ? computeVolumeDiscount({ totalBottles, discountableCents: Math.round(itemsSubtotal * 100), tiers: pricingTiers })
+    : { discountCents: 0, discountPercent: 0 };
+  const discountAmount = proDiscount.discountCents / 100;
+
+  const total = Math.max(0, subtotal + deliveryFee - depositCredited - discountAmount);
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - itemsSubtotal);
   const hasItems = beerLines.length > 0 || extrasLines.length > 0;
 
@@ -120,6 +134,10 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
     setStatus({ type: '', message: '' });
     if (!hasItems) {
       setStatus({ type: 'error', message: 'Ajoutez au moins un article à votre commande.' });
+      return;
+    }
+    if (!acceptedTerms) {
+      setStatus({ type: 'error', message: 'Merci de confirmer avoir pris connaissance des CGU/CGV.' });
       return;
     }
     setSubmitting(true);
@@ -133,19 +151,29 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
 
     const res = await fetch('/api/orders', {
       method: 'POST',
-      body: JSON.stringify({ town, pickup, slot, items, returns: returnItems, extras: extraItems }),
+      body: JSON.stringify({
+        town, pickup, slot, items, returns: returnItems, extras: extraItems, acceptedTerms,
+        paymentChoice: user?.proApproved ? paymentChoice : undefined,
+      }),
     });
-    setSubmitting(false);
     if (!res.ok) {
+      setSubmitting(false);
       const data = await res.json().catch(() => ({}));
       setStatus({ type: 'error', message: data.error || 'Impossible de valider la commande.' });
       return;
     }
+    const data = await res.json();
+    if (data.stripeCheckoutUrl) {
+      window.location.href = data.stripeCheckoutUrl;
+      return;
+    }
+    setSubmitting(false);
     setQty({});
     setGlassChoice({});
     setReturns({});
     setBasketQty(0);
     setMerchQty({});
+    setAcceptedTerms(false);
     setStatus({ type: 'success', message: 'Commande envoyée ! Retrouvez-la dans "Mon compte".' });
   }
 
@@ -410,6 +438,12 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
               <span>−{depositCredited.toFixed(2)} €</span>
             </div>
           )}
+          {discountAmount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: 'var(--pine)' }}>
+              <span>Remise volume pro (−{proDiscount.discountPercent}%)</span>
+              <span>−{discountAmount.toFixed(2)} €</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginTop: 8 }}>
             <span>Total</span>
             <span>{total.toFixed(2)} €</span>
@@ -469,7 +503,38 @@ export default function OrderForm({ groups, slots, basket, merchProducts }) {
           </p>
         )}
 
-        <button type="submit" className="btn" disabled={submitting || loggedIn === false} style={{ marginTop: 16 }}>
+        {user?.proApproved && (
+          <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'white' }}>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 8 }}>
+              Mode de paiement (compte pro)
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, marginBottom: 6, cursor: 'pointer' }}>
+              <input type="radio" name="paymentChoice" checked={paymentChoice === 'NET_30'} onChange={() => setPaymentChoice('NET_30')} />
+              📅 Payer à 30 jours après livraison (facture envoyée par email)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, cursor: 'pointer' }}>
+              <input type="radio" name="paymentChoice" checked={paymentChoice === 'STRIPE'} onChange={() => setPaymentChoice('STRIPE')} />
+              💳 Payer maintenant par carte (paiement sécurisé Stripe)
+            </label>
+          </div>
+        )}
+
+        {loggedIn !== false && (
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, marginTop: 14, color: 'rgba(15,23,18,0.75)' }}>
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              style={{ marginTop: 2 }}
+            />
+            <span>
+              J'ai pris connaissance des{' '}
+              <a href="/cgu" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--pine)' }}>CGU/CGV</a>.
+            </span>
+          </label>
+        )}
+
+        <button type="submit" className="btn" disabled={submitting || loggedIn === false || !acceptedTerms} style={{ marginTop: 16 }}>
           {submitting ? 'Envoi…' : 'Valider la commande'}
         </button>
       </form>

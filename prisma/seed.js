@@ -345,6 +345,18 @@ async function main() {
     });
   }
 
+  // Prix dégressifs pour les comptes pro — seuils et % réglables ensuite depuis /admin/pro.
+  const tierCount = await prisma.pricingTier.count();
+  if (tierCount === 0) {
+    await prisma.pricingTier.createMany({
+      data: [
+        { minQuantity: 12, discountPercent: 5 },
+        { minQuantity: 24, discountPercent: 10 },
+        { minQuantity: 48, discountPercent: 15 },
+      ],
+    });
+  }
+
   // Compte admin de démarrage — À CHANGER le mot de passe immédiatement après le premier déploiement
   const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@houbloncheztoi.fr' } });
   if (!existingAdmin) {

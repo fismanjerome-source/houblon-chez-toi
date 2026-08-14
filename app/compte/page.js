@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const { TOWN_NAMES, townLabel } = require('../../lib/towns');
 
 const STATUS_LABELS = {
+  EN_ATTENTE_PAIEMENT: 'En attente de paiement',
   EN_PREPARATION: 'En préparation',
   EN_LIVRAISON: 'En livraison',
   LIVREE: 'Livrée',
@@ -19,6 +20,16 @@ export default function ComptePage() {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '' });
   const [pwStatus, setPwStatus] = useState({ type: '', message: '' });
+  const [paymentBanner, setPaymentBanner] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paiement') === 'reussi') {
+      setPaymentBanner('Paiement reçu, merci ! Votre commande est en cours de confirmation (quelques instants).');
+    } else if (params.get('paiement') === 'annule') {
+      setPaymentBanner("Le paiement a été annulé — votre commande n'a pas été enregistrée.");
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -83,6 +94,11 @@ export default function ComptePage() {
   if (user) {
     return (
       <main className="wrap" style={{ padding: '48px 0' }}>
+        {paymentBanner && (
+          <p style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: 12, fontSize: 13.5, color: 'var(--pine)', marginBottom: 20 }}>
+            {paymentBanner}
+          </p>
+        )}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
           <h1 style={{ color: 'var(--pine)' }}>Bonjour {user.name?.split(' ')[0] || ''}</h1>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
@@ -139,14 +155,27 @@ export default function ComptePage() {
                 ♻️ Consignes reprises : −{(o.depositReturnedCents / 100).toFixed(2)} €
               </div>
             )}
+            {o.discountCents > 0 && (
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
+                🏷️ Remise volume pro : −{(o.discountCents / 100).toFixed(2)} €
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, flexWrap: 'wrap', gap: 8 }}>
               <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12 }}>
                 {(o.totalCents / 100).toFixed(2)} € — <span style={{ color: o.status === 'LIVREE' ? 'var(--pine)' : o.status === 'ANNULEE' ? 'var(--copper)' : 'inherit' }}>{STATUS_LABELS[o.status] || o.status}</span>
               </div>
               {o.invoice && (
-                <a href={`/api/factures/${o.invoice.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--pine)' }}>
-                  📄 Télécharger la facture ({o.invoice.number})
-                </a>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  {o.invoice.dueDate && !o.invoice.paidAt && (
+                    <span style={{ fontSize: 11, color: new Date(o.invoice.dueDate) < new Date() ? '#A32D2D' : 'var(--copper)', fontFamily: 'Space Mono, monospace' }}>
+                      {new Date(o.invoice.dueDate) < new Date() ? 'En retard — échéance' : 'À régler avant le'} {new Date(o.invoice.dueDate).toLocaleDateString('fr-FR')}
+                    </span>
+                  )}
+                  {o.invoice.paidAt && <span style={{ fontSize: 11, color: 'var(--pine)', fontFamily: 'Space Mono, monospace' }}>✓ Payée</span>}
+                  <a href={`/api/factures/${o.invoice.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--pine)' }}>
+                    📄 Télécharger la facture ({o.invoice.number})
+                  </a>
+                </div>
               )}
             </div>
           </div>

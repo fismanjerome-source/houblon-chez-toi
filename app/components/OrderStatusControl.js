@@ -2,6 +2,7 @@
 import { useState } from 'react';
 
 const STATUSES = [
+  { value: 'EN_ATTENTE_PAIEMENT', label: 'En attente de paiement' },
   { value: 'EN_PREPARATION', label: 'En préparation' },
   { value: 'EN_LIVRAISON', label: 'En livraison' },
   { value: 'LIVREE', label: 'Livrée' },

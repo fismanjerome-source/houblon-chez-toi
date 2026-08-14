@@ -7,6 +7,12 @@ import AdminBeerEditor from '../components/AdminBeerEditor';
 import OrderStatusControl from '../components/OrderStatusControl';
 import AdminNav from '../components/AdminNav';
 
+const PAYMENT_LABELS = {
+  CASH_ON_DELIVERY: 'Espèces',
+  NET_30: 'Facture 30j',
+  STRIPE: 'Carte (Stripe)',
+};
+
 export default async function AdminPage() {
   const cookieStore = cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
@@ -46,6 +52,7 @@ export default async function AdminPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>
               #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}
+              {' — '}<span style={{ color: o.paidAt ? 'var(--pine)' : 'var(--copper)' }}>{PAYMENT_LABELS[o.paymentChoice] || o.paymentChoice}{o.paidAt ? ' ✓' : ''}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               {o.invoice && (
