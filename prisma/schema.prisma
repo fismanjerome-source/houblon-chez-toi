@@ -97,9 +97,11 @@ model Order {
   depositReturnedCents Int @default(0) // consignes recréditées (reprise de bouteilles)
   totalCents Int
   createdAt DateTime    @default(now())
+  reviewToken String    @unique @default(cuid()) // lien sécurisé pour l'email de demande d'avis
   items     OrderItem[]
   depositReturns DepositReturn[]
   extras    OrderExtra[]
+  review    Review?
 }
 
 model OrderExtra {
@@ -126,6 +128,17 @@ model OrderItem {
   glassId   String?
   unitPriceCents Int
   depositCents Int @default(0) // consigne facturée pour cette ligne (unitaire × quantité)
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  order        Order    @relation(fields: [orderId], references: [id])
+  orderId      String   @unique
+  customerName String
+  rating       Int      // 1 à 5
+  comment      String?
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
 }
 
 model DepositReturn {

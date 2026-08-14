@@ -8,6 +8,7 @@ import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
 import OurValues from './components/OurValues';
+import ReviewsTeaser from './components/ReviewsTeaser';
 
 async function getBeers() {
   return prisma.beer.findMany({
@@ -27,6 +28,9 @@ export default async function HomePage() {
   const slots = getUpcomingSlots();
   const basket = await prisma.basket.findFirst({ where: { active: true, priceCents: { gt: 0 } }, include: { beers: true } });
   const merchProducts = await prisma.merchProduct.findMany({ where: { active: true, priceCents: { gt: 0 } }, orderBy: { name: 'asc' } });
+  const allReviews = await prisma.review.findMany({ where: { published: true }, orderBy: { createdAt: 'desc' } });
+  const reviewsAverage = allReviews.length ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length : 0;
+  const featuredReviews = allReviews.slice(0, 3);
 
   return (
     <main>
@@ -45,6 +49,8 @@ export default async function HomePage() {
       <BeerOfMonth beer={beerOfMonth} />
 
       <DirectContact />
+
+      <ReviewsTeaser reviews={featuredReviews} average={reviewsAverage} />
 
       <section className="wrap" style={{ padding: '8px 0 40px' }}>
         <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>D'où viennent nos bières ?</h2>

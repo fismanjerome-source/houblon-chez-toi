@@ -32,18 +32,23 @@ export default function CguPage() {
       </Section>
 
       <Section title="5. Livraison">
-        La livraison est assurée sur le créneau et dans la commune choisis par le client au moment de la
-        commande, dans la limite du secteur desservi.
+        La livraison est assurée du lundi au vendredi de 18h à 19h30, et le samedi de 10h à 12h (pas de
+        livraison le dimanche), dans la commune choisie par le client et dans la limite du secteur desservi.
+        Une commande passée avant 15h peut être livrée dès le jour même, selon disponibilité ; passée
+        après 15h, elle est livrée à partir du lendemain. Les commandes passées le dimanche sont traitées
+        à partir du lundi. Le client peut également opter pour un retrait sur place à Bondues.
       </Section>
 
       <Section title="6. Paiement">
-        Les modalités de paiement seront précisées lors de la commande (paiement en ligne à venir).
+        Le paiement en ligne par carte bancaire (Stripe) sera proposé prochainement. En attendant, le
+        règlement se fait en espèces à la livraison ou au retrait de la commande.
       </Section>
 
       <Section title="7. Rétractation">
-        Conformément à la réglementation, le droit de rétractation peut être limité pour les denrées
-        périssables ou rapidement consommables. Les modalités applicables seront précisées avant la mise
-        en service du paiement en ligne.
+        Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne s'applique
+        pas aux biens susceptibles de se détériorer ou de se périmer rapidement, ni aux boissons dont le prix
+        dépend de fluctuations du marché. En cas de produit livré non conforme ou défectueux, contactez-nous
+        (voir la page Contact) pour un échange ou un remboursement.
       </Section>
 
       <Section title="8. Données personnelles">

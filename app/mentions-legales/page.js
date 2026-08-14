@@ -6,19 +6,20 @@ export default function MentionsLegalesPage() {
       <h1 style={{ color: 'var(--pine)' }}>Mentions légales</h1>
 
       <div style={{ background: '#FBF0E0', border: '1px solid var(--amber)', borderRadius: 6, padding: 16, margin: '20px 0', fontSize: 13.5 }}>
-        ⚠️ Page à compléter avant mise en ligne réelle — les champs entre crochets doivent être remplacés
-        par vos informations exactes. Les mentions légales sont obligatoires en France pour tout site
-        marchand (article 6-III de la LCEN).
+        ⚠️ L'entreprise Houblon chez toi est en cours de création — le statut juridique et le numéro SIRET
+        seront ajoutés ici dès l'immatriculation effective. Les champs restants entre crochets doivent être
+        complétés avant toute mise en ligne réelle. Les mentions légales sont obligatoires en France pour
+        tout site marchand (article 6-III de la LCEN).
       </div>
 
       <Section title="Éditeur du site">
         [Nom de l'entreprise ou nom et prénom si vous êtes auto-entrepreneur]<br />
-        [Statut juridique — ex : auto-entrepreneur, SASU, EURL…]<br />
-        [Adresse complète du siège]<br />
-        [Numéro SIRET]<br />
+        [Statut juridique — entreprise en cours de création]<br />
+        984 Avenue du Général de Gaulle, 59910 Bondues<br />
+        [Numéro SIRET — à venir]<br />
         [Numéro de TVA intracommunautaire, si applicable]<br />
-        Email : [votre email de contact]<br />
-        Téléphone : [votre numéro, facultatif]
+        Email : contact@houbloncheztoi.fr<br />
+        Téléphone : 06 08 12 91 45
       </Section>
 
       <Section title="Directeur de la publication">

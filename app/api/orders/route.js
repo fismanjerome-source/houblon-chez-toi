@@ -1,6 +1,8 @@
 const { prisma } = require('../../../lib/db');
 const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
 const { computeDeliveryFeeCents } = require('../../../lib/delivery');
+const { sendEmail } = require('../../../lib/email');
+const { orderConfirmationEmail, reviewRequestEmail, SITE_URL } = require('../../../lib/emailTemplates');
 
 function getSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -113,8 +115,16 @@ async function POST(request) {
       depositReturns: returnItemsData.length ? { create: returnItemsData } : undefined,
       extras: extrasData.length ? { create: extrasData } : undefined,
     },
-    include: { items: true, extras: true },
+    include: { items: { include: { beer: true, glass: true } }, extras: true, user: true },
   });
+
+  const confirmation = orderConfirmationEmail({ order, user: order.user });
+  const reviewEmail = reviewRequestEmail({ order, user: order.user, reviewUrl: `${SITE_URL}/avis/${order.reviewToken}` });
+  const reviewSendAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  await Promise.all([
+    sendEmail({ to: order.user.email, subject: confirmation.subject, html: confirmation.html }),
+    sendEmail({ to: order.user.email, subject: reviewEmail.subject, html: reviewEmail.html, scheduledAt: reviewSendAt }),
+  ]);
 
   return new Response(JSON.stringify(order), { status: 201 });
 }
