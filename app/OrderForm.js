@@ -11,7 +11,93 @@ const TOWNS = TOWN_NAMES;
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100;
 const DELIVERY_FEE = DELIVERY_FEE_CENTS / 100;
 
-export default function OrderForm({ groups, slots, basket, merchProducts, pricingTiers }) {
+const TXT = {
+  fr: {
+    addGlass: 'Ajouter un verre',
+    viewSheet: 'Voir la fiche complète →',
+    consigne: 'consigne',
+    boutique: 'Boutique',
+    yourOrder: 'Votre commande',
+    chooseQty: 'Choisissez des quantités ci-dessus pour composer votre commande.',
+    deposit: (name, format) => `+ consigne ${name} (${format}cl)`,
+    returnLine: (qty, name, format) => `− reprise ${qty} × ${name} (${format}cl)`,
+    returnSummary: '♻️ Rendre des bouteilles consignées (recrédité sur cette commande)',
+    freeShippingRemaining: (amount, fee) => `🚚 Plus que ${amount} € d'achat pour la livraison gratuite (sinon ${fee} €).`,
+    freeShipping: '🚚 Livraison gratuite !',
+    giftPromo: (threshold) => `🎁 À partir de ${threshold} € : un cadeau surprise bientôt disponible sur vos premières commandes.`,
+    subtotalBeers: (hasGlass) => `Sous-total bières${hasGlass ? ' + verres' : ''}`,
+    deposits: 'Consignes',
+    delivery: 'Livraison',
+    free: 'Gratuite',
+    returnDeposits: 'Reprise consignes',
+    proDiscount: (pct) => `Remise volume pro (−${pct}%)`,
+    total: 'Total',
+    deliveryBtn: 'Livraison',
+    pickupBtn: 'Retrait à Bondues',
+    pickupAddressLabel: 'Adresse de retrait',
+    townLabel: 'Commune de livraison',
+    slotLabel: (pickup) => `Créneau de ${pickup ? 'retrait' : 'livraison'}`,
+    loginPromptLink: 'Connectez-vous ou créez un compte',
+    loginPromptSuffix: 'pour valider votre commande.',
+    paymentModeLabel: 'Mode de paiement (compte pro)',
+    payNet30: '📅 Payer à 30 jours après livraison (facture envoyée par email)',
+    payStripe: '💳 Payer maintenant par carte (paiement sécurisé Stripe)',
+    termsPrefix: "J'ai pris connaissance des",
+    termsLink: 'CGU/CGV',
+    submitting: 'Envoi…',
+    submit: 'Valider la commande',
+    bottleAlt: 'Bouteille',
+    glassAlt: 'Verre',
+    errCart: 'Ajoutez au moins un article à votre commande.',
+    errTerms: 'Merci de confirmer avoir pris connaissance des CGU/CGV.',
+    errGeneric: 'Impossible de valider la commande.',
+    success: 'Commande envoyée ! Retrouvez-la dans "Mon compte".',
+  },
+  nl: {
+    addGlass: 'Glas toevoegen',
+    viewSheet: 'Bekijk de volledige fiche →',
+    consigne: 'statiegeld',
+    boutique: 'Winkel',
+    yourOrder: 'Uw bestelling',
+    chooseQty: 'Kies hierboven de hoeveelheden om uw bestelling samen te stellen.',
+    deposit: (name, format) => `+ statiegeld ${name} (${format}cl)`,
+    returnLine: (qty, name, format) => `− terugname ${qty} × ${name} (${format}cl)`,
+    returnSummary: '♻️ Statiegeldflessen inleveren (verrekend met deze bestelling)',
+    freeShippingRemaining: (amount, fee) => `🚚 Nog maar ${amount} € nodig voor gratis levering (anders ${fee} €).`,
+    freeShipping: '🚚 Gratis levering!',
+    giftPromo: (threshold) => `🎁 Vanaf ${threshold} €: binnenkort een verrassingscadeau bij uw eerste bestellingen.`,
+    subtotalBeers: (hasGlass) => `Subtotaal bieren${hasGlass ? ' + glazen' : ''}`,
+    deposits: 'Statiegeld',
+    delivery: 'Levering',
+    free: 'Gratis',
+    returnDeposits: 'Terugname statiegeld',
+    proDiscount: (pct) => `Volumekorting pro (−${pct}%)`,
+    total: 'Totaal',
+    deliveryBtn: 'Levering',
+    pickupBtn: 'Afhalen in Bondues',
+    pickupAddressLabel: 'Ophaaladres',
+    townLabel: 'Leveringsgemeente',
+    slotLabel: (pickup) => `${pickup ? 'Ophaal' : 'Leverings'}moment`,
+    loginPromptLink: 'Log in of maak een account aan',
+    loginPromptSuffix: 'om uw bestelling te bevestigen.',
+    paymentModeLabel: 'Betaalmethode (pro-account)',
+    payNet30: '📅 Betalen binnen 30 dagen na levering (factuur per e-mail)',
+    payStripe: '💳 Nu betalen met kaart (beveiligde betaling via Stripe)',
+    termsPrefix: 'Ik heb kennis genomen van de',
+    termsLink: 'algemene voorwaarden',
+    submitting: 'Verzenden…',
+    submit: 'Bestelling bevestigen',
+    bottleAlt: 'Fles',
+    glassAlt: 'Glas',
+    errCart: 'Voeg minstens één artikel toe aan uw bestelling.',
+    errTerms: 'Bevestig dat u kennis heeft genomen van de algemene voorwaarden.',
+    errGeneric: 'De bestelling kon niet worden bevestigd.',
+    success: 'Bestelling verzonden! U vindt ze terug bij "Mijn account".',
+  },
+};
+
+export default function OrderForm({ groups, slots, basket, merchProducts, pricingTiers, locale = 'fr' }) {
+  const t = TXT[locale] || TXT.fr;
   const beers = groups.flatMap((g) => g.beers);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
   const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: Set<glassId> }
@@ -133,11 +219,11 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     e.preventDefault();
     setStatus({ type: '', message: '' });
     if (!hasItems) {
-      setStatus({ type: 'error', message: 'Ajoutez au moins un article à votre commande.' });
+      setStatus({ type: 'error', message: t.errCart });
       return;
     }
     if (!acceptedTerms) {
-      setStatus({ type: 'error', message: 'Merci de confirmer avoir pris connaissance des CGU/CGV.' });
+      setStatus({ type: 'error', message: t.errTerms });
       return;
     }
     setSubmitting(true);
@@ -159,7 +245,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     if (!res.ok) {
       setSubmitting(false);
       const data = await res.json().catch(() => ({}));
-      setStatus({ type: 'error', message: data.error || 'Impossible de valider la commande.' });
+      setStatus({ type: 'error', message: data.error || t.errGeneric });
       return;
     }
     const data = await res.json();
@@ -174,7 +260,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     setBasketQty(0);
     setMerchQty({});
     setAcceptedTerms(false);
-    setStatus({ type: 'success', message: 'Commande envoyée ! Retrouvez-la dans "Mon compte".' });
+    setStatus({ type: 'success', message: t.success });
   }
 
   return (
@@ -186,6 +272,9 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             const color = BEER_COLORS[beer.name] || 'var(--line)';
             const glasses = beer.glasses || [];
             const selectedGlassIds = glassChoice[beer.id] || new Set();
+            const beerDescription = locale === 'nl' && beer.descriptionNl ? beer.descriptionNl : beer.description;
+            const beerTastingNote = locale === 'nl' && beer.tastingNoteNl ? beer.tastingNoteNl : beer.tastingNote;
+            const beerOrigin = locale === 'nl' && beer.originNl ? beer.originNl : beer.origin;
             const previewGlassImage =
               (glasses.find((g) => selectedGlassIds.has(g.id) && g.imageUrl) || {}).imageUrl ||
               (glasses.find((g) => g.imageUrl) || {}).imageUrl;
@@ -204,7 +293,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                     {beer.bottleImageUrl && (
                       <img
                         src={beer.bottleImageUrl}
-                        alt={`Bouteille ${beer.name}`}
+                        alt={`${t.bottleAlt} ${beer.name}`}
                         style={{ maxWidth: 70, maxHeight: 200, objectFit: 'contain' }}
                       />
                     )}
@@ -213,7 +302,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                     {previewGlassImage && (
                       <img
                         src={previewGlassImage}
-                        alt={`Verre ${beer.name}`}
+                        alt={`${t.glassAlt} ${beer.name}`}
                         style={{ maxWidth: 60, maxHeight: 170, objectFit: 'contain' }}
                       />
                     )}
@@ -228,23 +317,23 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                   <FlagIcon country={beer.country} />
                 </div>
                 <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
-                  {beer.origin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
+                  {beerOrigin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
                 </div>
-                <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beer.description}</p>
-                {beer.tastingNote && (
+                <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beerDescription}</p>
+                {beerTastingNote && (
                   <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 4 }}>
-                    « {beer.tastingNote} »
+                    « {beerTastingNote} »
                   </p>
                 )}
                 <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
-                  Voir la fiche complète →
+                  {t.viewSheet}
                 </a>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
                   {beer.price33 > 0 && (
                     <QuantityField
                       label={`33cl — ${beer.price33.toFixed(2)} €`}
-                      sublabel={beer.depositCents33 > 0 ? `+ ${(beer.depositCents33 / 100).toFixed(2)} € consigne` : null}
+                      sublabel={beer.depositCents33 > 0 ? `+ ${(beer.depositCents33 / 100).toFixed(2)} € ${t.consigne}` : null}
                       value={qty[`${beer.id}-33`] || 0}
                       onChange={(v) => setQuantity(beer.id, 33, v)}
                     />
@@ -252,7 +341,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                   {beer.price75 > 0 && (
                     <QuantityField
                       label={`75cl — ${beer.price75.toFixed(2)} €`}
-                      sublabel={beer.depositCents75 > 0 ? `+ ${(beer.depositCents75 / 100).toFixed(2)} € consigne` : null}
+                      sublabel={beer.depositCents75 > 0 ? `+ ${(beer.depositCents75 / 100).toFixed(2)} € ${t.consigne}` : null}
                       value={qty[`${beer.id}-75`] || 0}
                       onChange={(v) => setQuantity(beer.id, 75, v)}
                     />
@@ -262,7 +351,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                 {glasses.length > 0 && (
                   <div style={{ marginTop: 14 }}>
                     <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 6 }}>
-                      Ajouter un verre
+                      {t.addGlass}
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                       {glasses.map((g) => (
@@ -290,18 +379,21 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           basket={basket}
           quantity={basketQty}
           onChange={(v) => setBasketQty(Math.max(0, Math.min(9, Number(v) || 0)))}
+          locale={locale}
         />
       )}
 
       {merchProducts && merchProducts.length > 0 && (
         <div style={{ marginBottom: 24 }}>
-          <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Boutique</h2>
+          <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>{t.boutique}</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            {merchProducts.map((m) => (
+            {merchProducts.map((m) => {
+              const merchDescription = locale === 'nl' && m.descriptionNl ? m.descriptionNl : m.description;
+              return (
               <div key={m.id} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 8, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
                 {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: '100%', height: 120, objectFit: 'contain', marginBottom: 10 }} />}
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--pine)', marginBottom: 4 }}>{m.name}</div>
-                {m.description && <p style={{ fontSize: 12.5, color: 'rgba(15,23,18,0.65)', marginBottom: 10 }}>{m.description}</p>}
+                {merchDescription && <p style={{ fontSize: 12.5, color: 'rgba(15,23,18,0.65)', marginBottom: 10 }}>{merchDescription}</p>}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
                   <input
@@ -314,16 +406,17 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                   />
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
       <form onSubmit={handleSubmit} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 24, marginTop: 24 }}>
-        <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>Votre commande</h2>
+        <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>{t.yourOrder}</h2>
 
         {!hasItems ? (
-          <p style={{ color: 'rgba(15,23,18,0.5)', fontSize: 13.5 }}>Choisissez des quantités ci-dessus pour composer votre commande.</p>
+          <p style={{ color: 'rgba(15,23,18,0.5)', fontSize: 13.5 }}>{t.chooseQty}</p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', fontSize: 13.5 }}>
             {beerLines.map((l) => (
@@ -340,13 +433,13 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             ))}
             {beerLines.filter((l) => l.depositTotal > 0).map((l) => (
               <li key={`deposit-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)', fontSize: 12.5 }}>
-                <span>+ consigne {l.beer.name} ({l.format}cl)</span>
+                <span>{t.deposit(l.beer.name, l.format)}</span>
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.depositTotal.toFixed(2)} €</span>
               </li>
             ))}
             {returnLines.map((l) => (
               <li key={`return-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--pine)', fontSize: 12.5 }}>
-                <span>− reprise {l.quantity} × {l.beer.name} ({l.format}cl)</span>
+                <span>{t.returnLine(l.quantity, l.beer.name, l.format)}</span>
                 <span style={{ fontFamily: 'Space Mono, monospace' }}>−{l.creditTotal.toFixed(2)} €</span>
               </li>
             ))}
@@ -362,7 +455,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         {depositEligibleBeers.length > 0 && (
           <details style={{ marginBottom: 16, fontSize: 13 }}>
             <summary style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11.5, color: 'var(--pine)' }}>
-              ♻️ Rendre des bouteilles consignées (recrédité sur cette commande)
+              {t.returnSummary}
             </summary>
             <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {depositEligibleBeers.map((beer) => (
@@ -404,14 +497,14 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           <>
             {remainingForFreeShipping > 0 && !pickup && town !== 'Bondues' ? (
               <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>
-                🚚 Plus que {remainingForFreeShipping.toFixed(2)} € d'achat pour la livraison gratuite (sinon {DELIVERY_FEE.toFixed(2)} €).
+                {t.freeShippingRemaining(remainingForFreeShipping.toFixed(2), DELIVERY_FEE.toFixed(2))}
               </p>
             ) : (
-              <p style={{ fontSize: 13, color: 'var(--pine)', marginBottom: 4 }}>🚚 Livraison gratuite !</p>
+              <p style={{ fontSize: 13, color: 'var(--pine)', marginBottom: 4 }}>{t.freeShipping}</p>
             )}
             {itemsSubtotal >= FREE_SHIPPING_THRESHOLD && (
               <p style={{ fontSize: 13, color: 'var(--copper)', marginBottom: 4 }}>
-                🎁 À partir de {FREE_SHIPPING_THRESHOLD.toFixed(0)} € : un cadeau surprise bientôt disponible sur vos premières commandes.
+                {t.giftPromo(FREE_SHIPPING_THRESHOLD.toFixed(0))}
               </p>
             )}
           </>
@@ -419,33 +512,33 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
         <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span>Sous-total bières{glassLines.length > 0 ? ' + verres' : ''}</span>
+            <span>{t.subtotalBeers(glassLines.length > 0)}</span>
             <span>{itemsSubtotal.toFixed(2)} €</span>
           </div>
           {depositCharged > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span>Consignes</span>
+              <span>{t.deposits}</span>
               <span>{depositCharged.toFixed(2)} €</span>
             </div>
           )}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span>Livraison</span>
-            <span>{deliveryFee > 0 ? `${deliveryFee.toFixed(2)} €` : 'Gratuite'}</span>
+            <span>{t.delivery}</span>
+            <span>{deliveryFee > 0 ? `${deliveryFee.toFixed(2)} €` : t.free}</span>
           </div>
           {depositCredited > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: 'var(--pine)' }}>
-              <span>Reprise consignes</span>
+              <span>{t.returnDeposits}</span>
               <span>−{depositCredited.toFixed(2)} €</span>
             </div>
           )}
           {discountAmount > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: 'var(--pine)' }}>
-              <span>Remise volume pro (−{proDiscount.discountPercent}%)</span>
+              <span>{t.proDiscount(proDiscount.discountPercent)}</span>
               <span>−{discountAmount.toFixed(2)} €</span>
             </div>
           )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginTop: 8 }}>
-            <span>Total</span>
+            <span>{t.total}</span>
             <span>{total.toFixed(2)} €</span>
           </div>
         </div>
@@ -457,7 +550,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             className="btn"
             style={!pickup ? {} : { background: 'transparent', color: 'var(--pine)' }}
           >
-            Livraison
+            {t.deliveryBtn}
           </button>
           <button
             type="button"
@@ -465,28 +558,28 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             className="btn"
             style={pickup ? {} : { background: 'transparent', color: 'var(--pine)' }}
           >
-            Retrait à Bondues
+            {t.pickupBtn}
           </button>
         </div>
 
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           {pickup ? (
             <div className="field" style={{ flex: 1, minWidth: 220 }}>
-              <label>Adresse de retrait</label>
+              <label>{t.pickupAddressLabel}</label>
               <p style={{ margin: 0, fontSize: 14, padding: 12, border: '1px solid var(--line)', borderRadius: 3, background: 'var(--paper)' }}>
                 📍 {PICKUP_ADDRESS}
               </p>
             </div>
           ) : (
             <div className="field" style={{ flex: 1, minWidth: 180 }}>
-              <label>Commune de livraison</label>
+              <label>{t.townLabel}</label>
               <select value={town} onChange={(e) => setTown(e.target.value)}>
-                {TOWNS.map((t) => <option key={t} value={t}>{townLabel(t)}</option>)}
+                {TOWNS.map((townName) => <option key={townName} value={townName}>{townLabel(townName)}</option>)}
               </select>
             </div>
           )}
           <div className="field" style={{ flex: 1, minWidth: 220 }}>
-            <label>Créneau de {pickup ? 'retrait' : 'livraison'}</label>
+            <label>{t.slotLabel(pickup)}</label>
             <select value={slot} onChange={(e) => setSlot(e.target.value)}>
               {slots.map((s) => <option key={s}>{s}</option>)}
             </select>
@@ -499,22 +592,22 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
         {loggedIn === false && (
           <p style={{ fontSize: 13.5, marginTop: 4 }}>
-            <a href="/compte" style={{ color: 'var(--copper)' }}>Connectez-vous ou créez un compte</a> pour valider votre commande.
+            <a href="/compte" style={{ color: 'var(--copper)' }}>{t.loginPromptLink}</a> {t.loginPromptSuffix}
           </p>
         )}
 
         {user?.proApproved && (
           <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'white' }}>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 8 }}>
-              Mode de paiement (compte pro)
+              {t.paymentModeLabel}
             </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, marginBottom: 6, cursor: 'pointer' }}>
               <input type="radio" name="paymentChoice" checked={paymentChoice === 'NET_30'} onChange={() => setPaymentChoice('NET_30')} />
-              📅 Payer à 30 jours après livraison (facture envoyée par email)
+              {t.payNet30}
             </label>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, cursor: 'pointer' }}>
               <input type="radio" name="paymentChoice" checked={paymentChoice === 'STRIPE'} onChange={() => setPaymentChoice('STRIPE')} />
-              💳 Payer maintenant par carte (paiement sécurisé Stripe)
+              {t.payStripe}
             </label>
           </div>
         )}
@@ -528,14 +621,14 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               style={{ marginTop: 2 }}
             />
             <span>
-              J'ai pris connaissance des{' '}
-              <a href="/cgu" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--pine)' }}>CGU/CGV</a>.
+              {t.termsPrefix}{' '}
+              <a href="/cgu" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--pine)' }}>{t.termsLink}</a>.
             </span>
           </label>
         )}
 
         <button type="submit" className="btn" disabled={submitting || loggedIn === false || !acceptedTerms} style={{ marginTop: 16 }}>
-          {submitting ? 'Envoi…' : 'Valider la commande'}
+          {submitting ? t.submitting : t.submit}
         </button>
       </form>
     </div>

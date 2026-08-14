@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
-const LINKS = [
+const LINKS_FR = [
   { href: '/', emoji: '🏠', label: 'Accueil' },
   { href: '/#catalogue', emoji: '🍺', label: 'Nos bières' },
   { href: '/qui-sommes-nous', emoji: '👨‍👩‍👧', label: 'Qui sommes-nous' },
@@ -15,7 +15,22 @@ const LINKS = [
   { href: '/mentions-legales', emoji: '⚖️', label: 'Mentions légales' },
 ];
 
-export default function MobileMenu() {
+const LINKS_NL = [
+  { href: '/', emoji: '🏠', label: 'Home' },
+  { href: '/#catalogue', emoji: '🍺', label: 'Onze bieren' },
+  { href: '/qui-sommes-nous', emoji: '👨‍👩‍👧', label: 'Over ons' },
+  { href: '/histoire', emoji: '📜', label: 'Geschiedenis van het bier' },
+  { href: '/verres', emoji: '🍷', label: 'Geschiedenis van het bierglas' },
+  { href: '/avis', emoji: '⭐', label: 'Klantenbeoordelingen' },
+  { href: '/faq', emoji: '❓', label: 'Veelgestelde vragen' },
+  { href: '/compte', emoji: '👤', label: 'Mijn account' },
+  { href: '/contact', emoji: '💬', label: 'Contact' },
+  { href: '/cgu', emoji: '📄', label: 'Algemene voorwaarden' },
+  { href: '/mentions-legales', emoji: '⚖️', label: 'Wettelijke vermeldingen' },
+];
+
+export default function MobileMenu({ locale = 'fr' }) {
+  const LINKS = locale === 'nl' ? LINKS_NL : LINKS_FR;
   const [open, setOpen] = useState(false);
   const boxRef = useRef(null);
 

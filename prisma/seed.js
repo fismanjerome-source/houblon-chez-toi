@@ -357,6 +357,13 @@ async function main() {
     });
   }
 
+  // Traductions néerlandaises du catalogue (flamand) — cf. lib/i18n.js.
+  const BEER_TRANSLATIONS_NL = require('./beerTranslationsNl');
+  for (const [name, data] of Object.entries(BEER_TRANSLATIONS_NL)) {
+    const beer = await prisma.beer.findFirst({ where: { name } });
+    if (beer) await prisma.beer.update({ where: { id: beer.id }, data });
+  }
+
   // Compte admin de démarrage — À CHANGER le mot de passe immédiatement après le premier déploiement
   const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@houbloncheztoi.fr' } });
   if (!existingAdmin) {

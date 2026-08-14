@@ -3,15 +3,21 @@ const PHONE_TEL = '0608129145';
 const WHATSAPP_NUMBER = '33608129145';
 const EMAIL = 'contact@houbloncheztoi.fr';
 
-export default function DirectContact() {
+const TXT = {
+  fr: { title: 'Un peu de houblon chez toi ? Une question ?', subtitle: 'Un vrai contact, toujours disponible :' },
+  nl: { title: 'Zin in Houblon chez toi? Een vraag?', subtitle: 'Een echt contact, altijd beschikbaar:' },
+};
+
+export default function DirectContact({ locale = 'fr' }) {
+  const t = TXT[locale] || TXT.fr;
   return (
     <section className="wrap" style={{ padding: '8px 0 40px' }}>
       <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: '28px', textAlign: 'center' }}>
         <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, color: 'var(--pine)', margin: '0 0 6px' }}>
-          Un peu de houblon chez toi ? Une question ?
+          {t.title}
         </h2>
         <p style={{ margin: '0 0 22px', color: 'rgba(15,23,18,0.7)', fontSize: 14.5 }}>
-          Un vrai contact, toujours disponible :
+          {t.subtitle}
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>

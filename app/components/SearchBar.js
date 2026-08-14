@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
-export default function SearchBar() {
+export default function SearchBar({ locale = 'fr' }) {
   const [beers, setBeers] = useState([]);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -48,7 +48,7 @@ export default function SearchBar() {
           value={query}
           onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
-          placeholder="Trouve ta bière !"
+          placeholder={locale === 'nl' ? 'Vind je bier!' : 'Trouve ta bière !'}
           style={{
             width: '100%',
             padding: '9px 12px 9px 34px',
@@ -68,7 +68,7 @@ export default function SearchBar() {
           zIndex: 20, maxHeight: 320, overflowY: 'auto',
         }}>
           {results.length === 0 ? (
-            <div style={{ padding: 14, fontSize: 13, color: 'rgba(15,23,18,0.5)' }}>Aucune bière trouvée.</div>
+            <div style={{ padding: 14, fontSize: 13, color: 'rgba(15,23,18,0.5)' }}>{locale === 'nl' ? 'Geen bier gevonden.' : 'Aucune bière trouvée.'}</div>
           ) : (
             results.map((b) => (
               <div

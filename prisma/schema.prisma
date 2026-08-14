@@ -54,6 +54,17 @@ model Beer {
   bottleImageUrl String?
   learnMoreUrl String? // page officielle de la brasserie
   shortHistory String? // courte histoire pour la mise en avant "bière du mois"
+  // Traductions néerlandaises (flamand) — si vide, on retombe sur le texte français.
+  originNl      String?
+  descriptionNl String?
+  tastingNoteNl String?
+  appearanceNl  String?
+  aromaNl       String?
+  tasteNl       String?
+  servingTempNl String?
+  foodPairingNl String?
+  brewHistoryNl String?
+  shortHistoryNl String?
   isBeerOfMonth Boolean @default(false)
   glasses    Glass[]
   orderItems OrderItem[]
@@ -65,6 +76,7 @@ model Basket {
   id          String  @id @default(cuid())
   name        String  @default("Le panier de la quinzaine")
   description String?
+  descriptionNl String?
   priceCents  Int     @default(0)
   active      Boolean @default(false) // inactif tant qu'aucun prix n'est fixé
   beers       Beer[]  @relation("BasketBeers")
@@ -74,6 +86,7 @@ model MerchProduct {
   id          String  @id @default(cuid())
   name        String
   description String?
+  descriptionNl String?
   priceCents  Int     @default(0)
   imageUrl    String?
   active      Boolean @default(false) // inactif tant qu'aucun prix n'est fixé

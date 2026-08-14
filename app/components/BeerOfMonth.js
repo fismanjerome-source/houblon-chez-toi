@@ -1,6 +1,13 @@
-export default function BeerOfMonth({ beer }) {
+const TXT = {
+  fr: { label: 'BIÈRE DU MOIS', order: 'Commander', learnMore: 'En savoir plus →' },
+  nl: { label: 'BIER VAN DE MAAND', order: 'Bestellen', learnMore: 'Meer weten →' },
+};
+
+export default function BeerOfMonth({ beer, locale = 'fr' }) {
   if (!beer) return null;
+  const t = TXT[locale] || TXT.fr;
   const glassImage = ((beer.glasses || []).find((g) => g.imageUrl) || {}).imageUrl;
+  const shortHistory = locale === 'nl' && beer.shortHistoryNl ? beer.shortHistoryNl : beer.shortHistory;
 
   return (
     <section
@@ -18,18 +25,18 @@ export default function BeerOfMonth({ beer }) {
         </div>
         <div style={{ flex: '1 1 280px', minWidth: 240 }}>
           <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 8 }}>
-            BIÈRE DU MOIS
+            {t.label}
           </div>
           <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 28, margin: '0 0 6px' }}>{beer.name}</h2>
           {beer.abv > 0 && (
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, opacity: 0.75, marginBottom: 14 }}>{beer.abv}% vol.</div>
           )}
-          {beer.shortHistory && (
-            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.92, marginBottom: 18, maxWidth: 520 }}>{beer.shortHistory}</p>
+          {shortHistory && (
+            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.92, marginBottom: 18, maxWidth: 520 }}>{shortHistory}</p>
           )}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href={`#beer-${beer.id}`} className="btn" style={{ background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--pine)' }}>
-              Commander
+              {t.order}
             </a>
             {beer.learnMoreUrl && (
               <a
@@ -39,7 +46,7 @@ export default function BeerOfMonth({ beer }) {
                 className="btn"
                 style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'rgba(243,236,216,0.5)' }}
               >
-                En savoir plus →
+                {t.learnMore}
               </a>
             )}
           </div>

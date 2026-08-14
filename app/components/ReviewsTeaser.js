@@ -1,13 +1,19 @@
 import Stars from './ReviewStars';
 
-export default function ReviewsTeaser({ reviews, average }) {
+const TXT = {
+  fr: { title: 'Avis clients', seeAll: 'tous les avis' },
+  nl: { title: 'Klantenbeoordelingen', seeAll: 'alle beoordelingen' },
+};
+
+export default function ReviewsTeaser({ reviews, average, locale = 'fr' }) {
   if (!reviews.length) return null;
+  const t = TXT[locale] || TXT.fr;
 
   return (
     <section className="wrap" style={{ padding: '8px 0 40px' }}>
-      <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>Avis clients</h2>
+      <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>{t.title}</h2>
       <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.6)', marginBottom: 16 }}>
-        <Stars rating={Math.round(average)} /> {average.toFixed(1)} / 5 — voir <a href="/avis" style={{ color: 'var(--pine)' }}>tous les avis</a>
+        <Stars rating={Math.round(average)} /> {average.toFixed(1)} / 5 — {locale === 'nl' ? 'bekijk' : 'voir'} <a href="/avis" style={{ color: 'var(--pine)' }}>{t.seeAll}</a>
       </p>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {reviews.map((r) => (
