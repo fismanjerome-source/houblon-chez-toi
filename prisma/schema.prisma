@@ -58,6 +58,13 @@ model PromoCode {
   createdAt       DateTime @default(now())
 }
 
+model TelegramSubscriber {
+  id        String   @id @default(cuid())
+  chatId    String   @unique // identifiant de conversation Telegram, enregistré via /start <code>
+  label     String?  // nom Telegram affiché au moment de l'enregistrement, pour s'y retrouver
+  createdAt DateTime @default(now())
+}
+
 model PricingTier {
   id              String @id @default(cuid())
   minQuantity     Int    @unique // seuil en nombre de bouteilles, ex: 12

@@ -6,6 +6,7 @@ const { sendEmail } = require('../../../lib/email');
 const { orderConfirmationEmail, reviewRequestEmail, referralInviteEmail, SITE_URL } = require('../../../lib/emailTemplates');
 const { getStripeClient } = require('../../../lib/stripe');
 const { resolveCode, computeCodeDiscountCents } = require('../../../lib/promoCodes');
+const { notifyNewOrder } = require('../../../lib/telegramNotify');
 
 function getSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -225,6 +226,7 @@ async function POST(request) {
     emailsToSend.push(sendEmail({ to: order.user.email, subject: referral.subject, html: referral.html, scheduledAt: referralSendAt }));
   }
   await Promise.all(emailsToSend);
+  await notifyNewOrder(order);
 
   return new Response(JSON.stringify(order), { status: 201 });
 }

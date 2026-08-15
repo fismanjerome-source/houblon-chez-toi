@@ -2,6 +2,7 @@ const { prisma } = require('../../../../lib/db');
 const { getStripeClient } = require('../../../../lib/stripe');
 const { sendEmail } = require('../../../../lib/email');
 const { orderConfirmationEmail, reviewRequestEmail, referralInviteEmail, SITE_URL } = require('../../../../lib/emailTemplates');
+const { notifyPaymentConfirmed } = require('../../../../lib/telegramNotify');
 
 async function POST(request) {
   const stripe = getStripeClient();
@@ -46,6 +47,7 @@ async function POST(request) {
           emailsToSend.push(sendEmail({ to: order.user.email, subject: referral.subject, html: referral.html, scheduledAt: referralSendAt }));
         }
         await Promise.all(emailsToSend);
+        await notifyPaymentConfirmed(order);
       }
     }
   }

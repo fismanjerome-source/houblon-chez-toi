@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { prisma } = require('../../../../lib/db');
 const { createSessionToken, sessionCookieHeader } = require('../../../../lib/auth');
 const { generateUniqueReferralCode } = require('../../../../lib/referral');
+const { notifyProRequest } = require('../../../../lib/telegramNotify');
 
 async function POST(request) {
   const body = await request.json();
@@ -32,6 +33,10 @@ async function POST(request) {
       referralCode,
     },
   });
+
+  if (user.accountType === 'PROFESSIONNEL') {
+    await notifyProRequest(user);
+  }
 
   const token = createSessionToken(user);
   return new Response(JSON.stringify({ name: user.name, email: user.email }), {

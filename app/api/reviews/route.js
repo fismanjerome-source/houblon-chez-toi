@@ -1,4 +1,5 @@
 const { prisma } = require('../../../lib/db');
+const { notifyNewReview } = require('../../../lib/telegramNotify');
 
 async function GET() {
   const reviews = await prisma.review.findMany({
@@ -27,6 +28,8 @@ async function POST(request) {
       comment: comment ? String(comment).slice(0, 1000) : null,
     },
   });
+
+  await notifyNewReview(review);
 
   return new Response(JSON.stringify(review), { status: 201 });
 }
