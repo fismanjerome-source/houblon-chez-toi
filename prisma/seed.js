@@ -334,13 +334,26 @@ async function main() {
     });
   }
 
-  // Boutique : casquette et ecocup, prix à définir par l'admin.
+  // Boutique : casquette et ecocups (2 tailles), prix à définir par l'admin.
   const merchCount = await prisma.merchProduct.count();
   if (merchCount === 0) {
     await prisma.merchProduct.createMany({
       data: [
         { name: 'Casquette Houblon chez toi', description: 'Casquette brodée avec notre logo houblon.', priceCents: 0, active: false },
-        { name: 'Ecocup Houblon chez toi', description: 'Gobelet réutilisable avec notre logo houblon.', priceCents: 0, active: false },
+        {
+          name: 'Ecocup 25 cl',
+          description: 'Gobelet réutilisable et incassable, personnalisé avec notre logo houblon. Fabriqué en France 🇫🇷.',
+          descriptionNl: 'Herbruikbare, onbreekbare beker met ons hopblad-logo. Gemaakt in Frankrijk 🇫🇷.',
+          priceCents: 0,
+          active: false,
+        },
+        {
+          name: 'Ecocup 50 cl',
+          description: 'Le grand format, réutilisable et incassable, personnalisé avec notre logo houblon. Fabriqué en France 🇫🇷.',
+          descriptionNl: 'Het grote formaat, herbruikbaar en onbreekbaar, met ons hopblad-logo. Gemaakt in Frankrijk 🇫🇷.',
+          priceCents: 0,
+          active: false,
+        },
       ],
     });
   }

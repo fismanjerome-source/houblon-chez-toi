@@ -55,6 +55,7 @@ const TXT = {
     codeLabel: 'Code promo / parrainage (facultatif)',
     codePlaceholder: 'Ex : JEROME482',
     credit: 'Crédit utilisé',
+    madeInFrance: 'Fabriqué en France',
   },
   nl: {
     addGlass: 'Glas toevoegen',
@@ -99,6 +100,7 @@ const TXT = {
     codeLabel: 'Kortingscode / doorverwijzingscode (optioneel)',
     codePlaceholder: 'Bv.: JEROME482',
     credit: 'Gebruikt tegoed',
+    madeInFrance: 'Gemaakt in Frankrijk',
   },
 };
 
@@ -402,10 +404,17 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
             {merchProducts.map((m) => {
               const merchDescription = locale === 'nl' && m.descriptionNl ? m.descriptionNl : m.description;
+              const isEcocup = m.name.toLowerCase().includes('ecocup');
               return (
               <div key={m.id} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 8, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
                 {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: '100%', height: 120, objectFit: 'contain', marginBottom: 10 }} />}
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--pine)', marginBottom: 4 }}>{m.name}</div>
+                {isEcocup && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--pine)', marginBottom: 8, background: 'rgba(15,23,18,0.05)', padding: '3px 8px', borderRadius: 20 }}>
+                    <FlagIcon country="FR" size={14} />
+                    {t.madeInFrance}
+                  </div>
+                )}
                 {merchDescription && <p style={{ fontSize: 12.5, color: 'rgba(15,23,18,0.65)', marginBottom: 10 }}>{merchDescription}</p>}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
