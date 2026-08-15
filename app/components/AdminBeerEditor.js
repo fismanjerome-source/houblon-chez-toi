@@ -42,7 +42,7 @@ export default function AdminBeerEditor({ beers }) {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'white', marginBottom: 20 }}>
+    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Bières ({rows.length})</h3>
       <p style={{ fontSize: 13, color: 'var(--copper)', marginTop: -8, marginBottom: 16 }}>
         Une bière n'apparaît sur le site que si elle est cochée « Visible » avec un prix supérieur à 0.

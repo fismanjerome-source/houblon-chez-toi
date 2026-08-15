@@ -31,7 +31,7 @@ export default function AdminPromoCodeCreator() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'white', marginBottom: 20 }}>
+    <form onSubmit={handleSubmit} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Créer un code</h3>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div className="field" style={{ marginBottom: 0 }}>

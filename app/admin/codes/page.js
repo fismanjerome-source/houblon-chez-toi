@@ -40,13 +40,13 @@ export default async function AdminCodesPage() {
       <AdminPromoCodeList codes={codes} />
 
       <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Parrainages ({referrals.length})</h2>
-      <p style={{ fontSize: 13, color: 'rgba(15,23,18,0.6)', marginTop: -10, marginBottom: 16 }}>
+      <p style={{ fontSize: 13, color: 'rgba(var(--ink-rgb),0.6)', marginTop: -10, marginBottom: 16 }}>
         Chaque client dispose automatiquement de son propre code de parrainage (visible dans son espace client).
         Le parrain est crédité de 10 € dès que la commande du filleul est marquée « Livrée ».
       </p>
-      {referrals.length === 0 && <p style={{ color: 'rgba(15,23,18,0.55)' }}>Aucun parrainage pour le moment.</p>}
+      {referrals.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.55)' }}>Aucun parrainage pour le moment.</p>}
       {referrals.map((r) => (
-        <div key={r.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 12, marginBottom: 8, background: 'white', fontSize: 13, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <div key={r.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 12, marginBottom: 8, background: 'var(--surface)', fontSize: 13, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
           <div>
             <strong>{r.referrer.name}</strong> ({r.referrer.email}) a parrainé <strong>{r.referee.name}</strong> ({r.referee.email}) — code {r.code}
           </div>

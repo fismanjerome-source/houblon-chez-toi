@@ -59,11 +59,15 @@ h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
 }
 
 .field { margin-bottom: 16px; }
-.field label { display: block; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; color: rgba(15,23,18,0.6); }
+.field label { display: block; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; color: rgba(var(--ink-rgb),0.6); }
 .field input, .field select {
   width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 3px;
   font-family: 'Public Sans', sans-serif; font-size: 14px;
+  background: var(--surface); color: var(--ink);
 }
+
+input, select, textarea { background: var(--surface); color: var(--ink); border-color: var(--line); }
+input::placeholder, textarea::placeholder { color: rgba(var(--ink-rgb),0.45); }
 
 :target {
   animation: highlight-beer 1.8s ease-out;

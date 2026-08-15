@@ -89,14 +89,14 @@ export default function FaqPage() {
   return (
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 720 }}>
       <h1 style={{ color: 'var(--pine)' }}>{t.title}</h1>
-      <p style={{ color: 'rgba(15,23,18,0.7)', marginBottom: 8 }}>
+      <p style={{ color: 'rgba(var(--ink-rgb),0.7)', marginBottom: 8 }}>
         {t.intro} <a href="/contact" style={{ color: 'var(--pine)' }}>{t.contact}</a>.
       </p>
 
       {faqs.map((item, i) => (
         <section key={i} style={{ marginTop: 24 }}>
           <h2 style={{ fontSize: 17, color: 'var(--pine)', marginBottom: 6 }}>{item.q}</h2>
-          <p style={{ color: 'rgba(15,23,18,0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{item.a}</p>
+          <p style={{ color: 'rgba(var(--ink-rgb),0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{item.a}</p>
         </section>
       ))}
     </main>

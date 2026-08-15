@@ -88,7 +88,7 @@ export default function QuiSommesNousPage() {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '20px 0',
-          color: 'rgba(15,23,18,0.4)',
+          color: 'rgba(var(--ink-rgb),0.4)',
           fontSize: 13,
           fontFamily: 'Space Mono, monospace',
         }}
@@ -96,18 +96,18 @@ export default function QuiSommesNousPage() {
         {t.photoSoon}
       </div>
 
-      <p style={{ color: 'rgba(15,23,18,0.8)', lineHeight: 1.75, fontSize: 15 }}>
+      <p style={{ color: 'rgba(var(--ink-rgb),0.8)', lineHeight: 1.75, fontSize: 15 }}>
         {t.intro}
       </p>
 
       {promesses.map((p) => (
         <section key={p.title} style={{ marginTop: 26 }}>
           <h2 style={{ fontSize: 17, color: 'var(--pine)', marginBottom: 6 }}>{p.title}</h2>
-          <p style={{ color: 'rgba(15,23,18,0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{p.text}</p>
+          <p style={{ color: 'rgba(var(--ink-rgb),0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{p.text}</p>
         </section>
       ))}
 
-      <p style={{ marginTop: 32, color: 'rgba(15,23,18,0.7)', fontSize: 14.5 }}>
+      <p style={{ marginTop: 32, color: 'rgba(var(--ink-rgb),0.7)', fontSize: 14.5 }}>
         {t.beforeOrder} <a href="/faq" style={{ color: 'var(--pine)' }}>{t.faq}</a>{' '}
         {t.or} <a href="/contact" style={{ color: 'var(--pine)' }}>{t.contactUs}</a>.
       </p>

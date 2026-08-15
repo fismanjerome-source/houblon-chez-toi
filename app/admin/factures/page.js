@@ -51,7 +51,7 @@ export default async function AdminFacturesPage() {
 
       <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Factures ({invoices.length})</h2>
 
-      {invoices.length === 0 && <p style={{ color: 'rgba(15,23,18,0.6)' }}>Aucune facture pour le moment — une facture est créée automatiquement quand une commande passe au statut « Livrée ».</p>}
+      {invoices.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>Aucune facture pour le moment — une facture est créée automatiquement quand une commande passe au statut « Livrée ».</p>}
 
       {[...groups.entries()].map(([key, group]) => {
         const monthTotal = group.reduce((sum, inv) => sum + inv.totalCents, 0);

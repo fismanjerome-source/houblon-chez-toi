@@ -49,7 +49,7 @@ export default function VerresPage() {
   return (
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 780 }}>
       <h1 style={{ color: 'var(--pine)' }}>Histoire des verres à bière</h1>
-      <p style={{ color: 'rgba(15,23,18,0.75)', lineHeight: 1.7, marginBottom: 32 }}>
+      <p style={{ color: 'rgba(var(--ink-rgb),0.75)', lineHeight: 1.7, marginBottom: 32 }}>
         Chez Houblon chez toi, on ne vend jamais une bière sans penser au verre qui va avec — c'est même ce qui
         nous distingue. Chaque format a son histoire et son usage. Voici un petit tour d'horizon, du galopin
         au mathusalem.
@@ -74,13 +74,13 @@ export default function VerresPage() {
                   {g.volumeCl >= 100 ? `${(g.volumeCl / 100).toFixed(1).replace('.0', '')} L` : `${g.volumeCl} cl`}
                 </span>
               </div>
-              <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.75)', lineHeight: 1.6, margin: 0 }}>{g.text}</p>
+              <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.75)', lineHeight: 1.6, margin: 0 }}>{g.text}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <p style={{ fontSize: 13, color: 'rgba(15,23,18,0.5)', marginTop: 32 }}>
+      <p style={{ fontSize: 13, color: 'rgba(var(--ink-rgb),0.5)', marginTop: 32 }}>
         Selon les bières, nous proposons un ou plusieurs de ces formats à l'achat — voir chaque{' '}
         <a href="/#catalogue" style={{ color: 'var(--pine)' }}>fiche produit</a>.
       </p>

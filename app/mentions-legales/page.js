@@ -5,7 +5,7 @@ export default function MentionsLegalesPage() {
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 720 }}>
       <h1 style={{ color: 'var(--pine)' }}>Mentions légales</h1>
 
-      <div style={{ background: '#FBF0E0', border: '1px solid var(--amber)', borderRadius: 6, padding: 16, margin: '20px 0', fontSize: 13.5 }}>
+      <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--amber)', borderRadius: 6, padding: 16, margin: '20px 0', fontSize: 13.5 }}>
         ⚠️ L'entreprise Houblon chez toi est en cours de création — le statut juridique et le numéro SIRET
         seront ajoutés ici dès l'immatriculation effective. Les champs restants entre crochets doivent être
         complétés avant toute mise en ligne réelle. Les mentions légales sont obligatoires en France pour
@@ -58,7 +58,7 @@ function Section({ title, children }) {
   return (
     <section style={{ marginTop: 24 }}>
       <h2 style={{ fontSize: 17, color: 'var(--pine)', marginBottom: 6 }}>{title}</h2>
-      <p style={{ color: 'rgba(15,23,18,0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{children}</p>
+      <p style={{ color: 'rgba(var(--ink-rgb),0.75)', lineHeight: 1.7, fontSize: 14.5 }}>{children}</p>
     </section>
   );
 }

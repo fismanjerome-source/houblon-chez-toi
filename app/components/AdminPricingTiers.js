@@ -33,7 +33,7 @@ export default function AdminPricingTiers({ tiers }) {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'white', marginBottom: 20 }}>
+    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Prix dégressifs (comptes PRO)</h3>
       <p style={{ fontSize: 13, color: 'var(--copper)', marginTop: -8, marginBottom: 16 }}>
         Remise appliquée au sous-total (hors consignes) selon le nombre total de bouteilles commandées. Seul le palier le plus élevé atteint s'applique.
