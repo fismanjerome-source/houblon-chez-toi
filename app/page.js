@@ -9,6 +9,7 @@ import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
 import OurValues from './components/OurValues';
 import ReviewsTeaser from './components/ReviewsTeaser';
+import ScrollReveal from './components/ScrollReveal';
 const { getLocale } = require('../lib/i18n');
 
 const TXT = {
@@ -60,26 +61,28 @@ export default async function HomePage() {
           Houblon chez toi
           <HeroGlass size={44} />
         </h1>
-        <p style={{ maxWidth: 480, color: 'rgba(15,23,18,0.7)' }}>
+        <p style={{ maxWidth: 480, color: 'rgba(var(--ink-rgb),0.7)' }}>
           {t.tagline}
         </p>
       </div>
 
-      <OurValues locale={locale} />
+      <ScrollReveal><OurValues locale={locale} /></ScrollReveal>
 
-      <BeerOfMonth beer={beerOfMonth} locale={locale} />
+      <ScrollReveal><BeerOfMonth beer={beerOfMonth} locale={locale} /></ScrollReveal>
 
-      <DirectContact locale={locale} />
+      <ScrollReveal><DirectContact locale={locale} /></ScrollReveal>
 
-      <ReviewsTeaser reviews={featuredReviews} average={reviewsAverage} locale={locale} />
+      <ScrollReveal><ReviewsTeaser reviews={featuredReviews} average={reviewsAverage} locale={locale} /></ScrollReveal>
 
-      <section className="wrap" style={{ padding: '8px 0 40px' }}>
-        <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>{t.mapTitle}</h2>
-        <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.6)', marginBottom: 16 }}>
-          {t.mapIntro}
-        </p>
-        <BeerMap beers={beers} />
-      </section>
+      <ScrollReveal as="section" style={{ padding: '8px 0 40px' }}>
+        <div className="wrap">
+          <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>{t.mapTitle}</h2>
+          <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 16 }}>
+            {t.mapIntro}
+          </p>
+          <BeerMap beers={beers} />
+        </div>
+      </ScrollReveal>
 
       <section id="catalogue" className="wrap" style={{ paddingBottom: 60, scrollMarginTop: 90 }}>
         <OrderForm groups={groups} slots={slots} basket={basket} merchProducts={merchProducts} pricingTiers={pricingTiers} locale={locale} />

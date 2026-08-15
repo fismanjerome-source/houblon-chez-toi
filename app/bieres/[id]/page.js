@@ -101,7 +101,7 @@ export default async function BeerPage({ params }) {
             <h1 style={{ fontSize: 32, color: 'var(--pine)', margin: 0 }}>{beer.name}</h1>
             <FlagIcon country={beer.country} size={22} />
           </div>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5, color: 'rgba(15,23,18,0.55)', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5, color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 4 }}>
             {beer.brewery} — {origin}
           </div>
           {beer.abv > 0 && (
@@ -110,7 +110,7 @@ export default async function BeerPage({ params }) {
             </div>
           )}
 
-          <p style={{ fontSize: 15, color: 'rgba(15,23,18,0.8)', lineHeight: 1.65, marginTop: 18 }}>{description}</p>
+          <p style={{ fontSize: 15, color: 'rgba(var(--ink-rgb),0.8)', lineHeight: 1.65, marginTop: 18 }}>{description}</p>
 
           {tastingNote && (
             <p style={{ fontSize: 14, color: 'var(--copper)', fontStyle: 'italic', marginTop: 8 }}>
@@ -140,7 +140,7 @@ export default async function BeerPage({ params }) {
       {brewHistory && (
         <div style={{ marginBottom: 32 }}>
           <h2 style={{ fontSize: 18, color: 'var(--pine)', marginBottom: 8 }}>{t.history}</h2>
-          <p style={{ fontSize: 14, color: 'rgba(15,23,18,0.78)', lineHeight: 1.7 }}>{brewHistory}</p>
+          <p style={{ fontSize: 14, color: 'rgba(var(--ink-rgb),0.78)', lineHeight: 1.7 }}>{brewHistory}</p>
         </div>
       )}
 
@@ -167,7 +167,7 @@ function TastingCard({ label, icon, text }) {
       <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'var(--copper)', marginBottom: 6 }}>
         {icon} {label}
       </div>
-      <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.8)', lineHeight: 1.55, margin: 0 }}>{text}</p>
+      <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.8)', lineHeight: 1.55, margin: 0 }}>{text}</p>
     </div>
   );
 }

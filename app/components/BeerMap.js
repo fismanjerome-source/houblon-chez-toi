@@ -10,7 +10,7 @@ function flagSvg(country) {
       ? ['#000000', '#FDDA24', '#EF3340']
       : ['#0055A4', '#FFFFFF', '#EF4135'];
   return `
-    <div style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #1B2E20;box-shadow:0 2px 6px rgba(15,23,18,0.35);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+    <div style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #1B2E20;box-shadow:0 2px 6px rgba(var(--ink-rgb),0.35);display:flex;align-items:center;justify-content:center;overflow:hidden;">
       <svg width="16" height="12" viewBox="0 0 30 24">
         <rect width="10" height="24" x="0" fill="${stripes[0]}" />
         <rect width="10" height="24" x="10" fill="${stripes[1]}" />
@@ -22,7 +22,7 @@ function flagSvg(country) {
 
 function hqSvg() {
   return `
-    <div style="width:34px;height:34px;border-radius:50%;background:#1B2E20;border:2.5px solid #F3ECD8;box-shadow:0 3px 8px rgba(15,23,18,0.45);display:flex;align-items:center;justify-content:center;">
+    <div style="width:34px;height:34px;border-radius:50%;background:#1B2E20;border:2.5px solid #F3ECD8;box-shadow:0 3px 8px rgba(var(--ink-rgb),0.45);display:flex;align-items:center;justify-content:center;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M4 11.5 12 4l8 7.5" stroke="#C98A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M6 10v9h12v-9" stroke="#F3ECD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

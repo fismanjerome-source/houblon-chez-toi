@@ -19,7 +19,7 @@ export default async function ReviewPage({ params }) {
   return (
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 480 }}>
       <h1 style={{ color: 'var(--pine)', textAlign: 'center', fontSize: 22 }}>Votre avis compte pour nous</h1>
-      <p style={{ textAlign: 'center', color: 'rgba(15,23,18,0.7)', fontSize: 14, marginBottom: 24 }}>
+      <p style={{ textAlign: 'center', color: 'rgba(var(--ink-rgb),0.7)', fontSize: 14, marginBottom: 24 }}>
         Commande n°{order.id.slice(-6)} — {order.slot}
       </p>
       {order.review ? (

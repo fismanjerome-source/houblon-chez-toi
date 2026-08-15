@@ -2,8 +2,9 @@ import Logo from './Logo';
 import SearchBar from './SearchBar';
 import MobileMenu from './MobileMenu';
 import LanguageSwitcher from './LanguageSwitcher';
+import ThemeToggle from './ThemeToggle';
 
-export default function SiteHeader({ locale = 'fr' }) {
+export default function SiteHeader({ locale = 'fr', theme = 'light' }) {
   return (
     <header style={{ borderBottom: '1px solid var(--line)' }}>
       <div
@@ -15,6 +16,7 @@ export default function SiteHeader({ locale = 'fr' }) {
         </a>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', flex: '1 1 auto', justifyContent: 'flex-end' }}>
           <LanguageSwitcher locale={locale} />
+          <ThemeToggle theme={theme} />
           <SearchBar locale={locale} />
           <a href="/compte" className="btn" style={{ flexShrink: 0 }}>{locale === 'nl' ? 'Mijn account' : 'Mon compte'}</a>
           <MobileMenu locale={locale} />

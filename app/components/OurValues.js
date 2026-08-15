@@ -22,7 +22,7 @@ export default function OurValues({ locale = 'fr' }) {
         <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 21, color: 'var(--pine)', margin: '0 0 10px' }}>
           {t.title}
         </h2>
-        <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(15,23,18,0.8)', margin: 0 }}>
+        <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(var(--ink-rgb),0.8)', margin: 0 }}>
           {t.body}
         </p>
       </div>

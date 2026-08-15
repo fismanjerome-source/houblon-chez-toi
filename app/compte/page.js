@@ -119,7 +119,7 @@ export default function ComptePage() {
             <div>
               <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 6 }}>PARRAINAGE</div>
               <p style={{ margin: '0 0 6px', fontSize: 14 }}>Offrez 5 € à un proche, gagnez 10 € de crédit dès sa 1ère commande livrée.</p>
-              <div style={{ display: 'inline-block', background: 'rgba(243,236,216,0.12)', border: '1px dashed rgba(243,236,216,0.4)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Space Mono, monospace', fontSize: 17, letterSpacing: '0.06em' }}>
+              <div style={{ display: 'inline-block', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', border: '1px dashed color-mix(in srgb, var(--paper) 40%, transparent)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Space Mono, monospace', fontSize: 17, letterSpacing: '0.06em' }}>
                 {user.referralCode}
               </div>
             </div>
@@ -148,9 +148,9 @@ export default function ComptePage() {
         )}
 
         <h2 style={{ fontSize: 18, marginBottom: 14 }}>Mes commandes</h2>
-        {orders.length === 0 && <p style={{ color: 'rgba(15,23,18,0.5)' }}>Aucune commande pour le moment.</p>}
+        {orders.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.5)' }}>Aucune commande pour le moment.</p>}
         {orders.map((o) => (
-          <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'white' }}>
+          <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
             <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>#{o.id.slice(-6)}</div>
             <div>
               {[
@@ -162,7 +162,7 @@ export default function ComptePage() {
                 ...(o.extras || []).map((x) => `${x.quantity} × ${x.name}`),
               ].join(', ')}
             </div>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, marginTop: 6, color: 'rgba(15,23,18,0.6)' }}>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, marginTop: 6, color: 'rgba(var(--ink-rgb),0.6)' }}>
               {o.pickup ? '📍 Retrait à Bondues' : `🚚 Livraison — ${o.town}`}
               {o.deliveryFeeCents > 0 && ` (+${(o.deliveryFeeCents / 100).toFixed(2)} €)`}
             </div>

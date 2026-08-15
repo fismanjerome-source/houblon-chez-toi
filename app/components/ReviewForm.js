@@ -38,7 +38,7 @@ export default function ReviewForm({ token }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: 'white', border: '1px solid var(--line)', borderRadius: 8, padding: 24 }}>
+    <form onSubmit={handleSubmit} style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 8, padding: 24 }}>
       <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 16 }}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button
@@ -48,7 +48,7 @@ export default function ReviewForm({ token }) {
             onMouseEnter={() => setHover(n)}
             onMouseLeave={() => setHover(0)}
             aria-label={`${n} étoile${n > 1 ? 's' : ''}`}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 32, lineHeight: 1, color: n <= (hover || rating) ? 'var(--amber)' : 'rgba(15,23,18,0.2)' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 32, lineHeight: 1, color: n <= (hover || rating) ? 'var(--amber)' : 'rgba(var(--ink-rgb),0.2)' }}
           >
             ★
           </button>

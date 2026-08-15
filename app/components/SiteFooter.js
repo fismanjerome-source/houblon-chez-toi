@@ -21,14 +21,14 @@ export default function SiteFooter({ locale = 'fr' }) {
     <footer style={{ borderTop: '1px solid var(--line)', marginTop: 60 }}>
       <div className="wrap" style={{ padding: '28px 0', display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontFamily: 'Space Mono, monospace', fontSize: 11.5 }}>
-          <a href="/qui-sommes-nous" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.quiSommesNous}</a>
-          <a href="/histoire" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.histoire}</a>
-          <a href="/verres" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.verres}</a>
-          <a href="/avis" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.avis}</a>
-          <a href="/faq" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.faq}</a>
-          <a href="/contact" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.contact}</a>
-          <a href="/cgu" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.cgu}</a>
-          <a href="/mentions-legales" style={{ color: 'rgba(15,23,18,0.6)' }}>{t.mentions}</a>
+          <a href="/qui-sommes-nous" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.quiSommesNous}</a>
+          <a href="/histoire" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.histoire}</a>
+          <a href="/verres" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.verres}</a>
+          <a href="/avis" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.avis}</a>
+          <a href="/faq" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.faq}</a>
+          <a href="/contact" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.contact}</a>
+          <a href="/cgu" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.cgu}</a>
+          <a href="/mentions-legales" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.mentions}</a>
         </div>
         <SocialIcons />
       </div>
@@ -40,7 +40,7 @@ export default function SiteFooter({ locale = 'fr' }) {
         </div>
       </div>
       <div className="wrap" style={{ padding: '14px 0', textAlign: 'center' }}>
-        <p style={{ margin: 0, fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(15,23,18,0.45)' }}>
+        <p style={{ margin: 0, fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.45)' }}>
           {t.rights}
         </p>
       </div>

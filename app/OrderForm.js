@@ -331,10 +331,10 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                   </a>
                   <FlagIcon country={beer.country} />
                 </div>
-                <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.5)', margin: '4px 0 10px' }}>
+                <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', margin: '4px 0 10px' }}>
                   {beerOrigin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
                 </div>
-                <p style={{ fontSize: 13.5, color: 'rgba(15,23,18,0.7)' }}>{beerDescription}</p>
+                <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.7)' }}>{beerDescription}</p>
                 {beerTastingNote && (
                   <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 4 }}>
                     « {beerTastingNote} »
@@ -365,12 +365,12 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
                 {glasses.length > 0 && (
                   <div style={{ marginTop: 14 }}>
-                    <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 6 }}>
+                    <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 6 }}>
                       {t.addGlass}
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                       {glasses.map((g) => (
-                        <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(15,23,18,0.7)' }}>
+                        <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(var(--ink-rgb),0.7)' }}>
                           <input
                             type="checkbox"
                             checked={selectedGlassIds.has(g.id)}
@@ -410,12 +410,12 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                 {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: '100%', height: 120, objectFit: 'contain', marginBottom: 10 }} />}
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--pine)', marginBottom: 4 }}>{m.name}</div>
                 {isEcocup && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--pine)', marginBottom: 8, background: 'rgba(15,23,18,0.05)', padding: '3px 8px', borderRadius: 20 }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--pine)', marginBottom: 8, background: 'rgba(var(--ink-rgb),0.05)', padding: '3px 8px', borderRadius: 20 }}>
                     <FlagIcon country="FR" size={14} />
                     {t.madeInFrance}
                   </div>
                 )}
-                {merchDescription && <p style={{ fontSize: 12.5, color: 'rgba(15,23,18,0.65)', marginBottom: 10 }}>{merchDescription}</p>}
+                {merchDescription && <p style={{ fontSize: 12.5, color: 'rgba(var(--ink-rgb),0.65)', marginBottom: 10 }}>{merchDescription}</p>}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
                   <input
@@ -438,7 +438,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>{t.yourOrder}</h2>
 
         {!hasItems ? (
-          <p style={{ color: 'rgba(15,23,18,0.5)', fontSize: 13.5 }}>{t.chooseQty}</p>
+          <p style={{ color: 'rgba(var(--ink-rgb),0.5)', fontSize: 13.5 }}>{t.chooseQty}</p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', fontSize: 13.5 }}>
             {beerLines.map((l) => (
@@ -625,8 +625,8 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         )}
 
         {user?.proApproved && (
-          <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'white' }}>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'rgba(15,23,18,0.5)', marginBottom: 8 }}>
+          <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'var(--surface)' }}>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 8 }}>
               {t.paymentModeLabel}
             </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, marginBottom: 6, cursor: 'pointer' }}>
@@ -654,7 +654,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         )}
 
         {loggedIn !== false && (
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, marginTop: 14, color: 'rgba(15,23,18,0.75)' }}>
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, marginTop: 14, color: 'rgba(var(--ink-rgb),0.75)' }}>
             <input
               type="checkbox"
               checked={acceptedTerms}
@@ -679,7 +679,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 function QuantityField({ label, sublabel, value, onChange }) {
   return (
     <div>
-      <label style={{ display: 'block', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(15,23,18,0.6)', marginBottom: 6 }}>{label}</label>
+      <label style={{ display: 'block', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 6 }}>{label}</label>
       <input
         type="number"
         min={0}

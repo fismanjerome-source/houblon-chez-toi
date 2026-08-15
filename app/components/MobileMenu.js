@@ -62,7 +62,7 @@ export default function MobileMenu({ locale = 'fr' }) {
       {open && (
         <div style={{
           position: 'absolute', top: '120%', right: 0, minWidth: 200, background: 'var(--paper)',
-          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,18,0.15)',
+          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
           zIndex: 30, overflow: 'hidden',
         }}>
           {LINKS.map((l) => (

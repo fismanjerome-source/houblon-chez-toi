@@ -35,7 +35,7 @@ export default function BeerOfMonth({ beer, locale = 'fr' }) {
             <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.92, marginBottom: 18, maxWidth: 520 }}>{shortHistory}</p>
           )}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <a href={`#beer-${beer.id}`} className="btn" style={{ background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--pine)' }}>
+            <a href={`#beer-${beer.id}`} className="btn" style={{ background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--pine-fixed)' }}>
               {t.order}
             </a>
             {beer.learnMoreUrl && (
@@ -44,7 +44,7 @@ export default function BeerOfMonth({ beer, locale = 'fr' }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
-                style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'rgba(243,236,216,0.5)' }}
+                style={{ background: 'transparent', color: 'var(--paper)', borderColor: 'color-mix(in srgb, var(--paper) 50%, transparent)' }}
               >
                 {t.learnMore}
               </a>

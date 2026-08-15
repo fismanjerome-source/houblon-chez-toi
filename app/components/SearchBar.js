@@ -64,11 +64,11 @@ export default function SearchBar({ locale = 'fr' }) {
       {open && query.trim() && (
         <div style={{
           position: 'absolute', top: '110%', left: 0, right: 0, background: 'var(--paper)',
-          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,18,0.15)',
+          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
           zIndex: 20, maxHeight: 320, overflowY: 'auto',
         }}>
           {results.length === 0 ? (
-            <div style={{ padding: 14, fontSize: 13, color: 'rgba(15,23,18,0.5)' }}>{locale === 'nl' ? 'Geen bier gevonden.' : 'Aucune bière trouvée.'}</div>
+            <div style={{ padding: 14, fontSize: 13, color: 'rgba(var(--ink-rgb),0.5)' }}>{locale === 'nl' ? 'Geen bier gevonden.' : 'Aucune bière trouvée.'}</div>
           ) : (
             results.map((b) => (
               <div
@@ -84,7 +84,7 @@ export default function SearchBar({ locale = 'fr' }) {
                 )}
                 <div>
                   <div style={{ fontSize: 13.5 }}>{b.name}</div>
-                  {b.abv > 0 && <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(15,23,18,0.5)' }}>{b.abv}% vol.</div>}
+                  {b.abv > 0 && <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.5)' }}>{b.abv}% vol.</div>}
                 </div>
               </div>
             ))

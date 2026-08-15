@@ -16,7 +16,7 @@ export default function DirectContact({ locale = 'fr' }) {
         <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, color: 'var(--pine)', margin: '0 0 6px' }}>
           {t.title}
         </h2>
-        <p style={{ margin: '0 0 22px', color: 'rgba(15,23,18,0.7)', fontSize: 14.5 }}>
+        <p style={{ margin: '0 0 22px', color: 'rgba(var(--ink-rgb),0.7)', fontSize: 14.5 }}>
           {t.subtitle}
         </p>
 

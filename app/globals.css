@@ -8,9 +8,27 @@
   --ink: #0F1712;
   --copper: #7A3B24;
   --line: rgba(15, 23, 18, 0.14);
+  --ink-rgb: 15, 23, 18;
+  --surface: #FFFFFF;
+  --pine-fixed: #1B2E20;
+}
+
+html[data-theme="dark"] {
+  --pine: #BFE0C6;
+  --paper: #141F18;
+  --paper-warm: #1B2820;
+  --amber: #E3A94C;
+  --ink: #EDE7D6;
+  --copper: #D89B75;
+  --line: rgba(237, 231, 214, 0.16);
+  --ink-rgb: 237, 231, 214;
+  --surface: #1E2B23;
 }
 
 * { box-sizing: border-box; }
+
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
 
 body {
   margin: 0;
@@ -18,6 +36,7 @@ body {
   color: var(--ink);
   font-family: 'Public Sans', sans-serif;
   line-height: 1.6;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
@@ -57,6 +76,12 @@ h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
 .zoom-on-hover { overflow: hidden; }
 .zoom-on-hover img { transition: transform 0.35s ease; }
 .zoom-on-hover:hover img { transform: scale(1.18); }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 @media (max-width: 640px) {
   .wrap { padding: 0 16px; }
