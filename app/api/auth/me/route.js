@@ -10,7 +10,14 @@ async function GET(request) {
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
-  return new Response(JSON.stringify({ name: user.name, email: user.email, isAdmin: user.isAdmin, proApproved: user.proApproved }), { status: 200 });
+  return new Response(JSON.stringify({
+    name: user.name,
+    email: user.email,
+    isAdmin: user.isAdmin,
+    proApproved: user.proApproved,
+    creditCents: user.creditCents,
+    referralCode: user.referralCode,
+  }), { status: 200 });
 }
 
 module.exports = { GET };

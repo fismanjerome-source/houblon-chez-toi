@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { prisma } = require('../../../../lib/db');
 const { createSessionToken, sessionCookieHeader } = require('../../../../lib/auth');
+const { generateUniqueReferralCode } = require('../../../../lib/referral');
 
 async function POST(request) {
   const body = await request.json();
@@ -19,6 +20,7 @@ async function POST(request) {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const referralCode = await generateUniqueReferralCode(prisma, name);
   const user = await prisma.user.create({
     data: {
       name,
@@ -27,6 +29,7 @@ async function POST(request) {
       town,
       accountType: accountType === 'professionnel' ? 'PROFESSIONNEL' : 'PARTICULIER',
       companyName: companyName || null,
+      referralCode,
     },
   });
 

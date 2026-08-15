@@ -60,6 +60,15 @@ async function PATCH(request, { params }) {
       html: content.html,
       attachments: [{ filename: `facture-${invoice.number}.pdf`, content: pdfBuffer }],
     });
+
+    // Parrainage : la commande livrée est celle du filleul -> on crédite le parrain.
+    const referral = await prisma.referral.findUnique({ where: { refereeId: order.userId } });
+    if (referral && referral.status === 'PENDING' && referral.orderId === order.id) {
+      await prisma.$transaction([
+        prisma.user.update({ where: { id: referral.referrerId }, data: { creditCents: { increment: referral.rewardCents } } }),
+        prisma.referral.update({ where: { id: referral.id }, data: { status: 'COMPLETED', completedAt: new Date() } }),
+      ]);
+    }
   }
 
   return new Response(JSON.stringify(order), { status: 200 });

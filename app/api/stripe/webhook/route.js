@@ -1,7 +1,7 @@
 const { prisma } = require('../../../../lib/db');
 const { getStripeClient } = require('../../../../lib/stripe');
 const { sendEmail } = require('../../../../lib/email');
-const { orderConfirmationEmail, reviewRequestEmail, SITE_URL } = require('../../../../lib/emailTemplates');
+const { orderConfirmationEmail, reviewRequestEmail, referralInviteEmail, SITE_URL } = require('../../../../lib/emailTemplates');
 
 async function POST(request) {
   const stripe = getStripeClient();
@@ -35,10 +35,17 @@ async function POST(request) {
         const confirmation = orderConfirmationEmail({ order, user: order.user });
         const reviewEmail = reviewRequestEmail({ order, user: order.user, reviewUrl: `${SITE_URL}/avis/${order.reviewToken}` });
         const reviewSendAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-        await Promise.all([
+        const emailsToSend = [
           sendEmail({ to: order.user.email, subject: confirmation.subject, html: confirmation.html }),
           sendEmail({ to: order.user.email, subject: reviewEmail.subject, html: reviewEmail.html, scheduledAt: reviewSendAt }),
-        ]);
+        ];
+        const otherOrders = await prisma.order.count({ where: { userId: order.userId, id: { not: order.id } } });
+        if (otherOrders === 0) {
+          const referral = referralInviteEmail({ user: order.user });
+          const referralSendAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+          emailsToSend.push(sendEmail({ to: order.user.email, subject: referral.subject, html: referral.html, scheduledAt: referralSendAt }));
+        }
+        await Promise.all(emailsToSend);
       }
     }
   }

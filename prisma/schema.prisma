@@ -21,8 +21,41 @@ model User {
   town         String
   isAdmin      Boolean  @default(false)
   proApproved  Boolean  @default(false) // validé par l'admin : paiement à 30 jours + prix dégressifs
+  referralCode String?  @unique // code personnel de parrainage, généré à l'inscription
+  creditCents  Int      @default(0) // crédit boutique (gagné via le parrainage), déduit automatiquement à la commande
   createdAt    DateTime @default(now())
   orders       Order[]
+  referralsMade Referral[] @relation("Referrer")
+  referralReceived Referral? @relation("Referee")
+}
+
+model Referral {
+  id            String   @id @default(cuid())
+  referrer      User     @relation("Referrer", fields: [referrerId], references: [id])
+  referrerId    String
+  referee       User     @relation("Referee", fields: [refereeId], references: [id])
+  refereeId     String   @unique // un client ne peut être parrainé qu'une fois
+  code          String   // code utilisé au moment du parrainage
+  status        String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  friendDiscountCents Int @default(500) // remise accordée au filleul (5€)
+  rewardCents   Int      @default(1000) // crédit accordé au parrain (10€), versé à la livraison du filleul
+  orderId       String?  // commande du filleul ayant déclenché le parrainage
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+}
+
+model PromoCode {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  kind            String   @default("PROMO") // PROMO, PARTNER_REFERRAL (remise ami sans parrain crédité)
+  discountType    String   @default("FIXED") // FIXED (centimes) ou PERCENT
+  discountValue   Float    // centimes si FIXED, pourcentage si PERCENT
+  maxUses         Int?     // null = illimité
+  usedCount       Int      @default(0)
+  restrictToEmail String?  // remise spéciale réservée à un client précis
+  active          Boolean  @default(true)
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
 }
 
 model PricingTier {
@@ -116,6 +149,9 @@ model Order {
   depositChargedCents Int @default(0) // consignes facturées sur cette commande
   depositReturnedCents Int @default(0) // consignes recréditées (reprise de bouteilles)
   discountCents Int @default(0) // remise volume pro appliquée sur cette commande
+  promoCode String? // code promo ou de parrainage utilisé
+  promoDiscountCents Int @default(0) // remise obtenue via ce code
+  creditUsedCents Int @default(0) // crédit boutique déduit sur cette commande
   totalCents Int
   createdAt DateTime    @default(now())
   reviewToken String    @unique @default(cuid()) // lien sécurisé pour l'email de demande d'avis

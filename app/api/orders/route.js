@@ -3,8 +3,9 @@ const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
 const { computeDeliveryFeeCents } = require('../../../lib/delivery');
 const { computeVolumeDiscount } = require('../../../lib/pricing');
 const { sendEmail } = require('../../../lib/email');
-const { orderConfirmationEmail, reviewRequestEmail, SITE_URL } = require('../../../lib/emailTemplates');
+const { orderConfirmationEmail, reviewRequestEmail, referralInviteEmail, SITE_URL } = require('../../../lib/emailTemplates');
 const { getStripeClient } = require('../../../lib/stripe');
+const { resolveCode, computeCodeDiscountCents } = require('../../../lib/promoCodes');
 
 function getSession(request) {
   const cookie = request.headers.get('cookie') || '';
@@ -29,7 +30,7 @@ async function POST(request) {
   const session = getSession(request);
   if (!session) return new Response(JSON.stringify({ error: 'Non connecté' }), { status: 401 });
 
-  const { town, slot, items, pickup, returns, extras, acceptedTerms, paymentChoice: requestedPaymentChoice } = await request.json();
+  const { town, slot, items, pickup, returns, extras, acceptedTerms, paymentChoice: requestedPaymentChoice, code: promoCodeInput } = await request.json();
   // items: [{ beerId, format, quantity, glassId }]
   // returns: [{ beerId, format, quantity }]
   // extras: [{ kind: 'basket' | 'merch', refId, quantity }]
@@ -103,6 +104,8 @@ async function POST(request) {
   itemsTotalCents += extrasTotalCents;
 
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
+  const isFirstOrder = (await prisma.order.count({ where: { userId: user.id } })) === 0;
+
   let discountCents = 0;
   if (user.proApproved) {
     const totalBottles = safeItems.filter((i) => i.format > 0).reduce((sum, i) => sum + i.quantity, 0);
@@ -114,8 +117,20 @@ async function POST(request) {
     }));
   }
 
+  let codeResolution = null;
+  let promoDiscountCents = 0;
+  if (promoCodeInput) {
+    codeResolution = await resolveCode(prisma, promoCodeInput, user);
+    if (codeResolution?.error) {
+      return new Response(JSON.stringify({ error: codeResolution.error }), { status: 400 });
+    }
+    promoDiscountCents = computeCodeDiscountCents(codeResolution, itemsTotalCents - depositChargedCents);
+  }
+
   const deliveryFeeCents = computeDeliveryFeeCents({ pickup: !!pickup, town, itemsTotalCents: itemsTotalCents - depositChargedCents });
-  const totalCents = Math.max(0, itemsTotalCents + deliveryFeeCents - depositReturnedCents - discountCents);
+  const beforeCreditCents = Math.max(0, itemsTotalCents + deliveryFeeCents - depositReturnedCents - discountCents - promoDiscountCents);
+  const creditUsedCents = Math.min(user.creditCents, beforeCreditCents);
+  const totalCents = Math.max(0, beforeCreditCents - creditUsedCents);
 
   // Le paiement par carte (Stripe) et le paiement à 30 jours ne sont proposés
   // qu'aux comptes pro validés ; tout le monde d'autre paie en espèces à la livraison.
@@ -143,6 +158,9 @@ async function POST(request) {
       depositChargedCents,
       depositReturnedCents,
       discountCents,
+      promoCode: codeResolution && !codeResolution.error ? codeResolution.code : null,
+      promoDiscountCents,
+      creditUsedCents,
       totalCents,
       termsAcceptedAt: new Date(),
       paymentChoice,
@@ -153,6 +171,25 @@ async function POST(request) {
     },
     include: { items: { include: { beer: true, glass: true } }, extras: true, user: true },
   });
+
+  if (creditUsedCents > 0) {
+    await prisma.user.update({ where: { id: user.id }, data: { creditCents: { decrement: creditUsedCents } } });
+  }
+  if (codeResolution && !codeResolution.error) {
+    if (codeResolution.type === 'PROMO') {
+      await prisma.promoCode.update({ where: { code: codeResolution.code }, data: { usedCount: { increment: 1 } } });
+    } else if (codeResolution.type === 'REFERRAL') {
+      await prisma.referral.create({
+        data: {
+          referrerId: codeResolution.referrerId,
+          refereeId: user.id,
+          code: codeResolution.code,
+          friendDiscountCents: codeResolution.discountCents,
+          orderId: order.id,
+        },
+      });
+    }
+  }
 
   if (paymentChoice === 'STRIPE') {
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -178,10 +215,16 @@ async function POST(request) {
   const confirmation = orderConfirmationEmail({ order, user: order.user });
   const reviewEmail = reviewRequestEmail({ order, user: order.user, reviewUrl: `${SITE_URL}/avis/${order.reviewToken}` });
   const reviewSendAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  await Promise.all([
+  const emailsToSend = [
     sendEmail({ to: order.user.email, subject: confirmation.subject, html: confirmation.html }),
     sendEmail({ to: order.user.email, subject: reviewEmail.subject, html: reviewEmail.html, scheduledAt: reviewSendAt }),
-  ]);
+  ];
+  if (isFirstOrder) {
+    const referral = referralInviteEmail({ user: order.user });
+    const referralSendAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    emailsToSend.push(sendEmail({ to: order.user.email, subject: referral.subject, html: referral.html, scheduledAt: referralSendAt }));
+  }
+  await Promise.all(emailsToSend);
 
   return new Response(JSON.stringify(order), { status: 201 });
 }

@@ -52,6 +52,9 @@ const TXT = {
     errTerms: 'Merci de confirmer avoir pris connaissance des CGU/CGV.',
     errGeneric: 'Impossible de valider la commande.',
     success: 'Commande envoyée ! Retrouvez-la dans "Mon compte".',
+    codeLabel: 'Code promo / parrainage (facultatif)',
+    codePlaceholder: 'Ex : JEROME482',
+    credit: 'Crédit utilisé',
   },
   nl: {
     addGlass: 'Glas toevoegen',
@@ -93,6 +96,9 @@ const TXT = {
     errTerms: 'Bevestig dat u kennis heeft genomen van de algemene voorwaarden.',
     errGeneric: 'De bestelling kon niet worden bevestigd.',
     success: 'Bestelling verzonden! U vindt ze terug bij "Mijn account".',
+    codeLabel: 'Kortingscode / doorverwijzingscode (optioneel)',
+    codePlaceholder: 'Bv.: JEROME482',
+    credit: 'Gebruikt tegoed',
   },
 };
 
@@ -106,6 +112,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
   const [user, setUser] = useState(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [paymentChoice, setPaymentChoice] = useState('NET_30');
+  const [promoCodeInput, setPromoCodeInput] = useState('');
 
   function toggleGlass(beerId, glassId, checked) {
     setGlassChoice((prev) => {
@@ -211,7 +218,11 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     : { discountCents: 0, discountPercent: 0 };
   const discountAmount = proDiscount.discountCents / 100;
 
-  const total = Math.max(0, subtotal + deliveryFee - depositCredited - discountAmount);
+  const availableCredit = (user?.creditCents || 0) / 100;
+  const beforeCredit = Math.max(0, subtotal + deliveryFee - depositCredited - discountAmount);
+  const creditApplied = Math.min(availableCredit, beforeCredit);
+
+  const total = Math.max(0, beforeCredit - creditApplied);
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - itemsSubtotal);
   const hasItems = beerLines.length > 0 || extrasLines.length > 0;
 
@@ -240,6 +251,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
       body: JSON.stringify({
         town, pickup, slot, items, returns: returnItems, extras: extraItems, acceptedTerms,
         paymentChoice: user?.proApproved ? paymentChoice : undefined,
+        code: promoCodeInput || undefined,
       }),
     });
     if (!res.ok) {
@@ -260,6 +272,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     setBasketQty(0);
     setMerchQty({});
     setAcceptedTerms(false);
+    setPromoCodeInput('');
     setStatus({ type: 'success', message: t.success });
   }
 
@@ -537,6 +550,12 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               <span>−{discountAmount.toFixed(2)} €</span>
             </div>
           )}
+          {creditApplied > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, color: 'var(--pine)' }}>
+              <span>{t.credit}</span>
+              <span>−{creditApplied.toFixed(2)} €</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginTop: 8 }}>
             <span>{t.total}</span>
             <span>{total.toFixed(2)} €</span>
@@ -609,6 +628,19 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               <input type="radio" name="paymentChoice" checked={paymentChoice === 'STRIPE'} onChange={() => setPaymentChoice('STRIPE')} />
               {t.payStripe}
             </label>
+          </div>
+        )}
+
+        {loggedIn !== false && (
+          <div className="field" style={{ marginTop: 14, marginBottom: 0 }}>
+            <label>{t.codeLabel}</label>
+            <input
+              type="text"
+              value={promoCodeInput}
+              onChange={(e) => setPromoCodeInput(e.target.value)}
+              placeholder={t.codePlaceholder}
+              style={{ maxWidth: 220, textTransform: 'uppercase' }}
+            />
           </div>
         )}
 

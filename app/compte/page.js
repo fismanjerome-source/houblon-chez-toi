@@ -48,13 +48,18 @@ export default function ComptePage() {
     if (res.ok) setOrders(await res.json());
   }
 
+  async function refreshUser() {
+    const res = await fetch('/api/auth/me');
+    if (res.ok) setUser(await res.json());
+  }
+
   async function handleSignup(e) {
     e.preventDefault();
     setError('');
     const res = await fetch('/api/auth/signup', { method: 'POST', body: JSON.stringify(form) });
     const data = await res.json();
     if (!res.ok) return setError(data.error);
-    setUser(data);
+    await refreshUser();
     loadOrders();
   }
 
@@ -64,7 +69,7 @@ export default function ComptePage() {
     const res = await fetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: form.email, password: form.password }) });
     const data = await res.json();
     if (!res.ok) return setError(data.error);
-    setUser(data);
+    await refreshUser();
     loadOrders();
   }
 
@@ -108,6 +113,22 @@ export default function ComptePage() {
             <span onClick={handleLogout} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>Se déconnecter</span>
           </div>
         </div>
+
+        {user.referralCode && (
+          <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 8, padding: 20, marginBottom: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 6 }}>PARRAINAGE</div>
+              <p style={{ margin: '0 0 6px', fontSize: 14 }}>Offrez 5 € à un proche, gagnez 10 € de crédit dès sa 1ère commande livrée.</p>
+              <div style={{ display: 'inline-block', background: 'rgba(243,236,216,0.12)', border: '1px dashed rgba(243,236,216,0.4)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Space Mono, monospace', fontSize: 17, letterSpacing: '0.06em' }}>
+                {user.referralCode}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, opacity: 0.75 }}>Crédit disponible</div>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 22 }}>{((user.creditCents || 0) / 100).toFixed(2)} €</div>
+            </div>
+          </div>
+        )}
 
         {showPasswordForm && (
           <form onSubmit={handleChangePassword} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 20, marginBottom: 30, maxWidth: 380 }}>

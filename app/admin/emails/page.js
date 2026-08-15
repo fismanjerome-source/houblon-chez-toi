@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 const { verifySessionToken, SESSION_COOKIE } = require('../../../lib/auth');
-const { orderConfirmationEmail, invoiceEmail, reviewRequestEmail, SITE_URL } = require('../../../lib/emailTemplates');
+const { orderConfirmationEmail, invoiceEmail, reviewRequestEmail, referralInviteEmail, SITE_URL } = require('../../../lib/emailTemplates');
 import AdminNav from '../../components/AdminNav';
 
-const SAMPLE_USER = { name: 'Camille Dupont', email: 'camille@example.com', proApproved: false };
+const SAMPLE_USER = { name: 'Camille Dupont', email: 'camille@example.com', proApproved: false, referralCode: 'CAMILLE217' };
 
 const SAMPLE_ORDER = {
   id: 'sample000001exemple',
@@ -44,11 +44,13 @@ export default async function AdminEmailsPage() {
   const confirmation = orderConfirmationEmail({ order: SAMPLE_ORDER, user: SAMPLE_USER });
   const invoice = invoiceEmail({ order: SAMPLE_ORDER, user: SAMPLE_USER, invoice: SAMPLE_INVOICE });
   const review = reviewRequestEmail({ order: SAMPLE_ORDER, user: SAMPLE_USER, reviewUrl: `${SITE_URL}/avis/sample-review-token` });
+  const referral = referralInviteEmail({ user: SAMPLE_USER });
 
   const templates = [
     { label: 'Confirmation de commande', trigger: 'Envoyé immédiatement après validation de la commande.', ...confirmation },
     { label: 'Facture', trigger: 'Envoyé (avec le PDF en pièce jointe) quand une commande passe au statut « Livrée » en admin.', ...invoice },
     { label: "Demande d'avis", trigger: 'Programmé pour être envoyé 24h après la commande.', ...review },
+    { label: 'Parrainage', trigger: "Programmé pour être envoyé 7 jours après la 1ère commande d'un client.", ...referral },
   ];
 
   return (

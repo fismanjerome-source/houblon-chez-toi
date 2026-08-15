@@ -2,6 +2,7 @@ const LINKS = [
   { href: '/admin', label: 'Tableau de bord' },
   { href: '/admin/factures', label: 'Factures' },
   { href: '/admin/pro', label: 'Comptes PRO' },
+  { href: '/admin/codes', label: 'Codes & Parrainage' },
   { href: '/admin/emails', label: 'Modèles de mail' },
 ];
 
