@@ -54,9 +54,12 @@ function convexHull(points) {
 export default function BeerMap({ beers }) {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
+  const insetMapRef = useRef(null);
+  const insetRef = useRef(null);
 
   useEffect(() => {
     let map;
+    let insetMap;
     let cancelled = false;
 
     import('leaflet').then((L) => {
@@ -97,7 +100,7 @@ export default function BeerMap({ beers }) {
       hqMarker.bindPopup(
         `<div style="font-family:'Public Sans',sans-serif;font-size:13px;min-width:170px;">
           <div style="font-family:'Fraunces',serif;font-size:14.5px;color:#1B2E20;margin-bottom:2px;">🏠 Bondues — notre siège</div>
-          <div style="font-size:12.5px;color:#7A3B24;margin-bottom:4px;">Zone de livraison entourée en pointillés</div>
+          <div style="font-size:12.5px;color:#7A3B24;margin-bottom:4px;">Zone de livraison entourée en ambre</div>
           <div style="font-size:12px;color:#0F1712;opacity:0.75;">${HQ_LOCATION.address}</div>
         </div>`
       );
@@ -131,6 +134,38 @@ export default function BeerMap({ beers }) {
       });
 
       map.fitBounds(bounds, { padding: [30, 30] });
+
+      // Mini-carte détail, toujours zoomée sur la zone de livraison — visible
+      // sans avoir à zoomer la grande carte qui montre aussi les brasseries lointaines.
+      if (!cancelled && insetRef.current && !insetMapRef.current) {
+        insetMap = L.map(insetRef.current, {
+          attributionControl: false,
+          zoomControl: false,
+          dragging: false,
+          scrollWheelZoom: false,
+          doubleClickZoom: false,
+          boxZoom: false,
+          keyboard: false,
+          touchZoom: false,
+          tap: false,
+        });
+        insetMapRef.current = insetMap;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 13 }).addTo(insetMap);
+
+        L.polygon(deliveryHull, {
+          color: '#B36F1E',
+          weight: 3,
+          fillColor: '#C98A2E',
+          fillOpacity: 0.32,
+        }).addTo(insetMap);
+
+        L.marker([HQ_LOCATION.lat, HQ_LOCATION.lng], {
+          icon: L.divIcon({ html: homeSvg(), className: '', iconSize: [30, 30], iconAnchor: [15, 15] }),
+        }).addTo(insetMap);
+
+        insetMap.fitBounds(deliveryHull, { padding: [14, 14] });
+      }
     });
 
     return () => {
@@ -139,8 +174,34 @@ export default function BeerMap({ beers }) {
         mapRef.current.remove();
         mapRef.current = null;
       }
+      if (insetMapRef.current) {
+        insetMapRef.current.remove();
+        insetMapRef.current = null;
+      }
     };
   }, [beers]);
 
-  return <div ref={containerRef} style={{ height: 420, borderRadius: 6, border: '1px solid var(--line)' }} />;
+  return (
+    <div style={{ position: 'relative' }}>
+      <div ref={containerRef} style={{ height: 420, borderRadius: 6, border: '1px solid var(--line)' }} />
+      <div
+        style={{
+          position: 'absolute', top: 12, right: 12, zIndex: 400,
+          width: 168, background: 'var(--surface)', borderRadius: 6,
+          border: '2px solid var(--pine-fixed, #1B2E20)', boxShadow: '0 4px 14px rgba(15,23,18,0.35)',
+          overflow: 'hidden', pointerEvents: 'none',
+        }}
+      >
+        <div ref={insetRef} style={{ height: 130 }} />
+        <div
+          style={{
+            fontFamily: 'Space Mono, monospace', fontSize: 10.5, fontWeight: 500,
+            color: '#fff', background: '#B36F1E', textAlign: 'center', padding: '4px 6px',
+          }}
+        >
+          🏠 Zone de livraison
+        </div>
+      </div>
+    </div>
+  );
 }
