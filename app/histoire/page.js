@@ -2,6 +2,39 @@ import HopFieldIllustration from '../components/HopFieldIllustration';
 
 export const metadata = { title: 'Histoire de la bière — Houblon chez toi' };
 
+const STYLES = [
+  {
+    name: 'Blonde',
+    color: '#EFC94C',
+    abv: '5 à 8% vol.',
+    description: "Robe dorée pâle et limpide, mousse blanche fine. Le style le plus polyvalent : notes de céréales et de houblon herbacé, amertume douce à modérée, finale sèche et désaltérante.",
+  },
+  {
+    name: 'Ambrée',
+    color: '#C1752D',
+    abv: '5,5 à 8% vol.',
+    description: "Robe cuivrée à ambrée, reflets roux. Les malts plus torréfiés apportent des notes de caramel et de pain grillé, pour une bière plus ronde et corsée qu'une blonde, à l'amertume équilibrée par le sucre du malt.",
+  },
+  {
+    name: 'Brune',
+    color: '#4A2A16',
+    abv: '6 à 9% vol.',
+    description: "Robe brun foncé à acajou, parfois presque opaque. Malts fortement torréfiés : notes de chocolat, de café et de fruits secs. Corps plein et rond, amertume généralement discrète.",
+  },
+  {
+    name: 'Triple',
+    color: '#D9A227',
+    abv: '8 à 10% vol.',
+    description: "Robe dorée soutenue, mousse dense et crémeuse. Style emblématique des bières d'abbaye belges : forte en alcool mais ronde, notes fruitées (banane, agrumes) et épicées (girofle, poivre).",
+  },
+  {
+    name: 'IPA',
+    color: '#E29A3D',
+    abv: '5,5 à 7% vol.',
+    description: "Robe dorée à orangée, parfois trouble sur les versions modernes (NEIPA). Très houblonnée : arômes intenses d'agrumes, de fruits tropicaux et de résine, pour une amertume franche et présente.",
+  },
+];
+
 export default function HistoirePage() {
   return (
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 720 }}>
@@ -54,6 +87,38 @@ export default function HistoirePage() {
         dans le bon verre. On vous en parle plus en détail dans notre page sur{' '}
         <a href="/verres" style={{ color: 'var(--pine)' }}>l'histoire des verres à bière</a>.
       </p>
+
+      <h2 style={{ fontSize: 19, color: 'var(--pine)', marginTop: 40, marginBottom: 8 }}>Les grandes familles de bières</h2>
+      <p style={{ color: 'rgba(var(--ink-rgb),0.8)', lineHeight: 1.8, fontSize: 15, marginBottom: 20 }}>
+        Chaque style a sa robe, son caractère et sa manière de se déguster. Voici quelques repères pour
+        s'y retrouver dans notre sélection.
+      </p>
+
+      <div className="beer-style-grid">
+        {STYLES.map((s) => (
+          <div
+            key={s.name}
+            style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 8, padding: '14px 12px' }}
+          >
+            <div
+              aria-hidden="true"
+              style={{
+                width: 32, height: 32, borderRadius: '50%', margin: '0 0 10px',
+                background: s.color, border: '2px solid var(--paper)', boxShadow: '0 0 0 1px var(--line)',
+              }}
+            />
+            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 15, color: 'var(--pine)', margin: '0 0 3px' }}>
+              {s.name}
+            </h3>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: 'var(--copper)', marginBottom: 8 }}>
+              {s.abv}
+            </div>
+            <p style={{ fontSize: 12.5, lineHeight: 1.6, color: 'rgba(var(--ink-rgb),0.75)', margin: 0 }}>
+              {s.description}
+            </p>
+          </div>
+        ))}
+      </div>
 
       <p style={{ fontSize: 13, color: 'rgba(var(--ink-rgb),0.5)', marginTop: 28 }}>
         L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
