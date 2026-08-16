@@ -78,13 +78,17 @@ export default function BeerMap({ beers }) {
       const deliveryHull = convexHull(
         DELIVERY_TOWN_LOCATIONS.map((t) => [t.lat, t.lng]).concat([[HQ_LOCATION.lat, HQ_LOCATION.lng]])
       );
-      L.polygon(deliveryHull, {
-        color: '#C98A2E',
-        weight: 2,
-        dashArray: '5 5',
+      const deliveryZone = L.polygon(deliveryHull, {
+        color: '#B36F1E',
+        weight: 3,
         fillColor: '#C98A2E',
-        fillOpacity: 0.1,
+        fillOpacity: 0.3,
       }).addTo(map);
+      deliveryZone.bindTooltip('Zone de livraison', {
+        permanent: true,
+        direction: 'center',
+        className: 'delivery-zone-label',
+      });
 
       const hqMarker = L.marker([HQ_LOCATION.lat, HQ_LOCATION.lng], {
         icon: L.divIcon({ html: homeSvg(), className: '', iconSize: [38, 38], iconAnchor: [19, 19] }),
