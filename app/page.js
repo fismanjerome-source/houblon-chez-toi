@@ -7,16 +7,22 @@ import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
+import DeliveryZoneMap from './components/DeliveryZoneMap';
 import OurValues from './components/OurValues';
 import ReviewsTeaser from './components/ReviewsTeaser';
 import ScrollReveal from './components/ScrollReveal';
 const { getLocale } = require('../lib/i18n');
+const { TOWN_NAMES } = require('../lib/towns');
+
+const SITE_URL = process.env.SITE_URL || 'https://houblon-chez-toi-kohl.vercel.app';
 
 const TXT = {
   fr: {
     tagline: 'Bières artisanales françaises et belges, livrées à domicile dans le secteur de Bondues.',
     mapTitle: "D'où viennent nos bières ?",
     mapIntro: '🏠 Tout part de Bondues — nos brasseries sont toutes à moins de 2h de route, pour des bières vraiment locales. Cliquez sur un drapeau pour découvrir la bière et sa fiche.',
+    zoneTitle: 'Notre zone de livraison',
+    zoneIntro: "🏠 On livre à vélo/voiture depuis Bondues, dans le périmètre entouré en couleur ci-dessous.",
     frBeers: 'Bières françaises',
     beBeers: 'Bières belges',
   },
@@ -24,6 +30,8 @@ const TXT = {
     tagline: 'Ambachtelijke Franse en Belgische bieren, thuisbezorgd in de regio Bondues.',
     mapTitle: 'Waar komen onze bieren vandaan?',
     mapIntro: '🏠 Alles vertrekt vanuit Bondues — onze brouwerijen liggen allemaal op minder dan 2 uur rijden, voor echt lokale bieren. Klik op een vlag om het bier en zijn fiche te ontdekken.',
+    zoneTitle: 'Ons leveringsgebied',
+    zoneIntro: '🏠 We leveren vanuit Bondues, binnen de gekleurde omtrek hieronder.',
     frBeers: 'Franse bieren',
     beBeers: 'Belgische bieren',
   },
@@ -54,8 +62,35 @@ export default async function HomePage() {
   const reviewsAverage = allReviews.length ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length : 0;
   const featuredReviews = allReviews.slice(0, 3);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LiquorStore',
+    name: 'Houblon chez toi',
+    image: `${SITE_URL}/og-image.png`,
+    url: SITE_URL,
+    telephone: '+33608129145',
+    email: 'contact@houbloncheztoi.fr',
+    priceRange: '€€',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '984 Avenue du Général de Gaulle',
+      addressLocality: 'Bondues',
+      postalCode: '59910',
+      addressCountry: 'FR',
+    },
+    areaServed: TOWN_NAMES.map((name) => ({ '@type': 'City', name })),
+    ...(allReviews.length > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: reviewsAverage.toFixed(1),
+        reviewCount: allReviews.length,
+      },
+    }),
+  };
+
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="wrap" style={{ padding: '40px 0 8px' }}>
         <h1 style={{ fontSize: 40, color: 'var(--pine)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           Houblon chez toi
@@ -81,6 +116,16 @@ export default async function HomePage() {
             {t.mapIntro}
           </p>
           <BeerMap beers={beers} />
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal as="section" style={{ padding: '8px 0 40px' }}>
+        <div className="wrap">
+          <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>{t.zoneTitle}</h2>
+          <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 16 }}>
+            {t.zoneIntro}
+          </p>
+          <DeliveryZoneMap />
         </div>
       </ScrollReveal>
 
