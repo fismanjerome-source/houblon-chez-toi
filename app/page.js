@@ -7,7 +7,6 @@ import BeerOfMonth from './components/BeerOfMonth';
 import HeroGlass from './components/HeroGlass';
 import DirectContact from './components/DirectContact';
 import BeerMap from './components/BeerMap';
-import DeliveryZoneMap from './components/DeliveryZoneMap';
 import OurValues from './components/OurValues';
 import ReviewsTeaser from './components/ReviewsTeaser';
 import ScrollReveal from './components/ScrollReveal';
@@ -19,19 +18,15 @@ const SITE_URL = process.env.SITE_URL || 'https://houblon-chez-toi-kohl.vercel.a
 const TXT = {
   fr: {
     tagline: 'Bières artisanales françaises et belges, livrées à domicile dans le secteur de Bondues.',
-    mapTitle: "D'où viennent nos bières ?",
-    mapIntro: '🏠 Tout part de Bondues — nos brasseries sont toutes à moins de 2h de route, pour des bières vraiment locales. Cliquez sur un drapeau pour découvrir la bière et sa fiche.',
-    zoneTitle: 'Notre zone de livraison',
-    zoneIntro: "🏠 On livre à vélo/voiture depuis Bondues, dans le périmètre entouré en couleur ci-dessous.",
+    mapTitle: "D'où viennent nos bières, et jusqu'où on livre",
+    mapIntro: "🏠 Tout part de Bondues — nos brasseries sont toutes à moins de 2h de route, pour des bières vraiment locales. Le pointillé ambre délimite notre zone de livraison. Cliquez sur un drapeau pour découvrir la bière et sa fiche.",
     frBeers: 'Bières françaises',
     beBeers: 'Bières belges',
   },
   nl: {
     tagline: 'Ambachtelijke Franse en Belgische bieren, thuisbezorgd in de regio Bondues.',
-    mapTitle: 'Waar komen onze bieren vandaan?',
-    mapIntro: '🏠 Alles vertrekt vanuit Bondues — onze brouwerijen liggen allemaal op minder dan 2 uur rijden, voor echt lokale bieren. Klik op een vlag om het bier en zijn fiche te ontdekken.',
-    zoneTitle: 'Ons leveringsgebied',
-    zoneIntro: '🏠 We leveren vanuit Bondues, binnen de gekleurde omtrek hieronder.',
+    mapTitle: 'Waar onze bieren vandaan komen, en tot waar we leveren',
+    mapIntro: '🏠 Alles vertrekt vanuit Bondues — onze brouwerijen liggen allemaal op minder dan 2 uur rijden, voor echt lokale bieren. De gestippelde ambergrens toont ons leveringsgebied. Klik op een vlag om het bier en zijn fiche te ontdekken.',
     frBeers: 'Franse bieren',
     beBeers: 'Belgische bieren',
   },
@@ -116,16 +111,6 @@ export default async function HomePage() {
             {t.mapIntro}
           </p>
           <BeerMap beers={beers} />
-        </div>
-      </ScrollReveal>
-
-      <ScrollReveal as="section" style={{ padding: '8px 0 40px' }}>
-        <div className="wrap">
-          <h2 style={{ color: 'var(--pine)', marginBottom: 6 }}>{t.zoneTitle}</h2>
-          <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 16 }}>
-            {t.zoneIntro}
-          </p>
-          <DeliveryZoneMap />
         </div>
       </ScrollReveal>
 

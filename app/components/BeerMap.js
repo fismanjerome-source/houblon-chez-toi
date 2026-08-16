@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 const { BREWERY_LOCATIONS, HQ_LOCATION } = require('../../lib/breweryLocations');
+const { DELIVERY_TOWN_LOCATIONS } = require('../../lib/deliveryTowns');
 const { BEER_COLORS } = require('./beerColors');
 
 function flagSvg(country) {
@@ -10,7 +11,7 @@ function flagSvg(country) {
       ? ['#000000', '#FDDA24', '#EF3340']
       : ['#0055A4', '#FFFFFF', '#EF4135'];
   return `
-    <div style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #1B2E20;box-shadow:0 2px 6px rgba(var(--ink-rgb),0.35);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+    <div style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #1B2E20;box-shadow:0 2px 6px rgba(15,23,18,0.35);display:flex;align-items:center;justify-content:center;overflow:hidden;">
       <svg width="16" height="12" viewBox="0 0 30 24">
         <rect width="10" height="24" x="0" fill="${stripes[0]}" />
         <rect width="10" height="24" x="10" fill="${stripes[1]}" />
@@ -20,15 +21,34 @@ function flagSvg(country) {
   `;
 }
 
-function hqSvg() {
+function homeSvg() {
   return `
-    <div style="width:34px;height:34px;border-radius:50%;background:#1B2E20;border:2.5px solid #F3ECD8;box-shadow:0 3px 8px rgba(var(--ink-rgb),0.45);display:flex;align-items:center;justify-content:center;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M4 11.5 12 4l8 7.5" stroke="#C98A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M6 10v9h12v-9" stroke="#F3ECD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div style="width:38px;height:38px;border-radius:50%;background:#1B2E20;border:3px solid #C98A2E;box-shadow:0 3px 10px rgba(15,23,18,0.5);display:flex;align-items:center;justify-content:center;font-size:18px;">
+      🏠
     </div>
   `;
+}
+
+// Enveloppe convexe (Andrew's monotone chain) pour délimiter le périmètre de livraison
+// à partir des communes desservies, sans dépendre d'un rayon arbitraire.
+function convexHull(points) {
+  const pts = [...points].sort((a, b) => (a[0] === b[0] ? a[1] - b[1] : a[0] - b[0]));
+  if (pts.length < 3) return pts;
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [];
+  for (const p of pts) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+    lower.push(p);
+  }
+  const upper = [];
+  for (let i = pts.length - 1; i >= 0; i--) {
+    const p = pts[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+    upper.push(p);
+  }
+  lower.pop();
+  upper.pop();
+  return [...lower, ...upper];
 }
 
 export default function BeerMap({ beers }) {
@@ -54,24 +74,26 @@ export default function BeerMap({ beers }) {
 
       const bounds = [[HQ_LOCATION.lat, HQ_LOCATION.lng]];
 
-      // Zone de proximité, pour montrer qu'on livre autour de notre siège.
-      L.circle([HQ_LOCATION.lat, HQ_LOCATION.lng], {
-        radius: 12000,
+      // Périmètre de livraison, délimité par les communes réellement desservies.
+      const deliveryHull = convexHull(
+        DELIVERY_TOWN_LOCATIONS.map((t) => [t.lat, t.lng]).concat([[HQ_LOCATION.lat, HQ_LOCATION.lng]])
+      );
+      L.polygon(deliveryHull, {
         color: '#C98A2E',
-        weight: 1.5,
-        dashArray: '4 6',
+        weight: 2,
+        dashArray: '5 5',
         fillColor: '#C98A2E',
-        fillOpacity: 0.06,
+        fillOpacity: 0.1,
       }).addTo(map);
 
       const hqMarker = L.marker([HQ_LOCATION.lat, HQ_LOCATION.lng], {
-        icon: L.divIcon({ html: hqSvg(), className: '', iconSize: [34, 34], iconAnchor: [17, 17] }),
+        icon: L.divIcon({ html: homeSvg(), className: '', iconSize: [38, 38], iconAnchor: [19, 19] }),
         zIndexOffset: 1000,
       }).addTo(map);
       hqMarker.bindPopup(
         `<div style="font-family:'Public Sans',sans-serif;font-size:13px;min-width:170px;">
-          <div style="font-family:'Fraunces',serif;font-size:14.5px;color:#1B2E20;margin-bottom:2px;">🏠 Notre siège</div>
-          <div style="font-size:12.5px;color:#7A3B24;margin-bottom:4px;">Là où tout a commencé</div>
+          <div style="font-family:'Fraunces',serif;font-size:14.5px;color:#1B2E20;margin-bottom:2px;">🏠 Bondues — notre siège</div>
+          <div style="font-size:12.5px;color:#7A3B24;margin-bottom:4px;">Zone de livraison entourée en pointillés</div>
           <div style="font-size:12px;color:#0F1712;opacity:0.75;">${HQ_LOCATION.address}</div>
         </div>`
       );
@@ -116,5 +138,5 @@ export default function BeerMap({ beers }) {
     };
   }, [beers]);
 
-  return <div ref={containerRef} style={{ height: 380, borderRadius: 6, border: '1px solid var(--line)' }} />;
+  return <div ref={containerRef} style={{ height: 420, borderRadius: 6, border: '1px solid var(--line)' }} />;
 }
