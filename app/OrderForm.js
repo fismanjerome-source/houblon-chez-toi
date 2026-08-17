@@ -107,7 +107,7 @@ const TXT = {
 
 export default function OrderForm({ groups, slots, basket, merchProducts, pricingTiers, locale = 'fr' }) {
   const t = TXT[locale] || TXT.fr;
-  const beers = groups.flatMap((g) => g.beers);
+  const beers = useMemo(() => groups.flatMap((g) => g.beers), [groups]);
   const [qty, setQty] = useState({}); // { [beerId-format]: quantity }
   const [glassChoice, setGlassChoice] = useState({}); // { [beerId]: Set<glassId> }
   const [basketQty, setBasketQty] = useState(0);
@@ -411,8 +411,9 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
       : defaultVariant.id;
     const activeBeer = variants.find((v) => v.id === activeId) || defaultVariant;
 
+    const columns = Math.ceil(variants.length / 2);
     const strip = (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 34px)`, gap: 8, flexShrink: 0, alignContent: 'flex-start' }}>
         {variants.map((v) => (
           <a
             key={v.id}
@@ -758,16 +759,42 @@ function QuantityField({ label, sublabel, value, onChange }) {
   return (
     <div>
       <label style={{ display: 'block', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 6 }}>{label}</label>
-      <input
-        type="number"
-        min={0}
-        max={99}
-        value={value === 0 ? '' : value}
-        placeholder="0"
-        onChange={(e) => onChange(e.target.value === '' ? '0' : e.target.value)}
-        onFocus={(e) => e.target.select()}
-        style={{ width: 70, padding: 8, border: '1px solid var(--line)', borderRadius: 3, fontFamily: 'Public Sans, sans-serif', fontSize: 14 }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button
+          type="button"
+          onClick={() => onChange(String(Math.max(0, value - 1)))}
+          aria-label="Retirer"
+          style={{
+            width: 30, height: 30, flexShrink: 0, borderRadius: '50%', border: '1px solid var(--pine)',
+            background: 'var(--surface)', color: 'var(--pine)', fontSize: 17, lineHeight: 1, fontWeight: 600,
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+          }}
+        >
+          −
+        </button>
+        <input
+          type="number"
+          min={0}
+          max={99}
+          value={value === 0 ? '' : value}
+          placeholder="0"
+          onChange={(e) => onChange(e.target.value === '' ? '0' : e.target.value)}
+          onFocus={(e) => e.target.select()}
+          style={{ width: 46, padding: 8, border: '1px solid var(--line)', borderRadius: 3, fontFamily: 'Public Sans, sans-serif', fontSize: 14, textAlign: 'center' }}
+        />
+        <button
+          type="button"
+          onClick={() => onChange(String(Math.min(99, value + 1)))}
+          aria-label="Ajouter"
+          style={{
+            width: 30, height: 30, flexShrink: 0, borderRadius: '50%', border: '1px solid var(--pine)',
+            background: 'var(--pine)', color: 'var(--paper)', fontSize: 17, lineHeight: 1, fontWeight: 600,
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0,
+          }}
+        >
+          +
+        </button>
+      </div>
       {sublabel && (
         <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 9.5, color: 'var(--copper)', marginTop: 3 }}>{sublabel}</div>
       )}
