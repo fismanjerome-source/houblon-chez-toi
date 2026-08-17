@@ -16,7 +16,7 @@ const TXT = {
   fr: {
     addGlass: 'Ajouter un verre',
     viewSheet: 'Voir la fiche complète →',
-    consigne: 'consigne',
+    consigne: 'consigne par bouteille',
     boutique: 'Boutique',
     yourOrder: 'Votre commande',
     chooseQty: 'Choisissez des quantités ci-dessus pour composer votre commande.',
@@ -61,7 +61,7 @@ const TXT = {
   nl: {
     addGlass: 'Glas toevoegen',
     viewSheet: 'Bekijk de volledige fiche →',
-    consigne: 'statiegeld',
+    consigne: 'statiegeld per fles',
     boutique: 'Winkel',
     yourOrder: 'Uw bestelling',
     chooseQty: 'Kies hierboven de hoeveelheden om uw bestelling samen te stellen.',
