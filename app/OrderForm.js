@@ -116,6 +116,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [paymentChoice, setPaymentChoice] = useState('NET_30');
   const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [selectedVariant, setSelectedVariant] = useState({}); // { [brand]: beerId } — variante affichée dans l'encadré groupé
 
   function toggleGlass(beerId, glassId, checked) {
     setGlassChoice((prev) => {
@@ -139,6 +140,18 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
       if (res.ok) setUser(await res.json());
     });
   }, []);
+
+  // Arrivée depuis la fiche d'une variante (ex: #beer-xxx) : on la pré-sélectionne
+  // dans l'encadré groupé de sa marque, pour que "Commander cette bière" fonctionne.
+  useEffect(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#beer-(.+)$/);
+    if (!match) return;
+    const targetBeer = beers.find((b) => b.id === match[1]);
+    if (targetBeer && targetBeer.brand) {
+      setSelectedVariant((prev) => ({ ...prev, [targetBeer.brand]: targetBeer.id }));
+    }
+  }, [beers]);
 
   function setQuantity(beerId, format, value) {
     const n = Math.max(0, Math.min(99, Number(value) || 0));
@@ -279,118 +292,174 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
     setStatus({ type: 'success', message: t.success });
   }
 
+  function renderBeerCard(beer, { anchorIds = [beer.id], siblingsStrip = null } = {}) {
+    const color = BEER_COLORS[beer.name] || 'var(--line)';
+    const glasses = beer.glasses || [];
+    const selectedGlassIds = glassChoice[beer.id] || new Set();
+    const beerDescription = locale === 'nl' && beer.descriptionNl ? beer.descriptionNl : beer.description;
+    const beerTastingNote = locale === 'nl' && beer.tastingNoteNl ? beer.tastingNoteNl : beer.tastingNote;
+    const beerOrigin = locale === 'nl' && beer.originNl ? beer.originNl : beer.origin;
+    const previewGlassImage =
+      (glasses.find((g) => selectedGlassIds.has(g.id) && g.imageUrl) || {}).imageUrl ||
+      (glasses.find((g) => g.imageUrl) || {}).imageUrl;
+    return (
+      <div
+        id={`beer-${beer.id}`}
+        key={beer.id}
+        style={{
+          background: 'var(--paper)', padding: 20, border: `3px solid ${color}`, borderRadius: 8,
+          display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90, marginBottom: 16,
+        }}
+      >
+        {anchorIds.filter((id) => id !== beer.id).map((id) => (
+          <span key={id} id={`beer-${id}`} style={{ position: 'absolute', scrollMarginTop: 90 }} />
+        ))}
+        {(beer.bottleImageUrl || previewGlassImage) && (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0, width: 140 }}>
+            <div style={{ position: 'relative', width: 70, height: 200 }}>
+              {beer.bottleImageUrl && (
+                <Image
+                  src={beer.bottleImageUrl}
+                  alt={`${t.bottleAlt} ${beer.name}`}
+                  fill
+                  sizes="70px"
+                  style={{ objectFit: 'contain', objectPosition: 'bottom' }}
+                />
+              )}
+            </div>
+            <div style={{ position: 'relative', width: 60, height: 200 }}>
+              {previewGlassImage && (
+                <Image
+                  src={previewGlassImage}
+                  alt={`${t.glassAlt} ${beer.name}`}
+                  fill
+                  sizes="60px"
+                  style={{ objectFit: 'contain', objectPosition: 'bottom' }}
+                />
+              )}
+            </div>
+          </div>
+        )}
+        {siblingsStrip}
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)', textDecoration: 'none' }}>
+              {beer.name}
+            </a>
+            <FlagIcon country={beer.country} />
+          </div>
+          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', margin: '4px 0 10px' }}>
+            {beerOrigin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
+          </div>
+          <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.7)' }}>{beerDescription}</p>
+          {beerTastingNote && (
+            <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 4 }}>
+              « {beerTastingNote} »
+            </p>
+          )}
+          <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
+            {t.viewSheet}
+          </a>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
+            {beer.price33 > 0 && (
+              <QuantityField
+                label={`33cl — ${beer.price33.toFixed(2)} €`}
+                sublabel={beer.depositCents33 > 0 ? `+ ${(beer.depositCents33 / 100).toFixed(2)} € ${t.consigne}` : null}
+                value={qty[`${beer.id}-33`] || 0}
+                onChange={(v) => setQuantity(beer.id, 33, v)}
+              />
+            )}
+            {beer.price75 > 0 && (
+              <QuantityField
+                label={`75cl — ${beer.price75.toFixed(2)} €`}
+                sublabel={beer.depositCents75 > 0 ? `+ ${(beer.depositCents75 / 100).toFixed(2)} € ${t.consigne}` : null}
+                value={qty[`${beer.id}-75`] || 0}
+                onChange={(v) => setQuantity(beer.id, 75, v)}
+              />
+            )}
+          </div>
+
+          {glasses.length > 0 && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 6 }}>
+                {t.addGlass}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                {glasses.map((g) => (
+                  <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(var(--ink-rgb),0.7)' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedGlassIds.has(g.id)}
+                      onChange={(e) => toggleGlass(beer.id, g.id, e.target.checked)}
+                    />
+                    {g.name} — {g.volumeCl}cl ({g.price.toFixed(2)} €)
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function renderBrandGroup(brand, variants) {
+    const defaultVariant = variants.find((v) => (v.style || '').toLowerCase() === 'blonde') || variants[0];
+    const activeId = selectedVariant[brand] && variants.some((v) => v.id === selectedVariant[brand])
+      ? selectedVariant[brand]
+      : defaultVariant.id;
+    const activeBeer = variants.find((v) => v.id === activeId) || defaultVariant;
+
+    const strip = (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
+        {variants.map((v) => (
+          <a
+            key={v.id}
+            href={`/bieres/${v.id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedVariant((prev) => ({ ...prev, [brand]: v.id }));
+            }}
+            title={`${v.style || v.name} — ${v.price33 > 0 ? v.price33.toFixed(2) + ' €' : v.price75.toFixed(2) + ' €'}`}
+            style={{
+              position: 'relative', width: 34, height: 34, borderRadius: '50%', overflow: 'hidden',
+              background: 'var(--surface)', border: v.id === activeId ? '2px solid var(--amber)' : '1px solid var(--line)',
+              display: 'block', cursor: 'pointer',
+            }}
+          >
+            {v.bottleImageUrl && (
+              <Image src={v.bottleImageUrl} alt={v.style || v.name} fill sizes="34px" style={{ objectFit: 'contain', objectPosition: 'bottom' }} />
+            )}
+          </a>
+        ))}
+      </div>
+    );
+
+    return renderBeerCard(activeBeer, { anchorIds: variants.map((v) => v.id), siblingsStrip: strip });
+  }
+
+  function groupByBrand(beersInGroup) {
+    const order = [];
+    const map = new Map();
+    for (const beer of beersInGroup) {
+      const key = beer.brand || beer.id;
+      if (!map.has(key)) { map.set(key, []); order.push(key); }
+      map.get(key).push(beer);
+    }
+    return order.map((key) => ({ brand: key, variants: map.get(key) }));
+  }
+
   return (
     <div>
       {groups.map((group) => (
         <div key={group.title}>
           <h2 style={{ color: 'var(--pine)', margin: '40px 0 16px' }}>{group.title}</h2>
-          {group.beers.map((beer) => {
-            const color = BEER_COLORS[beer.name] || 'var(--line)';
-            const glasses = beer.glasses || [];
-            const selectedGlassIds = glassChoice[beer.id] || new Set();
-            const beerDescription = locale === 'nl' && beer.descriptionNl ? beer.descriptionNl : beer.description;
-            const beerTastingNote = locale === 'nl' && beer.tastingNoteNl ? beer.tastingNoteNl : beer.tastingNote;
-            const beerOrigin = locale === 'nl' && beer.originNl ? beer.originNl : beer.origin;
-            const previewGlassImage =
-              (glasses.find((g) => selectedGlassIds.has(g.id) && g.imageUrl) || {}).imageUrl ||
-              (glasses.find((g) => g.imageUrl) || {}).imageUrl;
-            return (
-            <div
-              id={`beer-${beer.id}`}
-              key={beer.id}
-              style={{
-                background: 'var(--paper)', padding: 20, border: `3px solid ${color}`, borderRadius: 8,
-                display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90, marginBottom: 16,
-              }}
-            >
-              {(beer.bottleImageUrl || previewGlassImage) && (
-                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0, width: 140 }}>
-                  <div style={{ position: 'relative', width: 70, height: 200 }}>
-                    {beer.bottleImageUrl && (
-                      <Image
-                        src={beer.bottleImageUrl}
-                        alt={`${t.bottleAlt} ${beer.name}`}
-                        fill
-                        sizes="70px"
-                        style={{ objectFit: 'contain', objectPosition: 'bottom' }}
-                      />
-                    )}
-                  </div>
-                  <div style={{ position: 'relative', width: 60, height: 200 }}>
-                    {previewGlassImage && (
-                      <Image
-                        src={previewGlassImage}
-                        alt={`${t.glassAlt} ${beer.name}`}
-                        fill
-                        sizes="60px"
-                        style={{ objectFit: 'contain', objectPosition: 'bottom' }}
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-              <div style={{ flex: 1, minWidth: 200 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: 'var(--pine)', textDecoration: 'none' }}>
-                    {beer.name}
-                  </a>
-                  <FlagIcon country={beer.country} />
-                </div>
-                <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', margin: '4px 0 10px' }}>
-                  {beerOrigin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
-                </div>
-                <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.7)' }}>{beerDescription}</p>
-                {beerTastingNote && (
-                  <p style={{ fontSize: 13, color: 'var(--copper)', fontStyle: 'italic', marginTop: -4, marginBottom: 4 }}>
-                    « {beerTastingNote} »
-                  </p>
-                )}
-                <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
-                  {t.viewSheet}
-                </a>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', marginTop: 14 }}>
-                  {beer.price33 > 0 && (
-                    <QuantityField
-                      label={`33cl — ${beer.price33.toFixed(2)} €`}
-                      sublabel={beer.depositCents33 > 0 ? `+ ${(beer.depositCents33 / 100).toFixed(2)} € ${t.consigne}` : null}
-                      value={qty[`${beer.id}-33`] || 0}
-                      onChange={(v) => setQuantity(beer.id, 33, v)}
-                    />
-                  )}
-                  {beer.price75 > 0 && (
-                    <QuantityField
-                      label={`75cl — ${beer.price75.toFixed(2)} €`}
-                      sublabel={beer.depositCents75 > 0 ? `+ ${(beer.depositCents75 / 100).toFixed(2)} € ${t.consigne}` : null}
-                      value={qty[`${beer.id}-75`] || 0}
-                      onChange={(v) => setQuantity(beer.id, 75, v)}
-                    />
-                  )}
-                </div>
-
-                {glasses.length > 0 && (
-                  <div style={{ marginTop: 14 }}>
-                    <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 6 }}>
-                      {t.addGlass}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                      {glasses.map((g) => (
-                        <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(var(--ink-rgb),0.7)' }}>
-                          <input
-                            type="checkbox"
-                            checked={selectedGlassIds.has(g.id)}
-                            onChange={(e) => toggleGlass(beer.id, g.id, e.target.checked)}
-                          />
-                          {g.name} — {g.volumeCl}cl ({g.price.toFixed(2)} €)
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+          {groupByBrand(group.beers).map(({ brand, variants }) => (
+            <div key={brand}>
+              {variants.length > 1 ? renderBrandGroup(brand, variants) : renderBeerCard(variants[0])}
             </div>
-            );
-          })}
+          ))}
         </div>
       ))}
 

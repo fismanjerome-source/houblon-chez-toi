@@ -74,6 +74,8 @@ model PricingTier {
 model Beer {
   id       String  @id @default(cuid())
   name     String
+  brand    String? // marque commune à plusieurs variantes (ex: "3 Monts", "Queue de Charrue") — pour le regroupement sur la homepage
+  style    String? // Blonde, Brune, Ambrée, Triple, IPA, Saison, NEIPA...
   brewery  String
   origin   String  // ville / région
   country  String  // "FR" ou "BE"

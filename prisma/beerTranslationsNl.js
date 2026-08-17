@@ -114,7 +114,7 @@ module.exports = {
     "brewHistoryNl": "Ooit uitgevonden en gebrouwen door de cisterciënzerzusters van de gelijknamige abdij, op een avond bij volle maan.",
     "shortHistoryNl": "Deze tripel, gebrouwen door Brouwerij Caulier als eerbetoon aan de voormalige cisterciënzerabdij Paix-Dieu, volgt een recept dat rondeur en kruidigheid verenigt, in de zuivere traditie van de Belgische abdijbieren."
   },
-  "Queue de Charrue": {
+  "Queue de Charrue Triple": {
     "originNl": "Ploegsteert, België",
     "descriptionNl": "Blonde tripel van 9%, hergist op de fles, met een compacte schuimkraag en een langdurige, evenwichtige bitterheid.",
     "tastingNoteNl": "Rond en moutig, met een vleugje hopbitterheid dat aanhoudt in de afdronk.",

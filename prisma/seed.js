@@ -4,7 +4,9 @@ const prisma = new PrismaClient();
 
 const BEERS = [
   {
-    name: 'Queue de Charrue',
+    name: 'Queue de Charrue Triple',
+    brand: 'Queue de Charrue',
+    style: 'Triple',
     brewery: 'Vanuxeem',
     origin: 'Ploegsteert, Belgique',
     country: 'BE',
@@ -17,6 +19,8 @@ const BEERS = [
   },
   {
     name: 'Anosteke Blonde',
+    brand: 'Anosteke',
+    style: 'Blonde',
     brewery: 'Brasserie du Pays Flamand',
     origin: 'Merville, Nord',
     country: 'FR',
@@ -29,6 +33,8 @@ const BEERS = [
   },
   {
     name: 'Anosteke NEIPA',
+    brand: 'Anosteke',
+    style: 'NEIPA',
     brewery: 'Brasserie du Pays Flamand',
     origin: 'Merville, Nord',
     country: 'FR',
@@ -41,6 +47,8 @@ const BEERS = [
   },
   {
     name: 'Anosteke Saison',
+    brand: 'Anosteke',
+    style: 'Saison',
     brewery: 'Brasserie du Pays Flamand',
     origin: 'Merville, Nord',
     country: 'FR',
@@ -53,6 +61,8 @@ const BEERS = [
   },
   {
     name: 'Queue de Charrue IPA',
+    brand: 'Queue de Charrue',
+    style: 'IPA',
     brewery: 'Vanuxeem',
     origin: 'Ploegsteert, Belgique',
     country: 'BE',
@@ -65,6 +75,8 @@ const BEERS = [
   },
   {
     name: 'Queue de Charrue Blonde',
+    brand: 'Queue de Charrue',
+    style: 'Blonde',
     brewery: 'Vanuxeem',
     origin: 'Ploegsteert, Belgique',
     country: 'BE',
@@ -77,6 +89,8 @@ const BEERS = [
   },
   {
     name: 'Queue de Charrue Brune',
+    brand: 'Queue de Charrue',
+    style: 'Brune',
     brewery: 'Vanuxeem',
     origin: 'Ploegsteert, Belgique',
     country: 'BE',
@@ -89,6 +103,8 @@ const BEERS = [
   },
   {
     name: 'Ypra Triple',
+    brand: 'Ypra',
+    style: 'Triple',
     brewery: 'Omer Vander Ghinste',
     origin: 'Bissegem, Belgique',
     country: 'BE',
@@ -101,6 +117,8 @@ const BEERS = [
   },
   {
     name: '3 Monts IPA',
+    brand: '3 Monts',
+    style: 'IPA',
     brewery: 'Brasserie de Saint-Sylvestre',
     origin: 'Saint-Sylvestre-Cappel, Nord',
     country: 'FR',
@@ -113,6 +131,8 @@ const BEERS = [
   },
   {
     name: '3 Monts Blonde',
+    brand: '3 Monts',
+    style: 'Blonde',
     brewery: 'Brasserie de Saint-Sylvestre',
     origin: 'Saint-Sylvestre-Cappel, Nord',
     country: 'FR',
@@ -125,6 +145,8 @@ const BEERS = [
   },
   {
     name: '3 Monts Ambrée',
+    brand: '3 Monts',
+    style: 'Ambrée',
     brewery: 'Brasserie de Saint-Sylvestre',
     origin: 'Saint-Sylvestre-Cappel, Nord',
     country: 'FR',
@@ -137,6 +159,8 @@ const BEERS = [
   },
   {
     name: '3 Monts Saison',
+    brand: '3 Monts',
+    style: 'Saison',
     brewery: 'Brasserie de Saint-Sylvestre',
     origin: 'Saint-Sylvestre-Cappel, Nord',
     country: 'FR',
@@ -149,6 +173,8 @@ const BEERS = [
   },
   {
     name: '3 Monts Triple',
+    brand: '3 Monts',
+    style: 'Triple',
     brewery: 'Brasserie de Saint-Sylvestre',
     origin: 'Saint-Sylvestre-Cappel, Nord',
     country: 'FR',
@@ -161,6 +187,8 @@ const BEERS = [
   },
   {
     name: 'Paix Dieu',
+    brand: 'Paix Dieu',
+    style: 'Triple',
     brewery: 'Brasserie Caulier',
     origin: 'Abbaye de Bonlieu, Belgique',
     country: 'BE',
@@ -176,6 +204,8 @@ const BEERS = [
   },
   {
     name: 'Chouffe',
+    brand: 'Chouffe',
+    style: 'Blonde',
     brewery: "Brasserie d'Achouffe",
     origin: 'Achouffe, Belgique',
     country: 'BE',
@@ -188,6 +218,8 @@ const BEERS = [
   },
   {
     name: 'Tripel Karmeliet',
+    brand: 'Tripel Karmeliet',
+    style: 'Triple',
     brewery: 'Brouwerij Bosteels',
     origin: 'Buggenhout, Belgique',
     country: 'BE',
@@ -206,6 +238,8 @@ const BEERS = [
   },
   {
     name: 'Leffe Blonde',
+    brand: 'Leffe',
+    style: 'Blonde',
     brewery: 'Abbaye de Leffe (AB InBev)',
     origin: 'Dinant, Belgique',
     country: 'BE',
@@ -224,6 +258,8 @@ const BEERS = [
   },
   {
     name: 'PVL Blonde',
+    brand: 'PVL',
+    style: 'Blonde',
     brewery: 'Brasserie du Pavé',
     origin: 'Ennevelin, Nord',
     country: 'FR',
@@ -240,6 +276,8 @@ const BEERS = [
   },
   {
     name: 'PVL Triple',
+    brand: 'PVL',
+    style: 'Triple',
     brewery: 'Brasserie du Pavé',
     origin: 'Ennevelin, Nord',
     country: 'FR',
@@ -256,6 +294,8 @@ const BEERS = [
   },
   {
     name: 'PVL Ambrée',
+    brand: 'PVL',
+    style: 'Ambrée',
     brewery: 'Brasserie du Pavé',
     origin: 'Ennevelin, Nord',
     country: 'FR',
@@ -282,7 +322,7 @@ const GLASSES = {
   '3 Monts Ambrée': [{ name: 'Verre 3 Monts', volumeCl: 33, price: 5.0, imageUrl: '/beers/3monts-verre.png' }],
   '3 Monts Saison': [{ name: 'Verre 3 Monts', volumeCl: 33, price: 5.0, imageUrl: '/beers/3monts-verre.png' }],
   '3 Monts Triple': [{ name: 'Verre 3 Monts', volumeCl: 33, price: 5.0, imageUrl: '/beers/3monts-verre.png' }],
-  'Queue de Charrue': [
+  'Queue de Charrue Triple': [
     { name: 'Calice à pied Queue de Charrue', volumeCl: 25, price: 3.9 },
     { name: 'Calice à pied Queue de Charrue', volumeCl: 33, price: 4.9 },
     { name: 'Calice à pied Queue de Charrue', volumeCl: 50, price: 6.9 },

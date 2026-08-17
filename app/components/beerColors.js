@@ -1,6 +1,6 @@
 // Couleur dominante de l'étiquette/capsule de chaque bière, relevée sur ses photos.
 const BEER_COLORS = {
-  'Queue de Charrue': '#4a7c3f',
+  'Queue de Charrue Triple': '#4a7c3f',
   'Queue de Charrue IPA': '#e0b93a',
   'Queue de Charrue Blonde': '#4a90c4',
   'Queue de Charrue Brune': '#8b2e2e',
