@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const TXT = {
   fr: { label: 'COFFRET DÉCOUVERTE', beersSuffix: (n) => `${n} bières sélectionnées, une de chacune.`, quantity: 'Quantité' },
   nl: { label: 'ONTDEKKINGSPAKKET', beersSuffix: (n) => `${n} geselecteerde bieren, telkens één stuk.`, quantity: 'Aantal' },
@@ -10,8 +12,8 @@ export default function BasketCard({ basket, quantity, onChange, locale = 'fr' }
     <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 8, padding: 24, display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, width: 180, flexShrink: 0 }}>
         {basket.beers.slice(0, 15).map((b) => (
-          <div key={b.id} style={{ background: 'color-mix(in srgb, var(--paper) 12%, transparent)', borderRadius: 4, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            {b.bottleImageUrl && <img src={b.bottleImageUrl} alt={b.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />}
+          <div key={b.id} style={{ position: 'relative', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', borderRadius: 4, height: 44, overflow: 'hidden' }}>
+            {b.bottleImageUrl && <Image src={b.bottleImageUrl} alt={b.name} fill sizes="36px" style={{ objectFit: 'contain' }} />}
           </div>
         ))}
       </div>

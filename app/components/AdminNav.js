@@ -1,5 +1,6 @@
 const LINKS = [
   { href: '/admin', label: 'Tableau de bord' },
+  { href: '/admin/stats', label: 'Statistiques' },
   { href: '/admin/factures', label: 'Factures' },
   { href: '/admin/pro', label: 'Comptes PRO' },
   { href: '/admin/codes', label: 'Codes & Parrainage' },

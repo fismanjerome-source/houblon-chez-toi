@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import FlagIcon from './components/FlagIcon';
 import BasketCard from './components/BasketCard';
 const { FREE_SHIPPING_THRESHOLD_CENTS, DELIVERY_FEE_CENTS, PICKUP_ADDRESS, computeDeliveryFeeCents } = require('../lib/delivery');
@@ -304,21 +305,25 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             >
               {(beer.bottleImageUrl || previewGlassImage) && (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexShrink: 0, width: 140 }}>
-                  <div style={{ width: 70, height: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                  <div style={{ position: 'relative', width: 70, height: 200 }}>
                     {beer.bottleImageUrl && (
-                      <img
+                      <Image
                         src={beer.bottleImageUrl}
                         alt={`${t.bottleAlt} ${beer.name}`}
-                        style={{ maxWidth: 70, maxHeight: 200, objectFit: 'contain' }}
+                        fill
+                        sizes="70px"
+                        style={{ objectFit: 'contain', objectPosition: 'bottom' }}
                       />
                     )}
                   </div>
-                  <div style={{ width: 60, height: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                  <div style={{ position: 'relative', width: 60, height: 200 }}>
                     {previewGlassImage && (
-                      <img
+                      <Image
                         src={previewGlassImage}
                         alt={`${t.glassAlt} ${beer.name}`}
-                        style={{ maxWidth: 60, maxHeight: 170, objectFit: 'contain' }}
+                        fill
+                        sizes="60px"
+                        style={{ objectFit: 'contain', objectPosition: 'bottom' }}
                       />
                     )}
                   </div>
@@ -407,7 +412,11 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               const isEcocup = m.name.toLowerCase().includes('ecocup');
               return (
               <div key={m.id} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 8, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
-                {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: '100%', height: 120, objectFit: 'contain', marginBottom: 10 }} />}
+                {m.imageUrl && (
+                  <div style={{ position: 'relative', width: '100%', height: 120, marginBottom: 10 }}>
+                    <Image src={m.imageUrl} alt={m.name} fill sizes="220px" style={{ objectFit: 'contain' }} />
+                  </div>
+                )}
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--pine)', marginBottom: 4 }}>{m.name}</div>
                 {isEcocup && (
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--pine)', marginBottom: 8, background: 'rgba(var(--ink-rgb),0.05)', padding: '3px 8px', borderRadius: 20 }}>

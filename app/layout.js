@@ -1,4 +1,5 @@
 import './globals.css';
+import { Analytics } from '@vercel/analytics/react';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
 const { getLocale } = require('../lib/i18n');
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
         <SiteHeader locale={locale} theme={theme} />
         {children}
         <SiteFooter locale={locale} />
+        <Analytics />
       </body>
     </html>
   );

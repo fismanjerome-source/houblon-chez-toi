@@ -1,4 +1,5 @@
 const { prisma } = require('../../../lib/db');
+import Image from 'next/image';
 import FlagIcon from '../../components/FlagIcon';
 const { BEER_COLORS } = require('../../components/beerColors');
 const { getLocale } = require('../../../lib/i18n');
@@ -83,14 +84,14 @@ export default async function BeerPage({ params }) {
       <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', marginTop: 20, marginBottom: 32 }}>
         {(beer.bottleImageUrl || glassImage) && (
           <div style={{ display: 'flex', gap: 14, alignItems: 'flex-end', flexShrink: 0, margin: '0 auto', width: 215 }}>
-            <div className="zoom-on-hover" style={{ width: 110, height: 310, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+            <div className="zoom-on-hover" style={{ position: 'relative', width: 110, height: 310 }}>
               {beer.bottleImageUrl && (
-                <img src={beer.bottleImageUrl} alt={`${t.bottleAlt} ${beer.name}`} style={{ maxWidth: 110, maxHeight: 310, objectFit: 'contain' }} />
+                <Image src={beer.bottleImageUrl} alt={`${t.bottleAlt} ${beer.name}`} fill sizes="110px" style={{ objectFit: 'contain', objectPosition: 'bottom' }} />
               )}
             </div>
-            <div className="zoom-on-hover" style={{ width: 95, height: 310, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+            <div className="zoom-on-hover" style={{ position: 'relative', width: 95, height: 310 }}>
               {glassImage && (
-                <img src={glassImage} alt={`${t.glassAlt} ${beer.name}`} style={{ maxWidth: 95, maxHeight: 240, objectFit: 'contain' }} />
+                <Image src={glassImage} alt={`${t.glassAlt} ${beer.name}`} fill sizes="95px" style={{ objectFit: 'contain', objectPosition: 'bottom' }} />
               )}
             </div>
           </div>

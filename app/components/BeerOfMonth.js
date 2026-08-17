@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const TXT = {
   fr: { label: 'BIÈRE DU MOIS', order: 'Commander', learnMore: 'En savoir plus →' },
   nl: { label: 'BIER VAN DE MAAND', order: 'Bestellen', learnMore: 'Meer weten →' },
@@ -17,10 +19,10 @@ export default function BeerOfMonth({ beer, locale = 'fr' }) {
       <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 6, padding: '32px 28px', display: 'flex', gap: 28, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexShrink: 0, margin: '0 auto' }}>
           {beer.bottleImageUrl && (
-            <img src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} style={{ width: 80, height: 220, objectFit: 'contain' }} />
+            <Image src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} width={80} height={220} style={{ width: 80, height: 220, objectFit: 'contain' }} />
           )}
           {glassImage && (
-            <img src={glassImage} alt={`Verre ${beer.name}`} style={{ width: 70, height: 150, objectFit: 'contain' }} />
+            <Image src={glassImage} alt={`Verre ${beer.name}`} width={70} height={150} style={{ width: 70, height: 150, objectFit: 'contain' }} />
           )}
         </div>
         <div style={{ flex: '1 1 280px', minWidth: 240 }}>

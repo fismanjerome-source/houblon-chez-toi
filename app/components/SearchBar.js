@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 export default function SearchBar({ locale = 'fr' }) {
   const [beers, setBeers] = useState([]);
@@ -78,7 +79,7 @@ export default function SearchBar({ locale = 'fr' }) {
                 onMouseDown={(e) => e.preventDefault()}
               >
                 {b.bottleImageUrl ? (
-                  <img src={b.bottleImageUrl} alt="" style={{ width: 24, height: 48, objectFit: 'contain' }} />
+                  <Image src={b.bottleImageUrl} alt="" width={24} height={48} style={{ width: 24, height: 48, objectFit: 'contain' }} />
                 ) : (
                   <div style={{ width: 24, height: 48 }} />
                 )}
