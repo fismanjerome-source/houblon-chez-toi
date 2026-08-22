@@ -25,7 +25,7 @@ export default function OrderStatusControl({ orderId, status }) {
   }
 
   return (
-    <select value={current} onChange={handleChange} disabled={saving} style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12, padding: '3px 6px', border: '1px solid var(--line)', borderRadius: 3 }}>
+    <select value={current} onChange={handleChange} disabled={saving} style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12, padding: '3px 6px', border: '2px solid var(--line)', borderRadius: 3 }}>
       {STATUSES.map((s) => (
         <option key={s.value} value={s.value}>{s.label}</option>
       ))}

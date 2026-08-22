@@ -64,8 +64,8 @@ export default async function AdminEmailsPage() {
       </p>
 
       {templates.map((t) => (
-        <div key={t.label} style={{ marginBottom: 32, border: '1px solid var(--line)', borderRadius: 6, overflow: 'hidden', background: 'var(--surface)' }}>
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--line)' }}>
+        <div key={t.label} style={{ marginBottom: 32, border: '2px solid var(--line)', borderRadius: 2, overflow: 'hidden', background: 'var(--surface)' }}>
+          <div style={{ padding: '12px 16px', borderBottom: '2px solid var(--line)' }}>
             <strong style={{ color: 'var(--pine)', fontSize: 14.5 }}>{t.label}</strong>
             <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11.5, color: 'var(--copper)', marginTop: 4 }}>Objet : {t.subject}</div>
             <div style={{ fontSize: 12, color: 'rgba(var(--ink-rgb),0.55)', marginTop: 4 }}>{t.trigger}</div>

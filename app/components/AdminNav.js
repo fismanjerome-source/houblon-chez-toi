@@ -19,7 +19,7 @@ export default function AdminNav({ active }) {
             fontFamily: 'Public Sans, sans-serif',
             fontSize: 12,
             padding: '6px 12px',
-            borderRadius: 4,
+            borderRadius: 2,
             textDecoration: 'none',
             background: active === l.href ? 'var(--pine)' : 'transparent',
             color: active === l.href ? 'var(--paper)' : 'var(--pine)',

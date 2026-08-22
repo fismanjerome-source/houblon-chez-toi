@@ -33,7 +33,7 @@ export default function AdminPricingTiers({ tiers }) {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
+    <form onSubmit={handleSave} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Prix dégressifs (comptes PRO)</h3>
       <p style={{ fontSize: 13, color: 'var(--copper)', marginTop: -8, marginBottom: 16 }}>
         Remise appliquée au sous-total (hors consignes) selon le nombre total de bouteilles commandées. Seul le palier le plus élevé atteint s'applique.
@@ -51,7 +51,7 @@ export default function AdminPricingTiers({ tiers }) {
           <button type="button" onClick={() => removeRow(r.key)} style={{ background: 'transparent', border: 'none', color: 'var(--copper)', cursor: 'pointer', fontSize: 13 }}>Supprimer</button>
         </div>
       ))}
-      <button type="button" onClick={addRow} style={{ background: 'transparent', border: '1px dashed var(--line)', borderRadius: 4, padding: '6px 12px', cursor: 'pointer', fontSize: 13, color: 'var(--pine)', marginBottom: 16 }}>
+      <button type="button" onClick={addRow} style={{ background: 'transparent', border: '1px dashed var(--line)', borderRadius: 2, padding: '6px 12px', cursor: 'pointer', fontSize: 13, color: 'var(--pine)', marginBottom: 16 }}>
         + Ajouter un palier
       </button>
       {status && <p style={{ fontSize: 13, color: 'var(--pine)' }}>{status}</p>}

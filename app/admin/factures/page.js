@@ -57,14 +57,14 @@ export default async function AdminFacturesPage() {
         const monthTotal = group.reduce((sum, inv) => sum + inv.totalCents, 0);
         return (
           <div key={key} style={{ marginBottom: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid var(--line)', paddingBottom: 6, marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--line)', paddingBottom: 6, marginBottom: 10 }}>
               <h3 style={{ margin: 0, fontSize: 15, color: 'var(--pine)', textTransform: 'capitalize' }}>{monthLabel(key)}</h3>
               <span style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5, color: 'var(--copper)' }}>
                 {group.length} facture{group.length > 1 ? 's' : ''} — {(monthTotal / 100).toFixed(2)} €
               </span>
             </div>
             {group.map((inv) => (
-              <div key={inv.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
+              <div key={inv.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '2px solid var(--line)', flexWrap: 'wrap' }}>
                 <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5 }}>
                   <strong>{inv.number}</strong> — {inv.issuedAt.toLocaleDateString('fr-FR')} — {inv.order.user.name}
                   {inv.order.user.proApproved && <span style={{ marginLeft: 8, fontSize: 10.5, color: 'var(--copper)' }}>PRO</span>}

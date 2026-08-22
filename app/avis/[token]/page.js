@@ -23,7 +23,7 @@ export default async function ReviewPage({ params }) {
         Commande n°{order.id.slice(-6)} — {order.slot}
       </p>
       {order.review ? (
-        <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 8, padding: 24, textAlign: 'center' }}>
+        <div style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', borderRadius: 3, padding: 24, textAlign: 'center' }}>
           <p style={{ margin: 0, color: 'var(--pine)' }}>Vous avez déjà laissé un avis pour cette commande, merci !</p>
         </div>
       ) : (

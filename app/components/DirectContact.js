@@ -12,7 +12,7 @@ export default function DirectContact({ locale = 'fr' }) {
   const t = TXT[locale] || TXT.fr;
   return (
     <section className="wrap" style={{ padding: '8px 0 40px' }}>
-      <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: '28px', textAlign: 'center' }}>
+      <div style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', borderRadius: 2, padding: '28px', textAlign: 'center' }}>
         <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, color: 'var(--pine)', margin: '0 0 6px' }}>
           {t.title}
         </h2>

@@ -46,7 +46,7 @@ export default async function AdminCodesPage() {
       </p>
       {referrals.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.55)' }}>Aucun parrainage pour le moment.</p>}
       {referrals.map((r) => (
-        <div key={r.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 12, marginBottom: 8, background: 'var(--surface)', fontSize: 13, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <div key={r.id} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 12, marginBottom: 8, background: 'var(--surface)', fontSize: 13, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
           <div>
             <strong>{r.referrer.name}</strong> ({r.referrer.email}) a parrainé <strong>{r.referee.name}</strong> ({r.referee.email}) — code {r.code}
           </div>

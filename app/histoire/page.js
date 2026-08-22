@@ -50,7 +50,7 @@ export default function HistoirePage() {
         de Flandre, les malts du Nord.
       </p>
 
-      <div style={{ borderRadius: 8, overflow: 'hidden', margin: '28px 0' }}>
+      <div style={{ borderRadius: 3, overflow: 'hidden', margin: '28px 0' }}>
         <HopFieldIllustration />
       </div>
 
@@ -71,7 +71,7 @@ export default function HistoirePage() {
         houblons venus d'ailleurs. Chaque bière raconte un lieu, une brasserie, une manière de faire.
       </p>
 
-      <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 6, padding: '28px 24px', margin: '32px 0' }}>
+      <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 2, padding: '28px 24px', margin: '32px 0' }}>
         <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 20, margin: '0 0 10px' }}>Notre sélection, pas un catalogue</h2>
         <p style={{ fontSize: 14, lineHeight: 1.7, opacity: 0.92, margin: 0 }}>
           Le but de Houblon chez toi n'est pas de vous proposer toutes les bières du Nord et de Belgique —
@@ -98,7 +98,7 @@ export default function HistoirePage() {
         {STYLES.map((s) => (
           <div
             key={s.name}
-            style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 8, padding: '14px 12px' }}
+            style={{ background: 'var(--surface)', border: '2px solid var(--line)', borderRadius: 3, padding: '14px 12px' }}
           >
             <div
               aria-hidden="true"

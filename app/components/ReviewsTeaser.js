@@ -17,7 +17,7 @@ export default function ReviewsTeaser({ reviews, average, locale = 'fr' }) {
       </p>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {reviews.map((r) => (
-          <div key={r.id} style={{ flex: '1 1 220px', border: '1px solid var(--line)', borderRadius: 6, padding: 16, background: 'var(--surface)' }}>
+          <div key={r.id} style={{ flex: '1 1 220px', border: '2px solid var(--line)', borderRadius: 2, padding: 16, background: 'var(--surface)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, gap: 8 }}>
               <strong style={{ color: 'var(--pine)', fontSize: 14 }}>{r.customerName}</strong>
               <Stars rating={r.rating} />

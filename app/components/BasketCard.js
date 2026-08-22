@@ -9,10 +9,10 @@ export default function BasketCard({ basket, quantity, onChange, locale = 'fr' }
   const t = TXT[locale] || TXT.fr;
   const description = locale === 'nl' && basket.descriptionNl ? basket.descriptionNl : basket.description;
   return (
-    <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 8, padding: 24, display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
+    <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 3, padding: 24, display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, width: 180, flexShrink: 0 }}>
         {basket.beers.slice(0, 15).map((b) => (
-          <div key={b.id} style={{ position: 'relative', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', borderRadius: 4, height: 44, overflow: 'hidden' }}>
+          <div key={b.id} style={{ position: 'relative', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', borderRadius: 2, height: 44, overflow: 'hidden' }}>
             {b.bottleImageUrl && <Image src={b.bottleImageUrl} alt={b.name} fill sizes="36px" style={{ objectFit: 'contain' }} />}
           </div>
         ))}

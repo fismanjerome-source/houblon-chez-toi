@@ -183,11 +183,11 @@ export default function BeerMap({ beers }) {
 
   return (
     <div style={{ position: 'relative' }}>
-      <div ref={containerRef} style={{ height: 420, borderRadius: 6, border: '1px solid var(--line)' }} />
+      <div ref={containerRef} style={{ height: 420, borderRadius: 2, border: '2px solid var(--line)' }} />
       <div
         style={{
           position: 'absolute', top: 12, right: 12, zIndex: 400,
-          width: 168, background: 'var(--surface)', borderRadius: 6,
+          width: 168, background: 'var(--surface)', borderRadius: 2,
           border: '2px solid var(--pine-fixed, #1B2E20)', boxShadow: '0 4px 14px rgba(15,23,18,0.35)',
           overflow: 'hidden', pointerEvents: 'none',
         }}

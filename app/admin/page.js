@@ -48,7 +48,7 @@ export default async function AdminPage() {
 
       <h2 style={{ color: 'var(--pine)', marginBottom: 16 }}>Toutes les commandes</h2>
       {orders.map((o) => (
-        <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
+        <div key={o.id} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--copper)' }}>
               #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}

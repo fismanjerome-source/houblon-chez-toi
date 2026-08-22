@@ -150,7 +150,7 @@ export default async function BeerPage({ params }) {
           <h2 style={{ fontSize: 18, color: 'var(--pine)', marginBottom: 12 }}>{t.glassesProposed(glasses.length)}</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             {glasses.map((g) => (
-              <div key={g.id} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: '10px 14px', fontSize: 13.5 }}>
+              <div key={g.id} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: '10px 14px', fontSize: 13.5 }}>
                 {g.name} — <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{g.volumeCl}cl · {g.price.toFixed(2)} €</span>
               </div>
             ))}
@@ -164,7 +164,7 @@ export default async function BeerPage({ params }) {
 function TastingCard({ label, icon, text }) {
   if (!text) return null;
   return (
-    <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: 16 }}>
+    <div style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', borderRadius: 2, padding: 16 }}>
       <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, textTransform: 'uppercase', color: 'var(--copper)', marginBottom: 6 }}>
         {icon} {label}
       </div>

@@ -100,7 +100,7 @@ export default function ComptePage() {
     return (
       <main className="wrap" style={{ padding: '48px 0' }}>
         {paymentBanner && (
-          <p style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: 12, fontSize: 13.5, color: 'var(--pine)', marginBottom: 20 }}>
+          <p style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', borderRadius: 2, padding: 12, fontSize: 13.5, color: 'var(--pine)', marginBottom: 20 }}>
             {paymentBanner}
           </p>
         )}
@@ -115,11 +115,11 @@ export default function ComptePage() {
         </div>
 
         {user.referralCode && (
-          <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 8, padding: 20, marginBottom: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 3, padding: 20, marginBottom: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 6 }}>PARRAINAGE</div>
               <p style={{ margin: '0 0 6px', fontSize: 14 }}>Offrez 5 € à un proche, gagnez 10 € de crédit dès sa 1ère commande livrée.</p>
-              <div style={{ display: 'inline-block', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', border: '1px dashed color-mix(in srgb, var(--paper) 40%, transparent)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Public Sans, sans-serif', fontSize: 17, letterSpacing: '0.06em' }}>
+              <div style={{ display: 'inline-block', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', border: '1px dashed color-mix(in srgb, var(--paper) 40%, transparent)', borderRadius: 2, padding: '8px 18px', fontFamily: 'Public Sans, sans-serif', fontSize: 17, letterSpacing: '0.06em' }}>
                 {user.referralCode}
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function ComptePage() {
         )}
 
         {showPasswordForm && (
-          <form onSubmit={handleChangePassword} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 20, marginBottom: 30, maxWidth: 380 }}>
+          <form onSubmit={handleChangePassword} style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', padding: 20, marginBottom: 30, maxWidth: 380 }}>
             <div className="field">
               <label>Mot de passe actuel</label>
               <input type="password" required value={pwForm.currentPassword} onChange={(e) => setPwForm({ ...pwForm, currentPassword: e.target.value })} />
@@ -150,7 +150,7 @@ export default function ComptePage() {
         <h2 style={{ fontSize: 18, marginBottom: 14 }}>Mes commandes</h2>
         {orders.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.5)' }}>Aucune commande pour le moment.</p>}
         {orders.map((o) => (
-          <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
+          <div key={o.id} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
             <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--copper)' }}>#{o.id.slice(-6)}</div>
             <div>
               {[

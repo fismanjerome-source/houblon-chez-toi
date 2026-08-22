@@ -42,7 +42,7 @@ export default function AdminBeerEditor({ beers }) {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
+    <form onSubmit={handleSave} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Bières ({rows.length})</h3>
       <p style={{ fontSize: 13, color: 'var(--copper)', marginTop: -8, marginBottom: 16 }}>
         Une bière n'apparaît sur le site que si elle est cochée « Visible » avec un prix supérieur à 0.
@@ -50,7 +50,7 @@ export default function AdminBeerEditor({ beers }) {
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
           <thead>
-            <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--line)' }}>
+            <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--line)' }}>
               <th style={{ padding: '6px 8px' }}>Bière</th>
               <th style={{ padding: '6px 8px' }}>Prix 33cl (€)</th>
               <th style={{ padding: '6px 8px' }}>Prix 75cl (€)</th>
@@ -61,7 +61,7 @@ export default function AdminBeerEditor({ beers }) {
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} style={{ borderBottom: '1px solid var(--line)' }}>
+              <tr key={r.id} style={{ borderBottom: '2px solid var(--line)' }}>
                 <td style={{ padding: '6px 8px' }}>{r.name}</td>
                 <td style={{ padding: '6px 8px' }}>
                   <input type="number" min="0" step="0.01" value={r.price33} onChange={(e) => updateRow(r.id, 'price33', e.target.value)} style={{ width: 80 }} />

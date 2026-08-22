@@ -21,7 +21,7 @@ export default async function AvisPage() {
       )}
 
       {reviews.map((r) => (
-        <div key={r.id} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 16, marginBottom: 12, background: 'var(--surface)' }}>
+        <div key={r.id} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 16, marginBottom: 12, background: 'var(--surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
             <strong style={{ color: 'var(--pine)', fontSize: 14.5 }}>{r.customerName}</strong>
             <Stars rating={r.rating} />

@@ -82,7 +82,7 @@ export default function QuiSommesNousPage() {
         style={{
           background: 'var(--paper-warm)',
           border: '1px dashed var(--line)',
-          borderRadius: 8,
+          borderRadius: 3,
           height: 220,
           display: 'flex',
           alignItems: 'center',

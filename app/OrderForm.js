@@ -307,7 +307,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         id={`beer-${beer.id}`}
         key={beer.id}
         style={{
-          background: 'var(--paper)', padding: 20, border: `3px solid ${color}`, borderRadius: 8,
+          background: 'var(--paper)', padding: 20, border: `3px solid ${color}`, borderRadius: 3,
           display: 'flex', gap: 20, flexWrap: 'wrap', scrollMarginTop: 90, marginBottom: 16,
         }}
       >
@@ -425,7 +425,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             title={`${v.style || v.name} — ${v.price33 > 0 ? v.price33.toFixed(2) + ' €' : v.price75.toFixed(2) + ' €'}`}
             style={{
               position: 'relative', width: 34, height: 34, borderRadius: '50%', overflow: 'hidden',
-              background: 'var(--surface)', border: v.id === activeId ? '2px solid var(--amber)' : '1px solid var(--line)',
+              background: 'var(--surface)', border: v.id === activeId ? '2px solid var(--amber)' : '2px solid var(--line)',
               display: 'block', cursor: 'pointer',
             }}
           >
@@ -481,7 +481,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               const merchDescription = locale === 'nl' && m.descriptionNl ? m.descriptionNl : m.description;
               const isEcocup = m.name.toLowerCase().includes('ecocup');
               return (
-              <div key={m.id} style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 8, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
+              <div key={m.id} style={{ background: 'var(--paper)', border: '2px solid var(--line)', borderRadius: 3, padding: 16, flex: '1 1 220px', minWidth: 200 }}>
                 {m.imageUrl && (
                   <div style={{ position: 'relative', width: '100%', height: 120, marginBottom: 10 }}>
                     <Image src={m.imageUrl} alt={m.name} fill sizes="220px" style={{ objectFit: 'contain' }} />
@@ -503,7 +503,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                     placeholder="0"
                     onChange={(e) => setMerchQty((q) => ({ ...q, [m.id]: Math.max(0, Math.min(20, Number(e.target.value) || 0)) }))}
                     onFocus={(e) => e.target.select()}
-                    style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                    style={{ width: 55, padding: 6, border: '2px solid var(--line)', borderRadius: 3 }}
                   />
                 </div>
               </div>
@@ -513,7 +513,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', padding: 24, marginTop: 24 }}>
+      <form onSubmit={handleSubmit} style={{ background: 'var(--paper-warm)', border: '2px solid var(--line)', padding: 24, marginTop: 24 }}>
         <h2 style={{ color: 'var(--pine)', marginTop: 0, marginBottom: 16 }}>{t.yourOrder}</h2>
 
         {!hasItems ? (
@@ -571,7 +571,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                         placeholder="0"
                         onChange={(e) => setReturnQty(beer.id, 33, e.target.value)}
                         onFocus={(e) => e.target.select()}
-                        style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                        style={{ width: 55, padding: 6, border: '2px solid var(--line)', borderRadius: 3 }}
                       />
                     </label>
                   )}
@@ -584,7 +584,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                         placeholder="0"
                         onChange={(e) => setReturnQty(beer.id, 75, e.target.value)}
                         onFocus={(e) => e.target.select()}
-                        style={{ width: 55, padding: 6, border: '1px solid var(--line)', borderRadius: 3 }}
+                        style={{ width: 55, padding: 6, border: '2px solid var(--line)', borderRadius: 3 }}
                       />
                     </label>
                   )}
@@ -611,7 +611,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           </>
         )}
 
-        <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
+        <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 13.5, borderTop: '2px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span>{t.subtotalBeers(glassLines.length > 0)}</span>
             <span>{itemsSubtotal.toFixed(2)} €</span>
@@ -673,7 +673,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           {pickup ? (
             <div className="field" style={{ flex: 1, minWidth: 220 }}>
               <label>{t.pickupAddressLabel}</label>
-              <p style={{ margin: 0, fontSize: 14, padding: 12, border: '1px solid var(--line)', borderRadius: 3, background: 'var(--paper)' }}>
+              <p style={{ margin: 0, fontSize: 14, padding: 12, border: '2px solid var(--line)', borderRadius: 3, background: 'var(--paper)' }}>
                 📍 {PICKUP_ADDRESS}
               </p>
             </div>
@@ -704,7 +704,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
         )}
 
         {user?.proApproved && (
-          <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'var(--surface)' }}>
+          <div style={{ marginTop: 14, padding: 14, border: '2px solid var(--line)', borderRadius: 2, background: 'var(--surface)' }}>
             <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 8 }}>
               {t.paymentModeLabel}
             </div>
@@ -780,7 +780,7 @@ function QuantityField({ label, sublabel, value, onChange }) {
           placeholder="0"
           onChange={(e) => onChange(e.target.value === '' ? '0' : e.target.value)}
           onFocus={(e) => e.target.select()}
-          style={{ width: 46, padding: 8, border: '1px solid var(--line)', borderRadius: 3, fontFamily: 'Public Sans, sans-serif', fontSize: 14, textAlign: 'center' }}
+          style={{ width: 46, padding: 8, border: '2px solid var(--line)', borderRadius: 3, fontFamily: 'Public Sans, sans-serif', fontSize: 14, textAlign: 'center' }}
         />
         <button
           type="button"

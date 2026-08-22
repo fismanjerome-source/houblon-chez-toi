@@ -50,8 +50,8 @@ export default function MobileMenu({ locale = 'fr' }) {
         aria-expanded={open}
         style={{
           display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4,
-          width: 36, height: 36, background: 'transparent', border: '1px solid var(--line)',
-          borderRadius: 6, cursor: 'pointer', padding: 0,
+          width: 36, height: 36, background: 'transparent', border: '2px solid var(--line)',
+          borderRadius: 2, cursor: 'pointer', padding: 0,
         }}
       >
         <span style={{ width: 18, height: 2, background: 'var(--pine)', margin: '0 auto', borderRadius: 2 }} />
@@ -62,7 +62,7 @@ export default function MobileMenu({ locale = 'fr' }) {
       {open && (
         <div style={{
           position: 'absolute', top: '120%', right: 0, minWidth: 200, background: 'var(--paper)',
-          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
+          border: '2px solid var(--line)', borderRadius: 3, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
           zIndex: 30, overflow: 'hidden',
         }}>
           {LINKS.map((l) => (
@@ -72,7 +72,7 @@ export default function MobileMenu({ locale = 'fr' }) {
               onClick={() => setOpen(false)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
-                fontSize: 14, color: 'var(--ink)', textDecoration: 'none', borderBottom: '1px solid var(--line)',
+                fontSize: 14, color: 'var(--ink)', textDecoration: 'none', borderBottom: '2px solid var(--line)',
               }}
             >
               <span style={{ fontSize: 16 }}>{l.emoji}</span>

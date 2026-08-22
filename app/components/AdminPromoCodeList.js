@@ -21,13 +21,13 @@ export default function AdminPromoCodeList({ codes: initialCodes }) {
   }
 
   return (
-    <div style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
+    <div style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Codes existants ({codes.length})</h3>
       {codes.length === 0 && <p style={{ fontSize: 13, color: 'rgba(var(--ink-rgb),0.55)' }}>Aucun code créé pour le moment.</p>}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
-            <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--line)' }}>
+            <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--line)' }}>
               <th style={{ padding: '6px 8px' }}>Code</th>
               <th style={{ padding: '6px 8px' }}>Type</th>
               <th style={{ padding: '6px 8px' }}>Remise</th>
@@ -39,7 +39,7 @@ export default function AdminPromoCodeList({ codes: initialCodes }) {
           </thead>
           <tbody>
             {codes.map((c) => (
-              <tr key={c.id} style={{ borderBottom: '1px solid var(--line)' }}>
+              <tr key={c.id} style={{ borderBottom: '2px solid var(--line)' }}>
                 <td style={{ padding: '6px 8px', fontFamily: 'Public Sans, sans-serif' }}>{c.code}{c.restrictToEmail ? ` (${c.restrictToEmail})` : ''}</td>
                 <td style={{ padding: '6px 8px' }}>{KIND_LABELS[c.kind] || c.kind}</td>
                 <td style={{ padding: '6px 8px' }}>{formatDiscount(c)}</td>

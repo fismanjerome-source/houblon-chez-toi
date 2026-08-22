@@ -61,7 +61,7 @@ export default function VerresPage() {
             key={g.name}
             style={{
               display: 'flex', gap: 20, alignItems: 'center', background: 'var(--paper-warm)',
-              border: '1px solid var(--line)', borderRadius: 6, padding: 20,
+              border: '2px solid var(--line)', borderRadius: 2, padding: 20,
             }}
           >
             <div style={{ flexShrink: 0, width: 70, display: 'flex', justifyContent: 'center' }}>

@@ -6,7 +6,7 @@ import ThemeToggle from './ThemeToggle';
 
 export default function SiteHeader({ locale = 'fr', theme = 'light' }) {
   return (
-    <header style={{ borderBottom: '1px solid var(--line)' }}>
+    <header style={{ borderBottom: '2px solid var(--line)' }}>
       <div
         className="wrap"
         style={{ padding: '16px 0', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}

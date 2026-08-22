@@ -53,7 +53,7 @@ export default function SearchBar({ locale = 'fr' }) {
           style={{
             width: '100%',
             padding: '9px 12px 9px 34px',
-            border: '1px solid var(--line)',
+            border: '2px solid var(--line)',
             borderRadius: 20,
             fontFamily: 'Public Sans, sans-serif',
             fontSize: 13.5,
@@ -65,7 +65,7 @@ export default function SearchBar({ locale = 'fr' }) {
       {open && query.trim() && (
         <div style={{
           position: 'absolute', top: '110%', left: 0, right: 0, background: 'var(--paper)',
-          border: '1px solid var(--line)', borderRadius: 8, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
+          border: '2px solid var(--line)', borderRadius: 3, boxShadow: '0 8px 24px rgba(var(--ink-rgb),0.15)',
           zIndex: 20, maxHeight: 320, overflowY: 'auto',
         }}>
           {results.length === 0 ? (
@@ -75,7 +75,7 @@ export default function SearchBar({ locale = 'fr' }) {
               <div
                 key={b.id}
                 onClick={() => goToBeer(b.id)}
-                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--line)' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', cursor: 'pointer', borderBottom: '2px solid var(--line)' }}
                 onMouseDown={(e) => e.preventDefault()}
               >
                 {b.bottleImageUrl ? (

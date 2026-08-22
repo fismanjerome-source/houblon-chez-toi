@@ -11,7 +11,7 @@ function euros(cents) {
 
 function StatCard({ label, value }) {
   return (
-    <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 6, padding: '16px 18px' }}>
+    <div style={{ background: 'var(--surface)', border: '2px solid var(--line)', borderRadius: 2, padding: '16px 18px' }}>
       <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 6 }}>
         {label}
       </div>
@@ -121,7 +121,7 @@ export default async function AdminStatsPage() {
       </div>
 
       <h3 style={{ fontSize: 14, color: 'var(--copper)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>Commandes par jour (14 derniers jours)</h3>
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 6, padding: '16px 18px', marginBottom: 28 }}>
+      <div style={{ background: 'var(--surface)', border: '2px solid var(--line)', borderRadius: 2, padding: '16px 18px', marginBottom: 28 }}>
         {dailyEntries.map(([date, v]) => (
           <div key={date} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, fontSize: 12.5 }}>
             <div style={{ fontFamily: 'Public Sans, sans-serif', width: 80, color: 'rgba(var(--ink-rgb),0.6)', flexShrink: 0 }}>
@@ -138,10 +138,10 @@ export default async function AdminStatsPage() {
       </div>
 
       <h3 style={{ fontSize: 14, color: 'var(--copper)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>Bières les plus vendues</h3>
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 6, padding: '16px 18px' }}>
+      <div style={{ background: 'var(--surface)', border: '2px solid var(--line)', borderRadius: 2, padding: '16px 18px' }}>
         {topBeers.length === 0 && <p style={{ fontSize: 13, color: 'rgba(var(--ink-rgb),0.55)', margin: 0 }}>Aucune vente pour le moment.</p>}
         {topBeers.map(({ beer, quantity }, i) => (
-          <div key={beer?.id || i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < topBeers.length - 1 ? '1px solid var(--line)' : 'none', fontSize: 13.5 }}>
+          <div key={beer?.id || i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < topBeers.length - 1 ? '2px solid var(--line)' : 'none', fontSize: 13.5 }}>
             <span>{i + 1}. {beer?.name || 'Bière supprimée'}</span>
             <span style={{ fontFamily: 'Public Sans, sans-serif', color: 'var(--copper)' }}>{quantity} vendues</span>
           </div>

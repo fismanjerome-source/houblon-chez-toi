@@ -20,7 +20,7 @@ export default function AdminProAccounts({ users }) {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
+    <form onSubmit={handleSave} style={{ border: '2px solid var(--line)', borderRadius: 2, padding: 20, background: 'var(--surface)', marginBottom: 20 }}>
       <h3 style={{ marginTop: 0, color: 'var(--pine)' }}>Comptes clients</h3>
       <p style={{ fontSize: 13, color: 'var(--copper)', marginTop: -8, marginBottom: 16 }}>
         Un compte coché « PRO » peut régler par facture à 30 jours et bénéficie des prix dégressifs.
@@ -28,7 +28,7 @@ export default function AdminProAccounts({ users }) {
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
           <thead>
-            <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--line)' }}>
+            <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--line)' }}>
               <th style={{ padding: '6px 8px' }}>Client</th>
               <th style={{ padding: '6px 8px' }}>Email</th>
               <th style={{ padding: '6px 8px' }}>Type déclaré</th>
@@ -39,7 +39,7 @@ export default function AdminProAccounts({ users }) {
             {users.map((u) => {
               const row = rows.find((r) => r.id === u.id);
               return (
-                <tr key={u.id} style={{ borderBottom: '1px solid var(--line)' }}>
+                <tr key={u.id} style={{ borderBottom: '2px solid var(--line)' }}>
                   <td style={{ padding: '6px 8px' }}>{u.name}</td>
                   <td style={{ padding: '6px 8px' }}>{u.email}</td>
                   <td style={{ padding: '6px 8px' }}>{u.accountType}</td>

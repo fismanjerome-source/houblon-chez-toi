@@ -5,7 +5,7 @@ export default function CguPage() {
     <main className="wrap" style={{ padding: '48px 0', maxWidth: 720 }}>
       <h1 style={{ color: 'var(--pine)' }}>Conditions générales d'utilisation et de vente</h1>
 
-      <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--amber)', borderRadius: 6, padding: 16, margin: '20px 0', fontSize: 13.5 }}>
+      <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--amber)', borderRadius: 2, padding: 16, margin: '20px 0', fontSize: 13.5 }}>
         ⚠️ Ce texte est un modèle générique de départ, pas un document juridique validé. Faites-le relire par
         un professionnel (avocat, expert-comptable, ou CCI) avant toute mise en ligne réelle du site.
       </div>

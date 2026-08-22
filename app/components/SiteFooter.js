@@ -18,7 +18,7 @@ const TXT = {
 export default function SiteFooter({ locale = 'fr' }) {
   const t = TXT[locale] || TXT.fr;
   return (
-    <footer style={{ borderTop: '1px solid var(--line)', marginTop: 60 }}>
+    <footer style={{ borderTop: '2px solid var(--line)', marginTop: 60 }}>
       <div className="wrap" style={{ padding: '28px 0', display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontFamily: 'Public Sans, sans-serif', fontSize: 11.5 }}>
           <a href="/qui-sommes-nous" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.quiSommesNous}</a>

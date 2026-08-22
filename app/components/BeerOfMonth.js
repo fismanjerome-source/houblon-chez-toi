@@ -16,7 +16,7 @@ export default function BeerOfMonth({ beer, locale = 'fr' }) {
       className="wrap"
       style={{ padding: '36px 0' }}
     >
-      <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 6, padding: '32px 28px', display: 'flex', gap: 28, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 2, padding: '32px 28px', display: 'flex', gap: 28, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexShrink: 0, margin: '0 auto' }}>
           {beer.bottleImageUrl && (
             <Image src={beer.bottleImageUrl} alt={`Bouteille ${beer.name}`} width={80} height={220} style={{ width: 80, height: 220, objectFit: 'contain' }} />
