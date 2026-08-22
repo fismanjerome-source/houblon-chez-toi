@@ -118,7 +118,7 @@ export default function BeerMap({ beers }) {
 
         const popupHtml = `
           <div style="font-family:'Public Sans',sans-serif;font-size:13px;min-width:160px;">
-            <div style="font-family:'Space Mono',monospace;font-size:10.5px;color:#7A3B24;margin-bottom:6px;">${loc.town}</div>
+            <div style="font-family:'Public Sans',sans-serif;font-size:10.5px;color:#7A3B24;margin-bottom:6px;">${loc.town}</div>
             ${locBeers
               .map(
                 (b) =>
@@ -195,7 +195,7 @@ export default function BeerMap({ beers }) {
         <div ref={insetRef} style={{ height: 130 }} />
         <div
           style={{
-            fontFamily: 'Space Mono, monospace', fontSize: 10.5, fontWeight: 500,
+            fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, fontWeight: 500,
             color: '#fff', background: '#B36F1E', textAlign: 'center', padding: '4px 6px',
           }}
         >

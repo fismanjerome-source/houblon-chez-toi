@@ -107,25 +107,25 @@ export default function ComptePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
           <h1 style={{ color: 'var(--pine)' }}>Bonjour {user.name?.split(' ')[0] || ''}</h1>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <span onClick={() => setShowPasswordForm((v) => !v)} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)' }}>
+            <span onClick={() => setShowPasswordForm((v) => !v)} style={{ cursor: 'pointer', fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--pine)' }}>
               {showPasswordForm ? 'Fermer' : 'Changer le mot de passe'}
             </span>
-            <span onClick={handleLogout} style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>Se déconnecter</span>
+            <span onClick={handleLogout} style={{ cursor: 'pointer', fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--copper)' }}>Se déconnecter</span>
           </div>
         </div>
 
         {user.referralCode && (
           <div style={{ background: 'var(--pine)', color: 'var(--paper)', borderRadius: 8, padding: 20, marginBottom: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 6 }}>PARRAINAGE</div>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 6 }}>PARRAINAGE</div>
               <p style={{ margin: '0 0 6px', fontSize: 14 }}>Offrez 5 € à un proche, gagnez 10 € de crédit dès sa 1ère commande livrée.</p>
-              <div style={{ display: 'inline-block', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', border: '1px dashed color-mix(in srgb, var(--paper) 40%, transparent)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Space Mono, monospace', fontSize: 17, letterSpacing: '0.06em' }}>
+              <div style={{ display: 'inline-block', background: 'color-mix(in srgb, var(--paper) 12%, transparent)', border: '1px dashed color-mix(in srgb, var(--paper) 40%, transparent)', borderRadius: 6, padding: '8px 18px', fontFamily: 'Public Sans, sans-serif', fontSize: 17, letterSpacing: '0.06em' }}>
                 {user.referralCode}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, opacity: 0.75 }}>Crédit disponible</div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 22 }}>{((user.creditCents || 0) / 100).toFixed(2)} €</div>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, opacity: 0.75 }}>Crédit disponible</div>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 22 }}>{((user.creditCents || 0) / 100).toFixed(2)} €</div>
             </div>
           </div>
         )}
@@ -151,7 +151,7 @@ export default function ComptePage() {
         {orders.length === 0 && <p style={{ color: 'rgba(var(--ink-rgb),0.5)' }}>Aucune commande pour le moment.</p>}
         {orders.map((o) => (
           <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>#{o.id.slice(-6)}</div>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--copper)' }}>#{o.id.slice(-6)}</div>
             <div>
               {[
                 ...o.items.map((i) =>
@@ -162,37 +162,37 @@ export default function ComptePage() {
                 ...(o.extras || []).map((x) => `${x.quantity} × ${x.name}`),
               ].join(', ')}
             </div>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, marginTop: 6, color: 'rgba(var(--ink-rgb),0.6)' }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11.5, marginTop: 6, color: 'rgba(var(--ink-rgb),0.6)' }}>
               {o.pickup ? '📍 Retrait à Bondues' : `🚚 Livraison — ${o.town}`}
               {o.deliveryFeeCents > 0 && ` (+${(o.deliveryFeeCents / 100).toFixed(2)} €)`}
             </div>
             {o.depositChargedCents > 0 && (
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--copper)' }}>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, marginTop: 2, color: 'var(--copper)' }}>
                 ♻️ Consignes : +{(o.depositChargedCents / 100).toFixed(2)} €
               </div>
             )}
             {o.depositReturnedCents > 0 && (
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
                 ♻️ Consignes reprises : −{(o.depositReturnedCents / 100).toFixed(2)} €
               </div>
             )}
             {o.discountCents > 0 && (
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, marginTop: 2, color: 'var(--pine)' }}>
                 🏷️ Remise volume pro : −{(o.discountCents / 100).toFixed(2)} €
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, flexWrap: 'wrap', gap: 8 }}>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12 }}>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12 }}>
                 {(o.totalCents / 100).toFixed(2)} € — <span style={{ color: o.status === 'LIVREE' ? 'var(--pine)' : o.status === 'ANNULEE' ? 'var(--copper)' : 'inherit' }}>{STATUS_LABELS[o.status] || o.status}</span>
               </div>
               {o.invoice && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   {o.invoice.dueDate && !o.invoice.paidAt && (
-                    <span style={{ fontSize: 11, color: new Date(o.invoice.dueDate) < new Date() ? '#A32D2D' : 'var(--copper)', fontFamily: 'Space Mono, monospace' }}>
+                    <span style={{ fontSize: 11, color: new Date(o.invoice.dueDate) < new Date() ? '#A32D2D' : 'var(--copper)', fontFamily: 'Public Sans, sans-serif' }}>
                       {new Date(o.invoice.dueDate) < new Date() ? 'En retard — échéance' : 'À régler avant le'} {new Date(o.invoice.dueDate).toLocaleDateString('fr-FR')}
                     </span>
                   )}
-                  {o.invoice.paidAt && <span style={{ fontSize: 11, color: 'var(--pine)', fontFamily: 'Space Mono, monospace' }}>✓ Payée</span>}
+                  {o.invoice.paidAt && <span style={{ fontSize: 11, color: 'var(--pine)', fontFamily: 'Public Sans, sans-serif' }}>✓ Payée</span>}
                   <a href={`/api/factures/${o.invoice.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--pine)' }}>
                     📄 Télécharger la facture ({o.invoice.number})
                   </a>

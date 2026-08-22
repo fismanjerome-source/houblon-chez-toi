@@ -16,14 +16,14 @@ export default function InvoicePaymentStatus({ invoiceId, dueDate, paidAt }) {
   }
 
   if (paid) {
-    return <span style={{ fontSize: 11.5, color: 'var(--pine)', fontFamily: 'Space Mono, monospace' }}>✓ Payée</span>;
+    return <span style={{ fontSize: 11.5, color: 'var(--pine)', fontFamily: 'Public Sans, sans-serif' }}>✓ Payée</span>;
   }
 
   const overdue = dueDate && new Date(dueDate) < new Date();
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 11.5, fontFamily: 'Space Mono, monospace', color: overdue ? '#A32D2D' : 'var(--copper)' }}>
+      <span style={{ fontSize: 11.5, fontFamily: 'Public Sans, sans-serif', color: overdue ? '#A32D2D' : 'var(--copper)' }}>
         {dueDate ? `${overdue ? 'En retard — échéance' : 'À régler avant le'} ${new Date(dueDate).toLocaleDateString('fr-FR')}` : 'Impayée'}
       </span>
       <button

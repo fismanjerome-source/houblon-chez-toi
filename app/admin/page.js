@@ -50,7 +50,7 @@ export default async function AdminPage() {
       {orders.map((o) => (
         <div key={o.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 10, background: 'var(--surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--copper)' }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--copper)' }}>
               #{o.id.slice(-6)} — {o.user.name} ({o.user.email}) — {o.user.accountType}
               {' — '}<span style={{ color: o.paidAt ? 'var(--pine)' : 'var(--copper)' }}>{PAYMENT_LABELS[o.paymentChoice] || o.paymentChoice}{o.paidAt ? ' ✓' : ''}</span>
             </div>
@@ -71,7 +71,7 @@ export default async function AdminPage() {
               ...o.extras.map((x) => `${x.quantity} × ${x.name}`),
             ].join(', ')}
           </div>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, marginTop: 6 }}>
+          <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12, marginTop: 6 }}>
             {o.pickup ? 'Retrait à Bondues' : o.town} — {o.slot} — {((o.itemsTotalCents ?? o.totalCents) / 100).toFixed(2)} €
             {o.deliveryFeeCents > 0 && ` + ${(o.deliveryFeeCents / 100).toFixed(2)} € livraison`}
             {o.depositChargedCents > 0 && ` + ${(o.depositChargedCents / 100).toFixed(2)} € consignes`}

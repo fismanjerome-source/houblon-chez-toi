@@ -50,7 +50,7 @@ export default async function AdminCodesPage() {
           <div>
             <strong>{r.referrer.name}</strong> ({r.referrer.email}) a parrainé <strong>{r.referee.name}</strong> ({r.referee.email}) — code {r.code}
           </div>
-          <div style={{ fontFamily: 'Space Mono, monospace', color: r.status === 'COMPLETED' ? 'var(--pine)' : 'var(--copper)' }}>
+          <div style={{ fontFamily: 'Public Sans, sans-serif', color: r.status === 'COMPLETED' ? 'var(--pine)' : 'var(--copper)' }}>
             {STATUS_LABELS[r.status] || r.status}{r.status === 'COMPLETED' ? ` (+${(r.rewardCents / 100).toFixed(2)} €)` : ''}
           </div>
         </div>

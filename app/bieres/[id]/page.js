@@ -77,7 +77,7 @@ export default async function BeerPage({ params }) {
 
   return (
     <main className="wrap" style={{ padding: '40px 0 60px', maxWidth: 800 }}>
-      <a href="/#catalogue" style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, color: 'var(--copper)', textDecoration: 'none' }}>
+      <a href="/#catalogue" style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12, color: 'var(--copper)', textDecoration: 'none' }}>
         {t.back}
       </a>
 
@@ -102,11 +102,11 @@ export default async function BeerPage({ params }) {
             <h1 style={{ fontSize: 32, color: 'var(--pine)', margin: 0 }}>{beer.name}</h1>
             <FlagIcon country={beer.country} size={22} />
           </div>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5, color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5, color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 4 }}>
             {beer.brewery} — {origin}
           </div>
           {beer.abv > 0 && (
-            <div style={{ display: 'inline-block', background: color, color: '#fff', fontFamily: 'Space Mono, monospace', fontSize: 12, padding: '3px 10px', borderRadius: 12, marginTop: 8 }}>
+            <div style={{ display: 'inline-block', background: color, color: '#fff', fontFamily: 'Public Sans, sans-serif', fontSize: 12, padding: '3px 10px', borderRadius: 12, marginTop: 8 }}>
               {beer.abv}% vol.
             </div>
           )}
@@ -151,7 +151,7 @@ export default async function BeerPage({ params }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             {glasses.map((g) => (
               <div key={g.id} style={{ border: '1px solid var(--line)', borderRadius: 6, padding: '10px 14px', fontSize: 13.5 }}>
-                {g.name} — <span style={{ fontFamily: 'Space Mono, monospace' }}>{g.volumeCl}cl · {g.price.toFixed(2)} €</span>
+                {g.name} — <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{g.volumeCl}cl · {g.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
@@ -165,7 +165,7 @@ function TastingCard({ label, icon, text }) {
   if (!text) return null;
   return (
     <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 6, padding: 16 }}>
-      <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'var(--copper)', marginBottom: 6 }}>
+      <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, textTransform: 'uppercase', color: 'var(--copper)', marginBottom: 6 }}>
         {icon} {label}
       </div>
       <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.8)', lineHeight: 1.55, margin: 0 }}>{text}</p>

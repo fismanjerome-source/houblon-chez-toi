@@ -85,7 +85,7 @@ export default function SearchBar({ locale = 'fr' }) {
                 )}
                 <div>
                   <div style={{ fontSize: 13.5 }}>{b.name}</div>
-                  {b.abv > 0 && <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.5)' }}>{b.abv}% vol.</div>}
+                  {b.abv > 0 && <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.5)' }}>{b.abv}% vol.</div>}
                 </div>
               </div>
             ))

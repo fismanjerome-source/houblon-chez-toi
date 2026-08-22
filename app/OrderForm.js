@@ -348,7 +348,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             </a>
             <FlagIcon country={beer.country} />
           </div>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', margin: '4px 0 10px' }}>
+          <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', margin: '4px 0 10px' }}>
             {beerOrigin}{beer.abv > 0 && ` · ${beer.abv}% vol.`}
           </div>
           <p style={{ fontSize: 13.5, color: 'rgba(var(--ink-rgb),0.7)' }}>{beerDescription}</p>
@@ -357,7 +357,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
               « {beerTastingNote} »
             </p>
           )}
-          <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
+          <a href={`/bieres/${beer.id}`} style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'var(--pine)', textDecoration: 'underline' }}>
             {t.viewSheet}
           </a>
 
@@ -382,12 +382,12 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
           {glasses.length > 0 && (
             <div style={{ marginTop: 14 }}>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 6 }}>
                 {t.addGlass}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 {glasses.map((g) => (
-                  <label key={g.id} style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(var(--ink-rgb),0.7)' }}>
+                  <label key={g.id} style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(var(--ink-rgb),0.7)' }}>
                     <input
                       type="checkbox"
                       checked={selectedGlassIds.has(g.id)}
@@ -496,7 +496,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                 )}
                 {merchDescription && <p style={{ fontSize: 12.5, color: 'rgba(var(--ink-rgb),0.65)', marginBottom: 10 }}>{merchDescription}</p>}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
+                  <span style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 14 }}>{(m.priceCents / 100).toFixed(2)} €</span>
                   <input
                     type="number" min={0} max={20}
                     value={merchQty[m.id] === 0 || !merchQty[m.id] ? '' : merchQty[m.id]}
@@ -523,31 +523,31 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
             {beerLines.map((l) => (
               <li key={`${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
                 <span>{l.quantity} × {l.beer.name} ({l.format}cl)</span>
-                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
+                <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
             {glassLines.map((l) => (
               <li key={`glass-${l.beer.id}-${l.glass.id}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)' }}>
                 <span>+ {l.glass.name} {l.glass.volumeCl}cl ({l.beer.name})</span>
-                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
+                <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
             {beerLines.filter((l) => l.depositTotal > 0).map((l) => (
               <li key={`deposit-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--copper)', fontSize: 12.5 }}>
                 <span>{t.deposit(l.beer.name, l.format)}</span>
-                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.depositTotal.toFixed(2)} €</span>
+                <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{l.depositTotal.toFixed(2)} €</span>
               </li>
             ))}
             {returnLines.map((l) => (
               <li key={`return-${l.beer.id}-${l.format}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: 'var(--pine)', fontSize: 12.5 }}>
                 <span>{t.returnLine(l.quantity, l.beer.name, l.format)}</span>
-                <span style={{ fontFamily: 'Space Mono, monospace' }}>−{l.creditTotal.toFixed(2)} €</span>
+                <span style={{ fontFamily: 'Public Sans, sans-serif' }}>−{l.creditTotal.toFixed(2)} €</span>
               </li>
             ))}
             {extrasLines.map((l) => (
               <li key={`extra-${l.kind}-${l.refId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
                 <span>{l.quantity} × {l.name}</span>
-                <span style={{ fontFamily: 'Space Mono, monospace' }}>{l.lineTotal.toFixed(2)} €</span>
+                <span style={{ fontFamily: 'Public Sans, sans-serif' }}>{l.lineTotal.toFixed(2)} €</span>
               </li>
             ))}
           </ul>
@@ -555,7 +555,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
         {depositEligibleBeers.length > 0 && (
           <details style={{ marginBottom: 16, fontSize: 13 }}>
-            <summary style={{ cursor: 'pointer', fontFamily: 'Space Mono, monospace', fontSize: 11.5, color: 'var(--pine)' }}>
+            <summary style={{ cursor: 'pointer', fontFamily: 'Public Sans, sans-serif', fontSize: 11.5, color: 'var(--pine)' }}>
               {t.returnSummary}
             </summary>
             <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -563,7 +563,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                 <div key={beer.id} style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 12.5, minWidth: 140 }}>{beer.name}</span>
                   {beer.depositCents33 > 0 && (
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Space Mono, monospace', fontSize: 11 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Public Sans, sans-serif', fontSize: 11 }}>
                       33cl
                       <input
                         type="number" min={0} max={999}
@@ -576,7 +576,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
                     </label>
                   )}
                   {beer.depositCents75 > 0 && (
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Space Mono, monospace', fontSize: 11 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Public Sans, sans-serif', fontSize: 11 }}>
                       75cl
                       <input
                         type="number" min={0} max={999}
@@ -611,7 +611,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
           </>
         )}
 
-        <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
+        <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 13.5, borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span>{t.subtotalBeers(glassLines.length > 0)}</span>
             <span>{itemsSubtotal.toFixed(2)} €</span>
@@ -705,7 +705,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 
         {user?.proApproved && (
           <div style={{ marginTop: 14, padding: 14, border: '1px solid var(--line)', borderRadius: 6, background: 'var(--surface)' }}>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, textTransform: 'uppercase', color: 'rgba(var(--ink-rgb),0.5)', marginBottom: 8 }}>
               {t.paymentModeLabel}
             </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, marginBottom: 6, cursor: 'pointer' }}>
@@ -758,7 +758,7 @@ export default function OrderForm({ groups, slots, basket, merchProducts, pricin
 function QuantityField({ label, sublabel, value, onChange }) {
   return (
     <div>
-      <label style={{ display: 'block', fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 6 }}>{label}</label>
+      <label style={{ display: 'block', fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'rgba(var(--ink-rgb),0.6)', marginBottom: 6 }}>{label}</label>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <button
           type="button"
@@ -796,7 +796,7 @@ function QuantityField({ label, sublabel, value, onChange }) {
         </button>
       </div>
       {sublabel && (
-        <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 9.5, color: 'var(--copper)', marginTop: 3 }}>{sublabel}</div>
+        <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 9.5, color: 'var(--copper)', marginTop: 3 }}>{sublabel}</div>
       )}
     </div>
   );

@@ -40,7 +40,7 @@ export default function AdminPromoCodeList({ codes: initialCodes }) {
           <tbody>
             {codes.map((c) => (
               <tr key={c.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                <td style={{ padding: '6px 8px', fontFamily: 'Space Mono, monospace' }}>{c.code}{c.restrictToEmail ? ` (${c.restrictToEmail})` : ''}</td>
+                <td style={{ padding: '6px 8px', fontFamily: 'Public Sans, sans-serif' }}>{c.code}{c.restrictToEmail ? ` (${c.restrictToEmail})` : ''}</td>
                 <td style={{ padding: '6px 8px' }}>{KIND_LABELS[c.kind] || c.kind}</td>
                 <td style={{ padding: '6px 8px' }}>{formatDiscount(c)}</td>
                 <td style={{ padding: '6px 8px' }}>{c.usedCount}{c.maxUses ? ` / ${c.maxUses}` : ''}</td>

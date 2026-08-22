@@ -12,7 +12,7 @@ function euros(cents) {
 function StatCard({ label, value }) {
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 6, padding: '16px 18px' }}>
-      <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 6 }}>
+      <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'rgba(var(--ink-rgb),0.55)', marginBottom: 6 }}>
         {label}
       </div>
       <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, color: 'var(--pine)' }}>{value}</div>
@@ -124,13 +124,13 @@ export default async function AdminStatsPage() {
       <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 6, padding: '16px 18px', marginBottom: 28 }}>
         {dailyEntries.map(([date, v]) => (
           <div key={date} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, fontSize: 12.5 }}>
-            <div style={{ fontFamily: 'Space Mono, monospace', width: 80, color: 'rgba(var(--ink-rgb),0.6)', flexShrink: 0 }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', width: 80, color: 'rgba(var(--ink-rgb),0.6)', flexShrink: 0 }}>
               {new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
             </div>
             <div style={{ flex: 1, background: 'var(--paper-warm)', borderRadius: 3, height: 16, position: 'relative', overflow: 'hidden' }}>
               <div style={{ width: `${(v.count / maxDailyCount) * 100}%`, background: 'var(--amber)', height: '100%', borderRadius: 3 }} />
             </div>
-            <div style={{ fontFamily: 'Space Mono, monospace', width: 96, textAlign: 'right', flexShrink: 0 }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', width: 96, textAlign: 'right', flexShrink: 0 }}>
               {v.count} · {euros(v.cents)}
             </div>
           </div>
@@ -143,7 +143,7 @@ export default async function AdminStatsPage() {
         {topBeers.map(({ beer, quantity }, i) => (
           <div key={beer?.id || i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < topBeers.length - 1 ? '1px solid var(--line)' : 'none', fontSize: 13.5 }}>
             <span>{i + 1}. {beer?.name || 'Bière supprimée'}</span>
-            <span style={{ fontFamily: 'Space Mono, monospace', color: 'var(--copper)' }}>{quantity} vendues</span>
+            <span style={{ fontFamily: 'Public Sans, sans-serif', color: 'var(--copper)' }}>{quantity} vendues</span>
           </div>
         ))}
       </div>

@@ -21,7 +21,7 @@ export default function AdminReviewList({ reviews: initialReviews }) {
           <div style={{ flex: '1 1 300px' }}>
             <strong>{r.customerName}</strong> — {'⭐'.repeat(r.rating)}
             {r.comment && <p style={{ margin: '4px 0 0', fontSize: 13.5 }}>« {r.comment} »</p>}
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', marginTop: 4 }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, color: 'rgba(var(--ink-rgb),0.5)', marginTop: 4 }}>
               {new Date(r.createdAt).toLocaleDateString('fr-FR')}
             </div>
           </div>

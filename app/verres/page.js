@@ -70,7 +70,7 @@ export default function VerresPage() {
             <div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
                 <h2 style={{ fontSize: 18, color: 'var(--pine)', margin: 0 }}>{g.name}</h2>
-                <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 11.5, color: 'var(--copper)' }}>
+                <span style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11.5, color: 'var(--copper)' }}>
                   {g.volumeCl >= 100 ? `${(g.volumeCl / 100).toFixed(1).replace('.0', '')} L` : `${g.volumeCl} cl`}
                 </span>
               </div>

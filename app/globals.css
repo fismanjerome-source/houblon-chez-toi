@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=Space+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600;700&display=swap');
 
 :root {
   --pine: #1B2E20;
@@ -50,16 +50,17 @@ h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
   color: var(--paper);
   border: 1px solid var(--pine);
   border-radius: 3px;
-  font-family: 'Space Mono', monospace;
-  font-size: 12.5px;
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   cursor: pointer;
   text-decoration: none;
 }
 
 .field { margin-bottom: 16px; }
-.field label { display: block; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; color: rgba(var(--ink-rgb),0.6); }
+.field label { display: block; font-family: 'Public Sans', sans-serif; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; color: rgba(var(--ink-rgb),0.6); }
 .field input, .field select {
   width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 3px;
   font-family: 'Public Sans', sans-serif; font-size: 14px;
@@ -92,9 +93,9 @@ input::placeholder, textarea::placeholder { color: rgba(var(--ink-rgb),0.45); }
   color: #FFFFFF;
   border: none;
   border-radius: 4px;
-  font-family: 'Space Mono', monospace;
+  font-family: 'Public Sans', sans-serif;
   font-size: 10.5px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.02em;
   padding: 3px 7px;
   box-shadow: 0 2px 6px rgba(15,23,18,0.3);

@@ -16,7 +16,7 @@ export default function AdminNav({ active }) {
           key={l.href}
           href={l.href}
           style={{
-            fontFamily: 'Space Mono, monospace',
+            fontFamily: 'Public Sans, sans-serif',
             fontSize: 12,
             padding: '6px 12px',
             borderRadius: 4,

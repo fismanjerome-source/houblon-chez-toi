@@ -26,12 +26,12 @@ export default function BeerOfMonth({ beer, locale = 'fr' }) {
           )}
         </div>
         <div style={{ flex: '1 1 280px', minWidth: 240 }}>
-          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 11, letterSpacing: '0.08em', color: 'var(--amber)', marginBottom: 8 }}>
             {t.label}
           </div>
           <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 28, margin: '0 0 6px' }}>{beer.name}</h2>
           {beer.abv > 0 && (
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12, opacity: 0.75, marginBottom: 14 }}>{beer.abv}% vol.</div>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12, opacity: 0.75, marginBottom: 14 }}>{beer.abv}% vol.</div>
           )}
           {shortHistory && (
             <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.92, marginBottom: 18, maxWidth: 520 }}>{shortHistory}</p>

@@ -110,7 +110,7 @@ export default function HistoirePage() {
             <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 15, color: 'var(--pine)', margin: '0 0 3px' }}>
               {s.name}
             </h3>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: 'var(--copper)', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 10, color: 'var(--copper)', marginBottom: 8 }}>
               {s.abv}
             </div>
             <p style={{ fontSize: 12.5, lineHeight: 1.6, color: 'rgba(var(--ink-rgb),0.75)', margin: 0 }}>

@@ -59,19 +59,19 @@ export default async function AdminFacturesPage() {
           <div key={key} style={{ marginBottom: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid var(--line)', paddingBottom: 6, marginBottom: 10 }}>
               <h3 style={{ margin: 0, fontSize: 15, color: 'var(--pine)', textTransform: 'capitalize' }}>{monthLabel(key)}</h3>
-              <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5, color: 'var(--copper)' }}>
+              <span style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5, color: 'var(--copper)' }}>
                 {group.length} facture{group.length > 1 ? 's' : ''} — {(monthTotal / 100).toFixed(2)} €
               </span>
             </div>
             {group.map((inv) => (
               <div key={inv.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
-                <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5 }}>
+                <div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5 }}>
                   <strong>{inv.number}</strong> — {inv.issuedAt.toLocaleDateString('fr-FR')} — {inv.order.user.name}
                   {inv.order.user.proApproved && <span style={{ marginLeft: 8, fontSize: 10.5, color: 'var(--copper)' }}>PRO</span>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                   <InvoicePaymentStatus invoiceId={inv.id} dueDate={inv.dueDate} paidAt={inv.paidAt} />
-                  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 12.5 }}>{(inv.totalCents / 100).toFixed(2)} €</span>
+                  <span style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 12.5 }}>{(inv.totalCents / 100).toFixed(2)} €</span>
                   <a href={`/api/factures/${inv.id}/pdf`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, color: 'var(--pine)' }}>📄 PDF</a>
                 </div>
               </div>

@@ -90,7 +90,7 @@ export default function QuiSommesNousPage() {
           margin: '20px 0',
           color: 'rgba(var(--ink-rgb),0.4)',
           fontSize: 13,
-          fontFamily: 'Space Mono, monospace',
+          fontFamily: 'Public Sans, sans-serif',
         }}
       >
         {t.photoSoon}

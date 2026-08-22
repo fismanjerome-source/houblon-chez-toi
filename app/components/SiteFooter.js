@@ -20,7 +20,7 @@ export default function SiteFooter({ locale = 'fr' }) {
   return (
     <footer style={{ borderTop: '1px solid var(--line)', marginTop: 60 }}>
       <div className="wrap" style={{ padding: '28px 0', display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontFamily: 'Space Mono, monospace', fontSize: 11.5 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontFamily: 'Public Sans, sans-serif', fontSize: 11.5 }}>
           <a href="/qui-sommes-nous" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.quiSommesNous}</a>
           <a href="/histoire" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.histoire}</a>
           <a href="/verres" style={{ color: 'rgba(var(--ink-rgb),0.6)' }}>{t.verres}</a>
@@ -34,13 +34,13 @@ export default function SiteFooter({ locale = 'fr' }) {
       </div>
       <div style={{ background: 'var(--pine)' }}>
         <div className="wrap" style={{ padding: '10px 0', textAlign: 'center' }}>
-          <p style={{ margin: 0, fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'var(--paper)', letterSpacing: '0.02em' }}>
+          <p style={{ margin: 0, fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, color: 'var(--paper)', letterSpacing: '0.02em' }}>
             {t.warning}
           </p>
         </div>
       </div>
       <div className="wrap" style={{ padding: '14px 0', textAlign: 'center' }}>
-        <p style={{ margin: 0, fontFamily: 'Space Mono, monospace', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.45)' }}>
+        <p style={{ margin: 0, fontFamily: 'Public Sans, sans-serif', fontSize: 10.5, color: 'rgba(var(--ink-rgb),0.45)' }}>
           {t.rights}
         </p>
       </div>
